@@ -1,7 +1,6 @@
 = FlexMock 0.6.0 Released
 
-FlexMock is a flexible mocking library for use in Ruby's Test::Unit
-test framework.  Version 0.6.0 is a minor bug fix release.
+FlexMock is a flexible mocking library for use in unit testing and behavior specification in Ruby.  Version 0.6.0 introduces a number of API enhancements to make testing with mocks even easier than before.
 
 == New in 0.6.0
 
@@ -10,26 +9,66 @@ test framework.  Version 0.6.0 is a minor bug fix release.
 
 * Integration with RSpec (version 0.9.0 or later of RSpec is required).
 
-* Enhanced +flexmock+ method
+* The +flexmock+ method will now create both regular mocks and partial mocks.
+    
+     flexmock()          # => a full mock
+     flexmock(person)    # => a partial mock based on person
 
-  * +flexmock+ will now create both regular mocks and partial mocks
-    (+flexstub+ is still included for backwards compatibility).
+  (+flexstub+ is still included for backwards compatibility).
 
-  * Quick and simple mocks my now be created using an expectation hash
-    (example: <tt>flexmock(:foo => 10, :bar => "Hello")</tt> will create a
-    mock with two methods, :foo and :bar, defined).
+* Quick and simple mocks my now be created using an expectation hash. For
+  example:
 
-* Refactored implementation, allowing for more granular 
+    flexmock(:foo => 10, :bar => "Hello")
+    
+  will create a mock with two methods, :foo and :bar,defined. :foo will
+  return 10 when invoked, and :bar will return "Hello".
+
+* The +should_receive+ method will now allow multiple methods (with the same
+  constraints) be defined in a single call. For example, the following
+  declares that both :read and :write need to be called at least one time each
+  on the mock object.
+
+    flexmock.should_receive(:read, :write).at_least.once
+
+
+* +should_recieve+ now will allow expectation hashes as arguments. This is
+  similar to the list of methods, but allows each defined method to have its
+  own return value.
+
+    flexmock.should_receive(:name => "John", :age => 32)
+
+
+* In addition to using a block for defining constrains, constraints may now be
+  applied directly to the return value of +new_instances+. Combined with the
+  expectation hashes supported by +should_receive+, simple mocking scenarios
+  have become much more succinct. For example:
+
+      flexmock(Person).new_instances.should_receive(:name => "John", :age => 32)
+
+* Improved implementation, allowing for more flexible use and greater
+  consistency between full mock and partial mocks.
+
+* Version 0.6.0 also includes a fix for an incompatibility with some older
+  versions of RCov. The FlexMock Rakefile now includes a RCov task (and we
+  have 100% code coverage).
 
 == What is FlexMock?
 
-FlexMock is a flexible Ruby mocking library that works with Ruby's
-Test::Unit framework to create easy to use mocks.
+FlexMock is a flexible framework for creating mock object for testing. When
+running unit tests, it is often desirable to use isolate the objects being
+tested from the "real world" by having them interact with simplified test
+objects. Sometimes these test objects simply return values when called, other
+times they verify that certain methods were called with particular arguments
+in a particular order.
+
+FlexMock makes creating these test objects easy.
 
 === Features
 
-* Easy integration with Test::Unit.  Mocks created with the flexmock
-  method are automatically verified at the end of the test.
+* Easy integration with both Test::Unit and RSpec. Mocks created with the
+  flexmock method are automatically verified at the end of the test or
+  example.
 
 * A fluent interface that allows mock behavior to be specified very
   easily.
@@ -39,6 +78,9 @@ Test::Unit framework to create easy to use mocks.
   implementation.
 
 * Easy mocking of individual methods in existing, non-mock objects.
+
+* The ability to cause classes to instantiate test instances (instead of real
+  instances) for the duration of a test.
 
 === Example
 
@@ -73,11 +115,10 @@ require 'flexmock/test_unit'
 FlexMock will automatically verify that the mocked tail object received the
 message +wag+ exactly one time. If it doesn't, the test will not pass.
 
-See the FlexMock documentation at
-http://onestepback.org/software/flexmock for details on specifying
-arguments and return values on mocked methods, as well as a simple
-technique for mocking tail objects when the Dog class creates the tail
-objects directly.
+See the FlexMock documentation at http://flexmock.rubyforge.org for details on
+specifying arguments and return values on mocked methods, as well as a simple
+technique for mocking tail objects when the Dog class creates the tail objects
+directly.
 
 == Availability
 
@@ -89,8 +130,7 @@ Otherwise, you can get it from the more traditional places:
 
 Download::  http://rubyforge.org/project/showfiles.php?group_id=170
 
-You will find documentation at:
-http://onestepback.org/software/flexmock/
+You will find documentation at: http://flexmock.rubyforge.org.
 
 -- Jim Weirich
 
