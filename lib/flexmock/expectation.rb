@@ -248,10 +248,6 @@ class FlexMock
       end
       self
     end
-    
-    def should_receive(*args, &block)
-      @mock.should_receive(*args, &block)
-    end
   end
 
   ##########################################################################
@@ -291,15 +287,16 @@ class FlexMock
       @expectations.first.mock
     end
     
+    # Start a new method expectation.  The following constraints will be
+    # applied to the new expectation.
     def should_receive(*args, &block)
       @expectations.first.mock.should_receive(*args, &block)
     end
 
-
     # Return a string representations
     def to_s
       if @expectations.size > 1
-        @expectations.collect { |e| e.to_s }.join(', ')
+        "[" + @expectations.collect { |e| e.to_s }.join(', ') + "]"
       else
         @expectations.first.to_s
       end

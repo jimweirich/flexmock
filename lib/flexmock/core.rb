@@ -126,12 +126,25 @@ class FlexMock
     end
   end
 
+  # :call-seq:
+  #    mock.should_receive(:method_name)
+  #    mock.should_receive(:method1, method2, ...)
+  #    mock.should_receive(:meth1 => result1, :meth2 => result2, ...)
+  #
   # Declare that the mock object should receive a message with the given name.
+  #
+  # If more than one method name is given, then the mock object should expect
+  # to receive all the listed melthods.  If a hash of method name/value pairs
+  # is given, then the each method will return the associated result.  Any
+  # expectations applied to the result of +should_receive+ will be applied to
+  # all the methods defined in the argument list.
+  #
   # An expectation object for the method name is returned as the result of
   # this method.  Further expectation constraints can be added by chaining to
   # the result.
   #
   # See Expectation for a list of declarators that can be used.
+  #
   def should_receive(*args)
     FlexMock.should_receive(args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)

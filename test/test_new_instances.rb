@@ -186,6 +186,11 @@ class TestNewInstances < Test::Unit::TestCase
     assert_equal :flip, Dog.new.roll_over
   end
   
+  def test_fancy_use_of_chained_should_received
+    flexmock(Dog).new_instances.should_receive(:woof => :grrr)
+    assert_equal :grrr, Dog.new.woof
+  end
+  
   def redirect_error
     require 'stringio'
     old_err = $stderr

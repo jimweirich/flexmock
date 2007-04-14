@@ -53,6 +53,8 @@ Here's the complete example:
     end
   end
 
+You can find an extended example of FlexMock in {Google Example}[http://flexmock.rubyforge.org/files/doc/GoogleExample_rdoc.html].
+
 == Test::Unit Integration
 
 FlexMock integrates nicely with Test::Unit. Just require the
@@ -173,11 +175,20 @@ your expectation. Here are some examples:
 The following methods may be used to create and refine expectations on a mock
 object. See theFlexMock::Expectation for more details.
 
-* <b>should_receive(<em>symbol</em>)</b>
+* <b>should_receive(<em>method_name</em>)</b>
 
-  Declares that a message named <em>symbol</em> will be sent to the mock
-  object. Further refinements on this expected message (called an expectation)
-  may be chained to the +should_receive+ call.
+  Declares that a message named <em>method_name</em> will be sent to the mock
+  object. Constraints on this expected message (called expectations) may be
+  chained to the +should_receive+ call.
+
+* <b>should_receive(<em>method_name1</em>, <em>method_name2</em>, ...)</b>
+
+  Define a number of expected messages that have the same constraints.
+
+* <b>should_receive(<em>meth1</em> => <em>result1</em>, <em>meth2</em> => <em>result2</em>, ...)</b>
+
+  Define a number of expected messages that have the same constrants, but
+  return different values.
 
 * <b>should_expect { |recorder| ... }</b>
 
@@ -203,54 +214,52 @@ object. See theFlexMock::Expectation for more details.
 
   Declares that this expectation matches messages with no arguments
 
-* <b>and_return(<em>value, ...</em>)</b>
+* <b>and_return(<em>value</em>)</b>
 
-  Declares that the message will return the given value.
+  Declares that the expected message will return the given value.
 
-  * If a single value is given, it will be returned for all matching calls.
+* <b>and_return(<em>value1</em>, <em>value2</em>, ...)</b>
 
-  * If multiple values are given, they will be returned in sequence for each
-    successive matching calls. The last value will be repeatably returned if
-    the number of matching calls exceeds the number of values.
+  Declares that the expected message will return a series of values. Each
+  invocation of the message will return the next value in the series. The last
+  value will be repeatably returned if the number of matching calls exceeds
+  the number of values.
 
-  * If a block is given, its yielded value will be returned. (the block will
-    receive all the arguments given to the mocked method)
+* <b>and_return { |args, ...|  code ... } </b>
 
-  * The default return value is nil.
+  Declares that the expected message will return the yielded value of the
+  block. The block will receive all the arguments in the message. If the
+  message was provided a block, it will be passed as the last parameter of the
+  block's argument list.
 
-* <b>returns(<em>value, ...</em>)</b>
+* <b>returns( ... )</b>
 
   Alias for <tt>and_return</tt>.
 
-* <b>returns { |args| code ... }</b>
-
-  Declares that the message will return whatever the block calculates. The
-  actual arguments in the message will be passed to the block.
-
 * <b>zero_or_more_times</b>
 
-  Declares that the message is may be sent zero or more times (default,
-  equivalent to <tt>at_least.never</tt>).
+  Declares that the expected message is may be sent zero or more times
+  (default, equivalent to <tt>at_least.never</tt>).
 
 * <b>once</b>
 
-  Declares that the message is only sent once. <tt>at_least</tt> /
+  Declares that the expected message is only sent once. <tt>at_least</tt> /
   <tt>at_most</tt> modifiers are allowed.
 
 * <b>twice</b>
 
-  Declares that the message is only sent twice. <tt>at_least</tt> /
+  Declares that the expected message is only sent twice. <tt>at_least</tt> /
   <tt>at_most</tt> modifiers are allowed.
 
 * <b>never</b>
 
-  Declares that the message is never sent. <tt>at_least</tt> /
+  Declares that the expected message is never sent. <tt>at_least</tt> /
   <tt>at_most</tt> modifiers are allowed.
 
 * <b>times(<em>n</em>)</b>
 
-  Declares that the message is sent <em>n</em> times. <tt>at_least</tt> /
-  <tt>at_most</tt> modifiers are allowed.
+  Declares that the expected message is sent <em>n</em> times.
+  <tt>at_least</tt> / <tt>at_most</tt> modifiers are allowed.
 
 * <b>at_least</b>
 
@@ -268,17 +277,17 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>ordered</b>
 
-  Declares that the message is ordered and is expected to be received in a
-  certain position in a sequence of messages. The message should arrive after
-  and previously declared ordered messages and prior to any following declared
-  ordered messages. Unordered messages are ignored when considering the
-  message order.
+  Declares that the expected message is ordered and is expected to be received
+  in a certain position in a sequence of messages. The message should arrive
+  after and previously declared ordered messages and prior to any following
+  declared ordered messages. Unordered messages are ignored when considering
+  the message order.
 
 * <b>ordered(<em>group</em>)</b>
 
-  Declare that the given method belongs to an order group. Methods within the
-  group may be received in any order. Ordered messages outside the group must
-  be received either before or after the grouped messages.
+  Declare that the expected message belongs to an order group. Methods within
+  an order group may be received in any order. Ordered messages outside the
+  group must be received either before or after all of the grouped messages.
 
   For example, in the following, messages +flip+ and +flop+ may be received in
   any order (because they are in the same group), but must occur strictly
@@ -474,9 +483,7 @@ very easy.
     # Setup the tests by mocking Woofer to always
     # return partial mocks.
     def setup
-      flexmock(Woofer).new_instances do |instance|
-         instance.should_receive(:woof).and_return(:grrr)
-      end
+      flexmock(Woofer).new_instances.should_receive(:woof => :grrr)
     end
 
     def test_dog
@@ -488,6 +495,14 @@ very easy.
 Note that FlexMock adds the mock expectations after the original +new+ method
 has completed. If the original version of +new+ yields the newly created
 instance to a block, that block will get an non-mocked version of the object.
+
+Note that +new_instances+ will accept a block if you wish to mock several
+methods at the same time. E.g.
+
+      flexmock(Woofer).new_instances do |m|
+        m.should_receive(:woof).twice.and_return(:grrr)
+        m.should_receive(:wag).at_least.once.and_return(:happy)
+      end
 
 == Examples
 
@@ -645,13 +660,13 @@ The Portfolio class calculate the value of a set of stocks by talking to a quote
 
 == Other Mock Objects
 
-ruby-mock      :: http://www.b13media.com/dev/ruby/mock.html
 test-unit-mock :: http://www.deveiate.org/code/Test-Unit-Mock.shtml
 mocha/stubba   :: http://mocha.rubyforge.org/
+Schmock        :: http://rubyforge.org/projects/schmock/
 
 == License
 
-Copyright 2003, 2004, 2005, 2006 by Jim Weirich (jim@weirichhouse.org).
+Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
 All rights reserved.
 
 Permission is granted for use, copying, modification, distribution,

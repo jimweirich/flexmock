@@ -35,8 +35,26 @@ class FlexMock
       @methods_proxied = []
     end
 
-    # Mock out the given method in the existing object and then let the
-    # mock object handle should_receive.
+    # :call-seq:
+    #    should_receive(:method_name)
+    #    should_receive(:method1, method2, ...)
+    #    should_receive(:meth1 => result1, :meth2 => result2, ...)
+    #
+    # Declare that the partial mock should receive a message with the given
+    # name.
+    #
+    # If more than one method name is given, then the mock object should
+    # expect to receive all the listed melthods.  If a hash of method
+    # name/value pairs is given, then the each method will return the
+    # associated result.  Any expectations applied to the result of
+    # +should_receive+ will be applied to all the methods defined in the
+    # argument list.
+    #
+    # An expectation object for the method name is returned as the result of
+    # this method.  Further expectation constraints can be added by chaining
+    # to the result.
+    #
+    # See Expectation for a list of declarators that can be used.
     def should_receive(*args)
       FlexMock.should_receive(args) do |sym|
         unless @methods_proxied.include?(sym)
@@ -49,6 +67,10 @@ class FlexMock
       end
     end
 
+    # :call-seq:
+    #   new_instances.should_receive(...)
+    #   new_instances { |instance|  instance.should_receive(...) }
+    #
     # new_instances is a short cut method for overriding the behavior of any
     # new instances created via a mocked class object.
     #
@@ -59,9 +81,7 @@ class FlexMock
     # For example, to stub only objects created by :make (and not :new
     # or :allocate), use:
     #
-    #    flexmock(ClassName).new_instances(:make) do |obj|
-    #      obj.should_receive(...)
-    #    end
+    #    flexmock(ClassName).new_instances(:make).should_receive(...)
     #
     def new_instances(*allocators, &block)
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj

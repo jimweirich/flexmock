@@ -12,12 +12,18 @@
 require 'flexmock/noop'
 
 class FlexMock
-  
-  
   class << self
     attr_reader :framework_adapter
 
-    def should_receive(args)
+    # :call-seq:
+    #   should_receive(args) { |symbol| ... }
+    #
+    # This method provides common handling for the various should_receive
+    # argument lists. It sorts out the differences between symbols, arrays and
+    # hashes, and identifies the method names specified by each.  As each
+    # method name is identified, create a mock expectation for it using the
+    # supplied block.
+    def should_receive(args)  # :nodoc:
       result = CompositeExpectation.new
       args.each do |arg|
         case arg
@@ -31,6 +37,7 @@ class FlexMock
       end
       result
     end
+    
     # Class method to make sure that verify is called at the end of a
     # test.  One mock object will be created for each name given to
     # the use method.  The mocks will be passed to the block as
@@ -67,7 +74,7 @@ class FlexMock
 
     # Class method to format a method name and argument list as a nice
     # looking string.
-    def format_args(sym, args)
+    def format_args(sym, args)  # :nodoc:
       if args
         "#{sym}(#{args.collect { |a| a.inspect }.join(', ')})"
       else
@@ -77,7 +84,7 @@ class FlexMock
 
     # Check will assert the block returns true.  If it doesn't, an
     # assertion failure is triggered with the given message.
-    def check(msg, &block)
+    def check(msg, &block)  # :nodoc:
       FlexMock.framework_adapter.assert_block(msg, &block)
     end
   end

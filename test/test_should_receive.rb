@@ -588,9 +588,13 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
   
   def test_expectation_formating
-    m = FlexMock.new("m")
-    exp = m.should_receive(:f).with(1,"two", /^3$/).and_return(0).at_least.once
+    exp = FlexMock.new("m").should_receive(:f).with(1,"two", /^3$/).and_return(0).at_least.once
     assert_equal 'f(1, "two", /^3$/)', exp.to_s
+  end
+
+  def test_multi_expectation_formatting
+    exp = FlexMock.new.should_receive(:f, :g).with(1)
+    assert_equal "[f(1), g(1)]", exp.to_s
   end
 
   def test_explicit_ordering_with_limits_allow_multiple_return_values
