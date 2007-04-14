@@ -9,6 +9,8 @@
 # above copyright notice is included.
 #+++
 
+require 'flexmock/composite'
+
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
 #
@@ -124,20 +126,22 @@ class FlexMock
     end
   end
 
-  # Declare that the mock object should receive a message with the
-  # given name.  An expectation object for the method name is returned
-  # as the result of this method.  Further expectation constraints can
-  # be added by chaining to the result.
+  # Declare that the mock object should receive a message with the given name.
+  # An expectation object for the method name is returned as the result of
+  # this method.  Further expectation constraints can be added by chaining to
+  # the result.
   #
   # See Expectation for a list of declarators that can be used.
-  def should_receive(sym)
-    @expectations[sym] ||= ExpectationDirector.new(sym)
-    result = Expectation.new(self, sym)
-    @expectations[sym] << result
-    override_existing_method(sym) if mock_respond_to?(sym)
-    result
+  def should_receive(*args)
+    FlexMock.should_receive(args) do |sym|
+      @expectations[sym] ||= ExpectationDirector.new(sym)
+      result = Expectation.new(self, sym)
+      @expectations[sym] << result
+      override_existing_method(sym) if mock_respond_to?(sym)
+      result
+    end
   end
-
+  
   # Declare that the mock object should expect methods by providing a
   # recorder for the methods and having the user invoke the expected
   # methods in a block.  Further expectations may be applied the

@@ -14,11 +14,12 @@ require 'rake/gempackagetask'
 require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/testtask'
+require 'rake/contrib/rubyforgepublisher'
 
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.5.99.2'
+PKG_VERSION = '0.5.99.3'
 
 PKG_FILES = FileList[
   '[A-Z]*',
@@ -156,18 +157,21 @@ task :rf => :rubyfiles
 require 'rake/contrib/publisher'
 require 'rake/contrib/sshpublisher'
 
-task :publish => [:rdoc] do
-  html_publisher = Rake::SshFreshDirPublisher.new(
+publisher = Rake::CompositePublisher.new
+publisher.add(Rake::RubyForgePublisher.new('flexmock', 'jimweirich'))
+publisher.add(Rake::SshFreshDirPublisher.new(
     'umlcoop',
     'htdocs/software/flexmock',
-    'html')
-  blurb_publisher = Rake::SshFilePublisher.new(
+    'html'))
+publisher.add(Rake::SshFilePublisher.new(
     'umlcoop',
     'htdocs/software/flexmock',
     '.',
-    'flexmock.blurb')
-  html_publisher.upload
-  blurb_publisher.upload
+    'flexmock.blurb'))
+
+desc "Publish the documentation on public websites"
+task :publish => [:rdoc] do
+  publisher.upload
 end
 
 SVNHOME = 'svn://localhost/software/flexmock'

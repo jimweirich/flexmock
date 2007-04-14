@@ -1,7 +1,13 @@
 #!/usr/bin/env ruby
-#
-#  Created by Jim Weirich on 2007-04-11.
-#  Copyright (c) 2007. All rights reserved.
+
+#---
+# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# All rights reserved.
+
+# Permission is granted for use, copying, modification, distribution,
+# and distribution of modified versions of this work as long as the
+# above copyright notice is included.
+#+++
 
 require "test/unit"
 require "flexmock"

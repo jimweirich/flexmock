@@ -41,6 +41,7 @@ class FlexMock
     # Close all the mock objects in the container.  Closing a mock object
     # restores any original behavior that was displaced by the mock.
     def flexmock_close
+      @flexmock_created_mocks ||= []
       @flexmock_created_mocks.each do |m|
         m.mock_teardown
       end

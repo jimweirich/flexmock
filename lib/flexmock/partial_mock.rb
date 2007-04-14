@@ -37,13 +37,16 @@ class FlexMock
 
     # Mock out the given method in the existing object and then let the
     # mock object handle should_receive.
-    def should_receive(method_name)
-      method_name = method_name.to_sym
-      unless @methods_proxied.include?(method_name)
-        hide_existing_method(method_name)
-        @methods_proxied << method_name
+    def should_receive(*args)
+      FlexMock.should_receive(args) do |sym|
+        unless @methods_proxied.include?(sym)
+          hide_existing_method(sym)
+          @methods_proxied << sym
+        end
+        ex = @mock.should_receive(sym)
+        ex.mock = self
+        ex
       end
-      @mock.should_receive(method_name)
     end
 
     # new_instances is a short cut method for overriding the behavior of any

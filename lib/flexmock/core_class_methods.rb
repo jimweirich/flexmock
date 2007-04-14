@@ -17,6 +17,20 @@ class FlexMock
   class << self
     attr_reader :framework_adapter
 
+    def should_receive(args)
+      result = CompositeExpectation.new
+      args.each do |arg|
+        case arg
+        when Hash
+          arg.each do |k,v|
+            result.add(yield(k.to_sym).and_return(v))
+          end
+        when Symbol, String
+          result.add(yield(arg.to_sym))
+        end
+      end
+      result
+    end
     # Class method to make sure that verify is called at the end of a
     # test.  One mock object will be created for each name given to
     # the use method.  The mocks will be passed to the block as

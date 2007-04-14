@@ -23,8 +23,8 @@ module Test
       # Teardown the test case, verifying any mocks that might have been
       # defined in this test case.
       def teardown
-        flexmock_original_teardown
         flexmock_teardown
+        flexmock_original_teardown
       end
 
     end

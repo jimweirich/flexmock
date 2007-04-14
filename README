@@ -3,13 +3,13 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.5.99.2
+Version :: 0.5.99.3
 
 = Links
 
-<b>Documents</b>   :: http://onestepback.org/software/flexmock
+<b>Documents</b>   :: http://flexmock.rubyforge.org
 <b>RubyGems</b>    :: Install with: <b>gem install flexmock</b>
-<b>Download</b>    :: Download from RubyForge at http://rubyforge.org/frs/?group_id=170
+<b>Download</b>    :: Download from RubyForge at http://rubyforge.org/frs/?group_id=3433 (pre 0.6.0 versions may be found at http://rubyforge.org/frs/?group_id=170)
 
 == Installation
 
@@ -55,7 +55,10 @@ Here's the complete example:
 
 == Test::Unit Integration
 
-FlexMock integrates nicely with Test::Unit.  Just require the 'flexmock/test_unit' file at the top of your test file.  The +flexmock+ method will be available for mock creation, and any created mocks will be automatically validated and closed at the end of the individual test.
+FlexMock integrates nicely with Test::Unit. Just require the
+'flexmock/test_unit' file at the top of your test file. The +flexmock+ method
+will be available for mock creation, and any created mocks will be
+automatically validated and closed at the end of the individual test.
 
 Your test case will look something like this:
 
@@ -68,7 +71,11 @@ Your test case will look something like this:
     end
   end
 
-<b>NOTE:</b>  If you don't want to automatically extend every TestCase with the flexmock methods and overhead, then require the 'flexmock' file and explicitly include the FlexMock::TestCase module in each test case class wher you wish to use mock objects.  FlexMock versions prior to 0.6.0 required the explicit include.
+<b>NOTE:</b> If you don't want to automatically extend every TestCase with the
+flexmock methods and overhead, then require the 'flexmock' file and explicitly
+include the FlexMock::TestCase module in each test case class where you wish
+to use mock objects. FlexMock versions prior to 0.6.0 required the explicit
+include.
 
 == RSpec Integration
 
@@ -136,16 +143,26 @@ The +flexmock+ method is used to create mocks in various configurations.  Here's
 
 === Expectation Declarators
 
-Once a mock is created, you need to define what that mock should expect to see.  Expectation declarators are used to specify these expectations placed
-upon received method calls.  A basic expectation, created with the +should_receive+ method, just establishes the fact that a method may (or may not) be called on the mock object.  Refinements to that expectation may be additionally declared.  FlexMock always starts with the most general expectation and adds constraints to that.
+Once a mock is created, you need to define what that mock should expect to
+see. Expectation declarators are used to specify these expectations placed
+upon received method calls. A basic expectation, created with the
++should_receive+ method, just establishes the fact that a method may (or may
+not) be called on the mock object. Refinements to that expectation may be
+additionally declared. FlexMock always starts with the most general
+expectation and adds constraints to that.
 
 For example, the following code:
 
     mock.should_recieve(:average).and_return(12)
-    
-Means that the mock will now accept method calls to an +average+ method.  The expectation will accept any arguments and may be called any number of times (including zero times).  Strictly speaking, the +and_return+ part of the declaration isn't exactly a constraint, but it does specify what value the mock will return when the expectation is matched.
 
-If you want to be more specific, you need to add additional constraints to your expectation.  Here are some examples:
+Means that the mock will now accept method calls to an +average+ method. The
+expectation will accept any arguments and may be called any number of times
+(including zero times). Strictly speaking, the +and_return+ part of the
+declaration isn't exactly a constraint, but it does specify what value the
+mock will return when the expectation is matched.
+
+If you want to be more specific, you need to add additional constraints to
+your expectation. Here are some examples:
 
     mock.should_receive(:average).with(12).once
 
@@ -335,8 +352,8 @@ The following rules are used for argument matching:
 * If you wish to match _anything_, then use the <tt>FlexMock.any</tt>
   method in the with argument list.
 
-  Examples (assumes either the FlexMock::TestCase or
-  FlexMock::ArgumentTypes mix-ins has been included):
+  Examples (assumes either the FlexMock::TestCase or FlexMock::ArgumentTypes
+  mix-ins has been included):
 
       with(any)             will match       f(3)
       with(any)             will match       f("hello")
@@ -355,14 +372,14 @@ The following rules are used for argument matching:
 === Creating Partial Mocks
 
 Sometimes it is useful to mock the behavior of one or two methods in an
-existing object without changing the behavior of the rest of the object. If 
-you pass a real object to the +flexmock+ method, it will allow you to use 
-that real object in your test and will just mock out the one or two methods
-that you specify.
+existing object without changing the behavior of the rest of the object. If
+you pass a real object to the +flexmock+ method, it will allow you to use that
+real object in your test and will just mock out the one or two methods that
+you specify.
 
-For example, suppose that a Dog object uses a Woofer object to
-bark. The code for Dog looks like this (we will leave the code for
-Woofer to your imagination):
+For example, suppose that a Dog object uses a Woofer object to bark. The code
+for Dog looks like this (we will leave the code for Woofer to your
+imagination):
 
   class Dog
     def initialize
@@ -376,12 +393,12 @@ Woofer to your imagination):
     end
   end
 
-Now we want to test Dog, but using a real Woofer object in the test is
-a real pain (why? ... well because Woofer plays a sound file of a dog
-barking, and that's really annoying during testing).
+Now we want to test Dog, but using a real Woofer object in the test is a real
+pain (why? ... well because Woofer plays a sound file of a dog barking, and
+that's really annoying during testing).
 
-So, how can we create a Dog object with mocked Woofer?  All we need to
-do is allow FlexMock to replace the +bark+ method.
+So, how can we create a Dog object with mocked Woofer? All we need to do is
+allow FlexMock to replace the +bark+ method.
 
 Here's the test code:
 
@@ -447,7 +464,9 @@ return mocks for us.
 
 === Mocking Behavior in All Instances Created by a Class Object
 
-Sometimes returning a single mock object is not enough.  Occasionally you want to mock <em>every</em> instance object created by a class.  FlexMock makes this very easy.
+Sometimes returning a single mock object is not enough. Occasionally you want
+to mock <em>every</em> instance object created by a class. FlexMock makes this
+very easy.
 
   class TestDogBarking < Test::Unit::TestCase
     include FlexMock::TestCase
@@ -503,7 +522,8 @@ argument list. Each call to query will return the three element array [1, 2,
 
 === Expect all queries before any updates
 
-(This and following examples assume that the 'flexmock/test_unit' file has been required.)
+(This and following examples assume that the 'flexmock/test_unit' file has
+been required.)
 
 All the query message must occur before any of the update messages.
 
