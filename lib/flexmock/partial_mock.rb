@@ -65,17 +65,18 @@ class FlexMock
     #
     def new_instances(*allocators, &block)
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
-      fail ArgumentError, "new_instances requires a block" unless block_given?
       allocators = [:new, :allocate] if allocators.empty?
+      result = ExpectationRecorder.new
       allocators.each do |m|
         self.should_receive(m).and_return { |*args|
           new_obj = invoke_original(m, args)
           mock = mock_container.flexmock(new_obj)
-          block.call(mock)
+          block.call(mock) if block_given?
+          result.apply(mock)
           new_obj
         }
       end
-      nil
+      result
     end
 
     # any_instance is present for backwards compatibility with version 0.5.0.

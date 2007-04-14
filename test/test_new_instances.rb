@@ -46,12 +46,6 @@ class TestNewInstances < Test::Unit::TestCase
       :unstubbed
     end
   end
-  
-  def test_new_instances_requires_block
-    ex = assert_raise(ArgumentError) {  
-      flexstub(Dog).new_instances
-    }
-  end
 
   def test_new_instances_allows_stubbing_of_existing_methods
     flexstub(Dog).new_instances do |obj|
@@ -182,6 +176,14 @@ class TestNewInstances < Test::Unit::TestCase
       block_run = true
     end
     assert block_run
+  end
+  
+  def test_new_instances_accept_chained_expectations
+    flexmock(Dog).new_instances.
+      should_receive(:growl).and_return(:grr).
+      should_receive(:roll_over).and_return(:flip)
+    assert_equal :grr, Dog.new.growl
+    assert_equal :flip, Dog.new.roll_over
   end
   
   def redirect_error
