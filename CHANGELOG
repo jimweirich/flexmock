@@ -2,11 +2,14 @@
 
 = Changes for FlexMock
 
-== Pre-Version 0.6.0
+== Version 0.6.0
 
-* Finally dropped class interception.
+* Dropped class interception.
 * Refactored into more granular classes.
 * Added RSpec integration.
+* Added hash expectations to flexmock() and should_expect().
+* Integrated partial mocks into the flexmock() methods.
+* Allow non-block configuration of new_instances.
 
 == Version 0.5.1
 
