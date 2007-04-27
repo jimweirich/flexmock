@@ -32,7 +32,7 @@ FlexMock is a flexible mocking library for use in unit testing and behavior spec
     flexmock.should_receive(:read, :write).at_least.once
 
 
-* +should_recieve+ now will allow expectation hashes as arguments. This is
+* +should_receive+ now will allow expectation hashes as arguments. This is
   similar to the list of methods, but allows each defined method to have its
   own return value.
 
