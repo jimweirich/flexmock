@@ -85,7 +85,6 @@ class FlexMock
 
   # Allocation a new order number from the mock.
   def mock_allocate_order
-    @auto_allocate = true
     @allocated_order += 1
   end
 

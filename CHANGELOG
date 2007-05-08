@@ -2,6 +2,11 @@
 
 = Changes for FlexMock
 
+== Version 0.6.1
+
+* Fixed bug that prevented mocks from mocking field assignment operators.
+* Fixed bug that prevented partial mocks from being ordered.
+
 == Version 0.6.0
 
 * Dropped class interception.

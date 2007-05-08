@@ -191,6 +191,30 @@ class TestNewInstances < Test::Unit::TestCase
     assert_equal :grrr, Dog.new.woof
   end
   
+  def test_writable_accessors
+    flexmock(Dog).new_instances.should_receive(:name=).with("fido")
+    dog = Dog.new
+    dog.name = 'fido'
+  end
+  
+  def test_ordering_can_be_specified
+    dog = Dog.new
+    flexmock(dog).should_receive(:bark).once.ordered
+    flexmock(dog).should_receive(:bite).once.ordered
+    dog.bark
+    dog.bite
+  end
+  
+  def test_ordering_can_be_specified_in_groups
+    dog = Dog.new
+    flexmock(dog).should_receive(:wag).once.ordered(:safe)
+    flexmock(dog).should_receive(:bark).once.ordered(:danger)
+    flexmock(dog).should_receive(:bite).once.ordered(:danger)
+    dog.wag
+    dog.bite
+    dog.bark
+  end
+  
   def redirect_error
     require 'stringio'
     old_err = $stderr

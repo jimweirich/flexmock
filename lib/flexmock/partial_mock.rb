@@ -13,19 +13,18 @@ require 'flexmock/noop'
 
 class FlexMock
   
-  ####################################################################
-  # PartialMock is used to mate the mock framework to an existing
-  # object.  The object is "enhanced" with a reference to a mock
-  # object (stored in <tt>@flexmock_mock</tt>).  When the
-  # +should_receive+ method is sent to the proxy, it overrides the
-  # existing object's method by creating  singleton method that
-  # forwards to the mock.  When testing is complete, PartialMock
-  # will erase the mocking infrastructure from the object being
-  # mocked (e.g. remove instance variables and mock singleton
-  # methods).
+  # #########################################################################
+  # PartialMock is used to mate the mock framework to an existing object.  The
+  # object is "enhanced" with a reference to a mock object (stored in
+  # <tt>@flexmock_mock</tt>).  When the +should_receive+ method is sent to the
+  # proxy, it overrides the existing object's method by creating  singleton
+  # method that forwards to the mock.  When testing is complete, PartialMock
+  # will erase the mocking infrastructure from the object being mocked (e.g.
+  # remove instance variables and mock singleton methods).
   #
   class PartialMock
-    attr_reader :mock
+    attr_reader :mock, :mock_groups
+    attr_accessor :mock_current_order, :mock_container
 
     # Initialize a PartialMock object.
     def initialize(obj, mock)
@@ -33,6 +32,9 @@ class FlexMock
       @mock = mock
       @method_definitions = {}
       @methods_proxied = []
+      @allocated_order = 0
+      @mock_current_order = 0
+      @mock_groups = {}
     end
 
     # :call-seq:
@@ -132,16 +134,9 @@ class FlexMock
       end
     end
 
-    # Return the container for this mocking object.  Returns nil if the
-    # mock is not in a container.  Mock containers make sure that mock objects
-    # inside the container are torn down at the end of a test
-    def mock_container
-      @mock.mock_container
-    end
-
-    # Set the container for this mock object.
-    def mock_container=(container)
-      @mock.mock_container = container
+    # Allocation a new order number from the mock.
+    def mock_allocate_order
+      @allocated_order += 1
     end
 
     private
@@ -189,9 +184,19 @@ class FlexMock
     # proxy method is defined as a singleton method on the object
     # being mocked.
     def define_proxy_method(method_name)
-      sclass.class_eval %{
-        def #{method_name}(*args, &block)  @flexmock_proxy.mock.#{method_name}(*args, &block)  end
-      }
+      if method_name.to_s =~ /=$/
+        sclass.class_eval %{
+          def #{method_name}(*args, &block)
+            @flexmock_proxy.mock.__send__(:#{method_name}, *args, &block) 
+          end
+        }
+      else
+        sclass.class_eval %{
+          def #{method_name}(*args, &block)
+            @flexmock_proxy.mock.#{method_name}(*args, &block) 
+          end
+        }
+      end
     end
 
     # Restore the original singleton defintion for method_name that
