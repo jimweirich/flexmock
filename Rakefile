@@ -66,13 +66,16 @@ end
 
 # RCov Target --------------------------------------------------------
 
-require 'rcov/rcovtask'
-
-Rcov::RcovTask.new do |t|
-  t.libs << "test"
-  t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '--text-report']
-  t.test_files = FileList['test/test*.rb']
-  t.verbose = true
+begin
+  require 'rcov/rcovtask'
+  
+  Rcov::RcovTask.new do |t|
+    t.libs << "test"
+    t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '--text-report']
+    t.test_files = FileList['test/test*.rb']
+    t.verbose = true
+  end
+rescue StandardError => ex
 end
 
 # RDoc Target --------------------------------------------------------
