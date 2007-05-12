@@ -75,7 +75,7 @@ begin
     t.test_files = FileList['test/test*.rb']
     t.verbose = true
   end
-rescue StandardError => ex
+rescue LoadError => ex
 end
 
 # RDoc Target --------------------------------------------------------
