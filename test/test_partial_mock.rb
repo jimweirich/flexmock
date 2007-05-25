@@ -199,5 +199,20 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock = flexmock(obj)
     assert_equal "flexmock(Object)", partial_mock.mock.mock_name
   end
+
+  def test_partials_can_be_defined_in_a_block
+    dog = Dog.new
+    flexmock(dog) do |m|
+      m.should_receive(:bark).and_return(:growl)
+    end
+    assert_equal :growl, dog.bark
+  end
+
+  def test_partials_defining_block_return_real_obj_not_proxy
+    dog = flexmock(Dog.new) do |m|
+      m.should_receive(:bark).and_return(:growl)
+    end
+    assert_equal :growl, dog.bark
+  end
   
 end

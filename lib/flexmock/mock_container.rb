@@ -13,14 +13,14 @@ require 'flexmock/noop'
 
 class FlexMock
   
-  ####################################################################
+  # ######################################################################
   # Mock container methods
   #
-  # Include this module in to get integration with FlexMock.  When 
-  # this module is included, mocks may be created with a simple call 
-  # to the +flexmock+ method.  Mocks created with via the method call
-  # will automatically be verified in the teardown of the test case.
-  # 
+  # Include this module in to get integration with FlexMock.  When this module
+  # is included, mocks may be created with a simple call to the +flexmock+
+  # method.  Mocks created with via the method call will automatically be
+  # verified in the teardown of the test case.
+  #   
   module MockContainer
     # Do the flexmock specific teardown stuff.  If you need finer control,
     # you can use either +flexmock_verify+ or +flexmock_close+.
@@ -48,11 +48,10 @@ class FlexMock
       @flexmock_created_mocks = []
     end
     
-    # Create a mocking object in the FlexMock framework.  The +flexmock+ 
-    # method has a number of options available, depending on just what
-    # kind of mocking object your require.  Mocks created via +flexmock+
-    # will be automatically verify during the teardown phase of your 
-    # test framework.
+    # Create a mocking object in the FlexMock framework.  The +flexmock+
+    # method has a number of options available, depending on just what kind of
+    # mocking object your require.  Mocks created via +flexmock+ will be
+    # automatically verify during the teardown phase of your test framework.
     #
     # :call-seq:
     #   flexmock() { |mock| ... }
@@ -63,6 +62,16 @@ class FlexMock
     #   flexmock(real_object, name) { |mock| ... }
     #   flexmock(real_object, name, expect_hash) { |mock| ... }
     #   flexmock(:base, string, name, expect_hash) { |mock| ... }
+    #
+    # <b>Note:</b> A plain flexmock() call without a block will return the
+    # mock object (the object that interprets <tt>should_receive</tt> and its
+    # brethern). A flexmock() call that _includes_ a block will return the
+    # domain objects (the object that will interpret domain messages) since
+    # the mock will be passed to the block for configuration. With regular
+    # mocks, this distinction is unimportant because the mock object and the
+    # domain object are the same object.  However, with partial mocks, the
+    # mock object is separation from the domain object.  Keep that distinciton
+    # in mind.
     #
     # name ::
     #   Name of the mock object.  If no name is given, "unknown" is used for
@@ -93,37 +102,40 @@ class FlexMock
     #   partial mock object.  This explicit tag is only needed if you 
     #   want to use a string or a symbol as the mock base (string and
     #   symbols would normally be interpretted as the mock name).
-    # 
+    #       
     # &block ::
     #   If a block is given, then the mock object is passed to the block and
-    #   expectations may be configured within the block.
+    #   expectations may be configured within the block.  When a block is given
+    #   for a partial mock, flexmock will return the domain object rather than 
+    #   the mock object.  
     #
     def flexmock(*args)
       name = nil
       quick_defs = {}
-      stub_target = nil
+      domain_obj = nil
       while ! args.empty?
         case args.first
         when :base
           args.shift
-          stub_target = args.shift
+          domain_obj = args.shift
         when String, Symbol
           name = args.shift.to_s
         when Hash
           quick_defs = args.shift
         else
-          stub_target = args.shift
+          domain_obj = args.shift
         end
       end
-      if stub_target
-        mock = flexmock_make_stub(stub_target, name)
+      if domain_obj
+        mock = flexmock_make_partial_proxy(domain_obj, name)
       else
         mock = FlexMock.new(name || "unknown")
+        domain_obj = mock
       end
       flexmock_quick_define(mock, quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
-      mock
+      block_given? ? domain_obj : mock
     end
     alias flexstub flexmock
     
@@ -131,7 +143,7 @@ class FlexMock
     
     # Create a PartialMock for the given object.  Use +name+ as the name 
     # of the mock object.
-    def flexmock_make_stub(obj, name)
+    def flexmock_make_partial_proxy(obj, name)
       name ||= "flexmock(#{obj.class.to_s})"
       obj.instance_eval {
         @flexmock_proxy ||= PartialMock.new(obj, FlexMock.new(name))
