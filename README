@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.6.1
+Version :: 0.6.2
 
 = Links
 
@@ -235,6 +235,14 @@ object. See theFlexMock::Expectation for more details.
 * <b>returns( ... )</b>
 
   Alias for <tt>and_return</tt>.
+
+* <b>and_raise(exception, *args)</b>
+
+  Declares that the expected messsage will raise the specified
+  exception.  If +exception+ is an exception class, then the raised
+  exception will be constructed from the class with +new+ given the
+  supplied arguments.  If +exception+ is an instance of an exception
+  class, then it will be raised directly.
 
 * <b>zero_or_more_times</b>
 

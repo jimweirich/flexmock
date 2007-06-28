@@ -139,7 +139,7 @@ class FlexMock
     #  mock.should_receive(:f).with(String). # returns an
     #    returns { |str| str.upcase }        # upcased string
     #
-    # +and_return+ is an alias for +returns+.
+    # +returns+ is an alias for +and_return+.
     #
     def and_return(*args, &block)
       @return_block = 
@@ -151,6 +151,30 @@ class FlexMock
       self
     end
     alias :returns :and_return  # :nodoc:
+
+    
+    # :call-seq:
+    #   and_raise(an_exception)
+    #   and_raise(SomeException)
+    #   and_raise(SomeException, args, ...)
+    #
+    # Declares that the method will raise the given exception (with
+    # an optional message) when executed.
+    #
+    # * If an exception instance is given, then that instance will be
+    #   raised.
+    #   
+    # * If an exception class is given, the exception raised with be
+    #   an instance of that class constructed with +new+.  Any
+    #   additional arguments in the argument list will be passed to
+    #   the +new+ constructor when it is invoked.
+    #   
+    # +raises+ is an alias for +and_return+.
+    #
+    def and_raise(exception, *args)
+      and_return { raise exception, *args }
+    end
+    alias :raises :and_raise
 
     # Declare that the method may be called any number of times.
     def zero_or_more_times

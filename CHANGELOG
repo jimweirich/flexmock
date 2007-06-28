@@ -1,12 +1,13 @@
 = Changes for FlexMock
 
-== Pre-Version 0.6.2
+== Version 0.6.2
 
 * flexmock() with a block now always returns the domain object.
   flexmock() without a block returns the mock object.  Note that for
   normal mocks, the domain and mock objects are the same.  For partial
   mocks, the mock is separate from the domain object.
-	
+* Added +and_raise+ to the list of expection specifications.	
+
 == Version 0.6.1
 
 * Fixed bug that prevented mocks from mocking field assignment operators.

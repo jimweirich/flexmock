@@ -33,8 +33,15 @@ module ExtendedShouldReceiveTests
     assert_equal :baz, @obj.bar(1)
   end
   
+  def test_count_contraints_apply_to_all_expectations
+    @mock.should_receive(:foo, :bar => :baz).once
+    @obj.foo
+    assert_raise(Test::Unit::AssertionFailedError) { @mock.mock_verify }
+  end
+  
   def test_multiple_should_receives_are_allowed
-    @mock.should_receive(:hi).and_return(:bye).should_receive(:hello => :goodbye)
+    @mock.should_receive(:hi).and_return(:bye).
+      should_receive(:hello => :goodbye)
     assert_equal :bye, @obj.hi
     assert_equal :goodbye, @obj.hello
   end

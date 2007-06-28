@@ -76,6 +76,48 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  class MyError < RuntimeError
+  end
+
+  def test_and_raises_with_exception_class_throws_exception
+    FlexMock.use do |m|
+      m.should_receive(:failure).and_raise(MyError)
+      assert_raise MyError do
+        m.failure
+      end
+    end
+  end
+
+  def test_and_raises_with_arguments_throws_exception_made_with_args
+    FlexMock.use do |m|
+      m.should_receive(:failure).and_raise(MyError, "my message")
+      ex = assert_raise MyError do
+        m.failure
+      end
+      assert_equal "my message", ex.message
+    end
+  end
+
+  def test_and_raises_with_a_specific_exception_throws_the_exception
+    FlexMock.use do |m|
+      err = MyError.new
+      m.should_receive(:failure).and_raise(err)
+      ex = assert_raise MyError do
+        m.failure
+      end
+      assert_equal err, ex
+    end
+  end
+
+  def test_raises_is_an_alias_for_and_raise
+    FlexMock.use do |m|
+      m.should_receive(:failure).raises(RuntimeError)
+      ex = assert_raise RuntimeError do
+        m.failure
+      end
+    end
+  end
+
   def test_multiple_expectations
     FlexMock.use do |m|
       m.should_receive(:hi).with(1).returns(10)
