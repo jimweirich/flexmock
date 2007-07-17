@@ -1,5 +1,12 @@
+2007-07-17  Jim Weirich  <jim@tardis.local>
+
 = Changes for FlexMock
 
+== Pre-Version 0.6.3
+
+* Fixed comment for singleton?
+* Fixed coverage report for the partial mocking class.
+	
 == Version 0.6.2
 
 * flexmock() with a block now always returns the domain object.

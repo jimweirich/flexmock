@@ -146,7 +146,7 @@ class FlexMock
       class << @obj; self; end
     end
 
-    # Is the current method a singleton method in the object we are
+    # Is the given method name a singleton method in the object we are
     # mocking?
     def singleton?(method_name)
       @obj.methods(false).include?(method_name.to_s)
@@ -185,17 +185,20 @@ class FlexMock
     # being mocked.
     def define_proxy_method(method_name)
       if method_name.to_s =~ /=$/
+        eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
             @flexmock_proxy.mock.__send__(:#{method_name}, *args, &block) 
           end
-        }
+        }, __FILE__, eval_line
       else
+        eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
             @flexmock_proxy.mock.#{method_name}(*args, &block) 
           end
-        }
+        }, __FILE__, eval_line
+        make_rcov_recognize_the_above_eval_is_covered = true
       end
     end
 
