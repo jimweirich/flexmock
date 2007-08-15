@@ -214,5 +214,22 @@ class TestStubbing < Test::Unit::TestCase
     end
     assert_equal :growl, dog.bark
   end
+
+  class Liar
+    def respond_to?(method_name)
+      sym = method_name.to_sym
+      if sym == :not_defined
+        true
+      else
+        super(method_name)
+      end
+    end
+  end
+
+  def test_partial_mock_where_respond_to_is_true_yet_method_is_not_there
+    liar = Liar.new
+    flexmock(liar, :not_defined => :xyzzy)
+    assert_equal :xyzzy, liar.not_defined
+  end
   
 end

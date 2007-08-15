@@ -3,9 +3,11 @@
 == Pre-Version 0.6.3
 
 * Fixed comment for singleton?
+
 * Fixed coverage report for the partial mocking class.
-	
-	* Fixed bug when partial mock objects reported they respond to a method but they actually didn't.
+
+* Fixed bug when partial mock objects reported they respond to a
+  method but they actually didn't.
 	
 == Version 0.6.2
 

@@ -8,7 +8,7 @@
 # and distribution of modified versions of this work as long as the
 # above copyright notice is included.
 #+++
-
+task :noop
 require 'rubygems'
 require 'rake/gempackagetask'
 require 'rake/clean'

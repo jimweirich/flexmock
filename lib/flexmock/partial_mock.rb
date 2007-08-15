@@ -159,13 +159,8 @@ class FlexMock
     # not a singleton, all we need to do is override it with our own
     # singleton.
     def hide_existing_method(method_name)
-      if @obj.respond_to?(method_name)
-        new_alias = new_name(method_name)
-        unless @obj.respond_to?(new_alias)
-          sclass.class_eval do
-            alias_method(new_alias, method_name)
-          end
-        end
+      new_alias = create_alias_for_existing_method(method_name)
+      if new_alias
         my_object = @obj
         @method_definitions[method_name] = Proc.new { |*args|
           block = nil
@@ -178,6 +173,24 @@ class FlexMock
       end
       remove_current_method(method_name) if singleton?(method_name)
       define_proxy_method(method_name)
+    end
+
+    # Create an alias for the existing +method_name+.  Returns the new
+    # alias name.  If the aliasing process fails (because the method
+    # doesn't really exist, then return nil.
+    def create_alias_for_existing_method(method_name)
+      begin
+        new_alias = new_name(method_name)
+        unless @obj.respond_to?(new_alias)
+          sclass.class_eval do
+            alias_method(new_alias, method_name)
+          end
+        end
+        new_alias
+      rescue NameError => ex
+        # Alias attempt failed
+        nil
+      end
     end
 
     # Define a proxy method that forwards to our mock object.  The
