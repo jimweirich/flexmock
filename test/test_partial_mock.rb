@@ -226,6 +226,11 @@ class TestStubbing < Test::Unit::TestCase
     end
   end
 
+  def test_liar_actually_lies
+    liar = Liar.new
+    assert liar.respond_to?(:not_defined)
+  end
+
   def test_partial_mock_where_respond_to_is_true_yet_method_is_not_there
     liar = Liar.new
     flexmock(liar, :not_defined => :xyzzy)
