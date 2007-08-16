@@ -223,7 +223,7 @@ class TestStubbing < Test::Unit::TestCase
 
   MOCK_METHOD_SUBSET = [
     :should_receive, :new_instances,
-    :mock, :mock_teardown, :mock_verify
+    :mock, :mock_teardown, :mock_verify,
   ]
 
   def test_domain_objects_do_not_have_mock_methods
