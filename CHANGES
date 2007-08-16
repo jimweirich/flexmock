@@ -1,5 +1,7 @@
 = Changes for FlexMock
 
+== Pre-Version 0.6.4
+
 == Version 0.6.3
 
 * Added flexmodel() for better support of mocking ActiveRecord models.
