@@ -2,6 +2,8 @@
 
 == Version 0.6.3
 
+* Added flexmodel() for better support of mocking ActiveRecord models.
+
 * Fixed comment for singleton?
 
 * Fixed coverage report for the partial mocking class.
