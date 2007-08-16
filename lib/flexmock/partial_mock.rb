@@ -84,11 +84,12 @@ class FlexMock
 
     def add_mock_method(obj, method_name)
       stow_existing_definition(method_name)
+      eval_line = __LINE__ + 1
       eval %{
         def obj.#{method_name}(*args, &block)
           @flexmock_proxy.#{method_name}(*args, &block)
         end
-      }
+      }, binding, __FILE__, eval_line
     end
 
     # :call-seq:
