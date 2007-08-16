@@ -102,7 +102,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     assert_equal 2, s.length
   end
   
-  def test_multiple_stubs_work_with_same_PartialMock
+  def test_multiple_stubs_work_with_same_partial_mock_proxy
     obj = Object.new
     mock1 = flexmock(obj)
     mock2 = flexmock(obj)

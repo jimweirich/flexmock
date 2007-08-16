@@ -58,7 +58,7 @@ class TestExtendedShouldReceiveOnFullMocks < Test::Unit::TestCase
 
 end
 
-class TestExtendedShouldReceiveOnPartialMocks < Test::Unit::TestCase
+class TestExtendedShouldReceiveOnPartialMockProxies < Test::Unit::TestCase
   include FlexMock::TestCase
   include ExtendedShouldReceiveTests
   

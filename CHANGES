@@ -9,12 +9,15 @@
 * Fixed bug when partial mock objects reported they respond to a
   method but they actually didn't.
 
-* Partial mocks now _always_ return the domain object.  The domain
-  object now has mock support methods on it (e.g. should_receive).
+* The flexmock() method now _always_ returns a combination domain/mock
+  object.  For partial mocks, this implies that the domain object now
+  has mock support methods on it (e.g. should_receive).
 
 * Safe mode for partials was introduced for the small number of cases
   where mock support methods in the domain object would cause
   problems.
+
+* Internally renamed PartialMock to PartialMockProxy.  
 	
 == Version 0.6.2
 

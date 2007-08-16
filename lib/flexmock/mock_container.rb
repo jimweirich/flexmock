@@ -145,12 +145,12 @@ class FlexMock
     
     private
     
-    # Create a PartialMock for the given object.  Use +name+ as the name 
-    # of the mock object.
+    # Create a PartialMockProxy for the given object.  Use +name+ as
+    # the name of the mock object.
     def flexmock_make_partial_proxy(obj, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
       obj.instance_eval {
-        @flexmock_proxy ||= PartialMock.new(obj, FlexMock.new(name), safe_mode)
+        @flexmock_proxy ||= PartialMockProxy.new(obj, FlexMock.new(name), safe_mode)
       }
       obj.instance_variable_get("@flexmock_proxy")
     end

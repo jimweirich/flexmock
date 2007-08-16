@@ -14,15 +14,16 @@ require 'flexmock/noop'
 class FlexMock
   
   # #########################################################################
-  # PartialMock is used to mate the mock framework to an existing object.  The
-  # object is "enhanced" with a reference to a mock object (stored in
-  # <tt>@flexmock_mock</tt>).  When the +should_receive+ method is sent to the
-  # proxy, it overrides the existing object's method by creating  singleton
-  # method that forwards to the mock.  When testing is complete, PartialMock
-  # will erase the mocking infrastructure from the object being mocked (e.g.
-  # remove instance variables and mock singleton methods).
+  # PartialMockProxy is used to mate the mock framework to an existing
+  # object.  The object is "enhanced" with a reference to a mock
+  # object (stored in <tt>@flexmock_mock</tt>).  When the
+  # +should_receive+ method is sent to the proxy, it overrides the
+  # existing object's method by creating singleton method that
+  # forwards to the mock.  When testing is complete, PartialMockProxy
+  # will erase the mocking infrastructure from the object being mocked
+  # (e.g.  remove instance variables and mock singleton methods).
   #
-  class PartialMock
+  class PartialMockProxy
     attr_reader :mock, :mock_groups
     attr_accessor :mock_current_order, :mock_container
 
@@ -34,7 +35,7 @@ class FlexMock
       :mock,           :mock_teardown, :mock_verify
     ]
 
-    # Initialize a PartialMock object.
+    # Initialize a PartialMockProxy object.
     def initialize(obj, mock, safe_mode)
       @obj = obj
       @mock = mock
