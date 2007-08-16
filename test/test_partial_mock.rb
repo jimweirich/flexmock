@@ -215,6 +215,80 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :growl, dog.bark
   end
 
+  def test_partial_mocks_always_return_domain_object
+    dog = Dog.new
+    assert_equal dog, flexmock(dog)
+    assert_equal dog, flexmock(dog) { }
+  end
+
+  MOCK_METHOD_SUBSET = [
+    :should_receive, :new_instances,
+    :mock, :mock_teardown, :mock_verify
+  ]
+
+  def test_domain_objects_do_not_have_mock_methods
+    dog = Dog.new
+    MOCK_METHOD_SUBSET.each do |sym|
+      assert ! dog.respond_to?(sym), "should not have :#{sym} defined"
+    end
+  end
+
+  def test_partial_mocks_have_mock_methods
+    dog = Dog.new
+    flexmock(dog)
+    MOCK_METHOD_SUBSET.each do |sym|
+      assert dog.respond_to?(sym), "should have :#{sym} defined"
+    end
+  end
+
+  def test_partial_mocks_do_not_have_mock_methods_after_teardown
+    dog = Dog.new
+    flexmock(dog)
+    dog.mock_teardown
+    MOCK_METHOD_SUBSET.each do |sym|
+      assert ! dog.respond_to?(sym), "should not have :#{sym} defined"
+    end
+  end
+
+  def test_partial_mocks_with_mock_method_singleton_colision_have_original_defs_restored
+    dog = Dog.new
+    def dog.mock() :original end
+    flexmock(dog)
+    dog.mock_teardown
+    assert_equal :original, dog.mock
+  end
+
+  class MockColision
+    def mock
+      :original
+    end
+  end
+
+  def test_partial_mocks_with_mock_method_non_singleton_colision_have_original_defs_restored
+    mc = MockColision.new
+    flexmock(mc)
+    mc.mock_teardown
+    assert_equal :original, mc.mock
+  end
+
+  def test_safe_partial_mocks_do_not_support_mock_methods
+    dog = Dog.new
+    flexmock(:safe, dog) { }
+    MOCK_METHOD_SUBSET.each do |sym|
+      assert ! dog.respond_to?(sym), "should not have :#{sym} defined"
+    end
+  end
+
+  def test_safe_partial_mocks_require_block
+    dog = Dog.new
+    ex = assert_raise(FlexMock::UsageError) { flexmock(:safe, dog) }
+  end
+
+  def test_safe_partial_mocks_are_actually_mocked
+    dog = flexmock(:safe, Dog.new) { |m| m.should_receive(:bark => :mocked) }
+    assert_equal :mocked, dog.bark
+  end
+
   class Liar
     def respond_to?(method_name)
       sym = method_name.to_sym

@@ -26,8 +26,16 @@ class FlexMock
     attr_reader :mock, :mock_groups
     attr_accessor :mock_current_order, :mock_container
 
+    # The following methods are added to partial mocks so that they
+    # can act like a mock.
+    
+    MOCK_METHODS = [
+      :should_receive, :new_instances, :any_instance,
+      :mock,           :mock_teardown, :mock_verify
+    ]
+
     # Initialize a PartialMock object.
-    def initialize(obj, mock)
+    def initialize(obj, mock, safe_mode)
       @obj = obj
       @mock = mock
       @method_definitions = {}
@@ -35,6 +43,11 @@ class FlexMock
       @allocated_order = 0
       @mock_current_order = 0
       @mock_groups = {}
+      unless safe_mode
+        MOCK_METHODS.each do |sym|
+          add_mock_method(@obj, sym)
+        end
+      end
     end
 
     # :call-seq:
@@ -61,12 +74,20 @@ class FlexMock
       FlexMock.should_receive(args) do |sym|
         unless @methods_proxied.include?(sym)
           hide_existing_method(sym)
-          @methods_proxied << sym
         end
         ex = @mock.should_receive(sym)
         ex.mock = self
         ex
       end
+    end
+
+    def add_mock_method(obj, method_name)
+      stow_existing_definition(method_name)
+      eval %{
+        def obj.#{method_name}(*args, &block)
+          @flexmock_proxy.#{method_name}(*args, &block)
+        end
+      }
     end
 
     # :call-seq:
@@ -159,6 +180,14 @@ class FlexMock
     # not a singleton, all we need to do is override it with our own
     # singleton.
     def hide_existing_method(method_name)
+      stow_existing_definition(method_name)
+      define_proxy_method(method_name)
+    end
+
+    # Stow the existing method definition so that it can be recovered
+    # later.
+    def stow_existing_definition(method_name)
+      @methods_proxied << method_name
       new_alias = create_alias_for_existing_method(method_name)
       if new_alias
         my_object = @obj
@@ -172,7 +201,6 @@ class FlexMock
         }
       end
       remove_current_method(method_name) if singleton?(method_name)
-      define_proxy_method(method_name)
     end
 
     # Create an alias for the existing +method_name+.  Returns the new

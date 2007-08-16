@@ -42,6 +42,11 @@ require 'flexmock/composite'
 # call +super+.
 #
 class FlexMock
+
+  # Error raised when flexmock is used incorrectly.
+  class UsageError < RuntimeError
+  end
+
   attr_reader :mock_name, :mock_groups
   attr_accessor :mock_current_order, :mock_container
 

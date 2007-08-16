@@ -31,7 +31,7 @@ PKG_FILES = FileList[
 
 RDOC_FILES = FileList[
   'README',
-  'CHANGELOG',
+  'CHANGES',
   'lib/**/*.rb',
   'doc/**/*.rdoc',
 ]
@@ -189,7 +189,7 @@ task :specs do
 end
 
 task :tag do
-  sh %{svn copy #{SVNHOME}/trunk #{SVNHOME}/tags/rel-#{PKG_VERSION} -m 'Release #{PKG_VERSION}'}
+  sh "svn copy #{SVNHOME}/trunk #{SVNHOME}/tags/rel-#{PKG_VERSION} -m 'Release #{PKG_VERSION}'"
 end
 
 RUBY_FILES = FileList['**/*.rb']
@@ -197,3 +197,18 @@ RUBY_FILES.exclude(/^pkg/)
 task :dbg do
   RUBY_FILES.egrep(/DBG/)
 end
+
+# Tagging ------------------------------------------------------------
+
+module Tags
+  RUBY_FILES = FileList['**/*.rb'].exclude("pkg")
+end
+
+namespace "tags" do
+  task :emacs => Tags::RUBY_FILES do
+    puts "Making Emacs TAGS file"
+    sh "xctags -e #{Tags::RUBY_FILES}", :verbose => false
+  end
+end
+
+task :tags => ["tags:emacs"]

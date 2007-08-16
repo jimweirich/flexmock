@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.6.2
+Version :: 0.6.2.1
 
 = Links
 
@@ -53,7 +53,8 @@ Here's the complete example:
     end
   end
 
-You can find an extended example of FlexMock in {Google Example}[http://flexmock.rubyforge.org/files/doc/GoogleExample_rdoc.html].
+You can find an extended example of FlexMock in {Google
+Example}[http://flexmock.rubyforge.org/files/doc/GoogleExample_rdoc.html].
 
 == Test::Unit Integration
 
@@ -94,48 +95,73 @@ FlexMock also supports integration with the RSpec behavior specification framewo
     end
   end
 
-If you wish to try this prior to the release of RSpec 0.9.0, check out the trunk of the RSpec subversion repository.
+If you wish to try this prior to the release of RSpec 0.9.0, check out
+the trunk of the RSpec subversion repository.
 
 == Quick Reference
 
 === Creating Mock Objects 
 
-The +flexmock+ method is used to create mocks in various configurations.  Here's a quick rundown of the most common options.  See FlexMock::MockContainer#flexmock for more details.
+The +flexmock+ method is used to create mocks in various
+configurations.  Here's a quick rundown of the most common options.
+See FlexMock::MockContainer#flexmock for more details.
 
-* <b>m = flexmock("joe")</b>
+* <b>mock = flexmock("joe")</b>
 
   Create a mock object named "joe" (the name is used in reporting errors).  
 
-* <b>m = flexmock(:foo => :bar, :baz => :froz)</b>
+* <b>mock = flexmock(:foo => :bar, :baz => :froz)</b>
 
   Create a mock object and define two mocked methods (:foo and :baz) that
   return the values :bar and :froz respectively. This is useful when creating
   mock objects with just a few methods and simple return values.
 
-* <b>m = flexmock("joe", :foo => :bar, :bar => :froz)</b>
+* <b>mock = flexmock("joe", :foo => :bar, :bar => :froz)</b>
 
   You can combine the mock name and an expectation hash in the same call to
   flexmock.
 
-* <b>m = flexmock(real_object)</b>
+* <b>partial_mock = flexmock(real_object)</b>
 
   If you you give +flexmock+ a real object in the argument list, it will treat
   that real object as a base for a partial mock object. The return value +m+
   may be used to set expectations. The real_object should be used in the
   reference portion of the test.
   
-* <b>m = flexmock(real_object, "name", :foo => :baz)</b>
+* <b>partial_mock = flexmock(real_object, "name", :foo => :baz)</b>
 
   Names and expectation hashes may be used with partial mocks as well.
 
-* <b>m = flexmock(:base, real_string_object)</b>
+* <b>partial_mock = flexmock(:base, real_string_object)</b>
 
   Since Strings (and Symbols for that matter) are used for mock names,
   FlexMock will not recognize them as the base for a partial mock. To force a
   string to be used as a partial mock base, proceed the string object in the
   calling sequence with :base.
 
-* <b>m = flexmock(...) { |mock| mock.should_receive(...) }</b>
+* <b>partial_mock = flexmock(:safe, real_object) { |mock| mock.should_receive(...) }</b>
+
+  When mocking real objects (i.e. "partial mocks"), FlexMock will add
+  a handful of mock related methods to the actual object (see below
+  for list of method names).  If one or more of these added methods
+  collide with an existing method on the partial mock, then there are problems.
+
+  FlexMock offers a "safe" mode for partial mocks that does not add
+  these methods.  Indicate safe mode by passing the symbol :safe as
+  the first argument of flexmock.  A block <em>is required</em> when
+  using safe mode (the partial_mock returned in safe mode does not
+  have a +should_receive+ method).
+
+  The methods added to partial mocks in non-safe mode are:
+
+  * should_receive
+  * new_instances
+  * any_instance  (note: deprecated)
+  * mock
+  * mock_teardown
+  * mock_setup    
+
+* <b>mock = flexmock(...) { |mock| mock.should_receive(...) }</b>
 
   If a block is given to any of the +flexmock+ forms, the mock object will be
   passed to the block as an argument. Code in the block can set the desired

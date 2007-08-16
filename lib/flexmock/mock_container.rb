@@ -113,10 +113,11 @@ class FlexMock
       name = nil
       quick_defs = {}
       domain_obj = nil
+      safe_mode = false
       while ! args.empty?
         case args.first
-        when :base
-          args.shift
+        when :base, :safe
+          safe_mode = (args.shift == :safe)
           domain_obj = args.shift
         when String, Symbol
           name = args.shift.to_s
@@ -126,8 +127,10 @@ class FlexMock
           domain_obj = args.shift
         end
       end
+      raise UsageError, "a block is required in safe mode" if safe_mode && ! block_given?
+
       if domain_obj
-        mock = flexmock_make_partial_proxy(domain_obj, name)
+        mock = flexmock_make_partial_proxy(domain_obj, name, safe_mode)
       else
         mock = FlexMock.new(name || "unknown")
         domain_obj = mock
@@ -136,6 +139,7 @@ class FlexMock
       yield(mock) if block_given?
       flexmock_remember(mock)
       block_given? ? domain_obj : mock
+      domain_obj
     end
     alias flexstub flexmock
     
@@ -143,10 +147,10 @@ class FlexMock
     
     # Create a PartialMock for the given object.  Use +name+ as the name 
     # of the mock object.
-    def flexmock_make_partial_proxy(obj, name)
+    def flexmock_make_partial_proxy(obj, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
       obj.instance_eval {
-        @flexmock_proxy ||= PartialMock.new(obj, FlexMock.new(name))
+        @flexmock_proxy ||= PartialMock.new(obj, FlexMock.new(name), safe_mode)
       }
       obj.instance_variable_get("@flexmock_proxy")
     end
