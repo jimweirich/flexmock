@@ -114,11 +114,15 @@ class FlexMock
       quick_defs = {}
       domain_obj = nil
       safe_mode = false
+      model_class = nil
       while ! args.empty?
         case args.first
         when :base, :safe
           safe_mode = (args.shift == :safe)
           domain_obj = args.shift
+        when :model
+          args.shift
+          model_class = args.shift
         when String, Symbol
           name = args.shift.to_s
         when Hash
@@ -131,20 +135,37 @@ class FlexMock
 
       if domain_obj
         mock = flexmock_make_partial_proxy(domain_obj, name, safe_mode)
+        result = domain_obj
+      elsif model_class
+        id = MockContainer.next_id
+        result = mock = FlexMock.new("#{model_class}_#{id}")
       else
-        mock = FlexMock.new(name || "unknown")
-        domain_obj = mock
+        result = mock = FlexMock.new(name || "unknown")
       end
       flexmock_quick_define(mock, quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
-      block_given? ? domain_obj : mock
-      domain_obj
+      flexmock_mock_model_methods(mock, model_class, id) if model_class
+      result
     end
     alias flexstub flexmock
     
     private
     
+    # Automatically add mocks for some common methods in ActiveRecord
+    # models.
+    def flexmock_mock_model_methods(mock, model_class, id)
+      mock.should_receive(
+        :id => id,
+        :to_params => id.to_s,
+        :new_record? => false,
+        :class => model_class,
+        :errors => flexmock("errors", :count => 0))
+      mock.should_receive(:is_a?).with(any).and_return { |other|
+        other == model_class
+      }
+    end
+
     # Create a PartialMockProxy for the given object.  Use +name+ as
     # the name of the mock object.
     def flexmock_make_partial_proxy(obj, name, safe_mode)
@@ -169,6 +190,11 @@ class FlexMock
       @flexmock_created_mocks << mocking_object
       mocking_object.mock_container = self
       mocking_object
+    end
+
+    def MockContainer.next_id
+      @id_counter ||= 0
+      @id_counter += 1
     end
   end
 

@@ -167,10 +167,10 @@ See FlexMock::MockContainer#flexmock for more details.
   passed to the block as an argument. Code in the block can set the desired
   expectations for the mock object.
 
-* <b>mock_model = flexmodel(YourModel, ...) { |mock| mock.should_receive(...) }</b>
+* <b>mock_model = flexmock(:model, YourModel, ...) { |mock| mock.should_receive(...) }</b>
 
-  The flexmodel() method will return a pure mock (not a partial mock)
-  that will have some ActiveRecord specific methods defined.
+  When given :model, flexmock() will return a pure mock (not a partial
+  mock) that will have some ActiveRecord specific methods defined.
   YourModel should be the class of an ActiveRecord model.  These
   predefined methods make it a bit easier to mock out ActiveRecord
   model objects in a Rails application.  Other that the predefined
@@ -185,9 +185,6 @@ See FlexMock::MockContainer#flexmock for more details.
   * errors -- returns an empty (mocked) errors object.
   * is_a?(other) -- returns true if other == YourModel.
   * class -- returns YourModel.
-
-  The flexmodel() method is optional.  You must require
-  'flexmock/activerecord' to enable it.
 
 <b>NOTE:</b>  Versions of FlexMock prior to 0.6.0 used +flexstub+ to create partial mocks.  The +flexmock+ method now assumes all the functionality that was spread out between two different methods.  +flexstub+ is still available for backward compatibility.
 
