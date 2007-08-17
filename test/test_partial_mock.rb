@@ -303,6 +303,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_liar_actually_lies
     liar = Liar.new
     assert liar.respond_to?(:not_defined)
+    assert_raise(NoMethodError) { liar.not_defined }
   end
 
   def test_partial_mock_where_respond_to_is_true_yet_method_is_not_there
