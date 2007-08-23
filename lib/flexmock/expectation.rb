@@ -39,7 +39,8 @@ class FlexMock
       @count_validator_class = ExactCountValidator
       @actual_count = 0
       @return_value = nil
-      @return_block = lambda { @return_value }
+      @return_queue = []
+      @yield_queue = []
       @order_number = nil
     end
 
@@ -52,8 +53,38 @@ class FlexMock
     def verify_call(*args)
       validate_order
       @actual_count += 1
-      @return_block.call(*args)
+      perform_yielding(args)
+      return_value(args)
     end
+
+    # Find the return value for this expectation.
+    def return_value(args)
+      case @return_queue.size
+      when 0
+        block = lambda { @return_value }
+      when 1
+        block = @return_queue.first
+      else
+        block = @return_queue.shift
+      end
+      block.call(*args)
+    end
+    private :return_value
+
+    # Yield stored values to any blocks given.
+    def perform_yielding(args)
+      @return_value = nil
+      unless @yield_queue.empty?
+        block = args.last
+        values = (@yield_queue.size == 1) ? @yield_queue.first : @yield_queue.shift
+        if block.respond_to?(:call) 
+          @return_value = block.call(*values)
+        else
+          fail MockError, "No Block given to mock with 'and_yield' expectation"
+        end
+      end
+    end
+    private :perform_yielding
 
     # Is this expectation eligible to be called again?  It is eligible
     # only if all of its count validators agree that it is eligible.
@@ -142,15 +173,21 @@ class FlexMock
     # +returns+ is an alias for +and_return+.
     #
     def and_return(*args, &block)
-      @return_block = 
-        if block_given? 
-           block
-        else
-          lambda { args.size == 1 ? args.first : args.shift }
+      if block_given? 
+        @return_queue << block
+      else
+        args.each do |arg|
+          @return_queue << lambda { arg }
         end
+      end
       self
     end
     alias :returns :and_return  # :nodoc:
+
+    def and_yield(*yield_values)
+      @yield_queue << yield_values
+    end
+    alias :yields :and_yield
 
     
     # :call-seq:

@@ -60,6 +60,17 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_multiple_returns
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_return(1).and_return(2,3)
+      assert_equal 1, m.hi
+      assert_equal 2, m.hi
+      assert_equal 3, m.hi
+      assert_equal 3, m.hi
+      assert_equal 3, m.hi
+    end
+  end
+
   def test_returns_with_block
     FlexMock.use do |m|
       result = nil
@@ -69,10 +80,89 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_return_with_and_without_block_interleaved
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_return(:a).and_return { :b }.and_return(:c)
+      assert_equal :a, m.hi
+      assert_equal :b, m.hi
+      assert_equal :c, m.hi
+      assert_equal :c, m.hi
+    end
+  end
+
   def test_and_returns_alias
     FlexMock.use do |m|
       m.should_receive(:hi).and_return(4)
       assert_equal 4, m.hi
+    end
+  end
+
+  def test_and_yield
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:yield_value)
+      assert_equal :yield_value, m.hi { |v| v }
+      assert_equal :yield_value, m.hi { |v| v }
+    end
+  end
+
+  def test_and_yield_multiple_values
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:one, :two).once
+      assert_equal [:one, :two], m.hi { |a, b| [a, b] }
+    end
+  end
+
+  def test_failure_if_no_block_given
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:one, :two).once
+      assert_raise(FlexMock::MockError) do m.hi end
+    end
+  end
+
+  def test_failure_different_return_value_than_yield_return
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:yld).once.and_return(:ret)
+      yielded_value = nil
+      assert_equal :ret, m.hi { |v| yielded_value = v }
+      assert_equal :yld, yielded_value
+    end
+  end
+
+  def test_multiple_yields
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:one, :two).and_yield(1, 2)
+      assert_equal [:one, :two], m.hi { |a, b| [a, b] }
+      assert_equal [1, 2], m.hi { |a, b| [a, b] }
+    end
+  end
+
+  def test_multiple_yields_will_yield_the_last_value_set
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:a).and_yield(:b)
+      assert_equal [:a], m.hi { |a, b| [a] }
+      assert_equal [:b], m.hi { |a, b| [a] }
+      assert_equal [:b], m.hi { |a, b| [a] }
+      assert_equal [:b], m.hi { |a, b| [a] }
+      assert_equal [:b], m.hi { |a, b| [a] }
+    end
+  end
+
+  def test_yielding_then_not_yielding_and_then_yielding_again
+    FlexMock.use do |m|
+      m.should_receive(:hi).and_yield(:a).once
+      m.should_receive(:hi).and_return(:b).once
+      m.should_receive(:hi).and_yield(:c).once
+      assert_equal :a, m.hi { |v| v }
+      assert_equal :b, m.hi
+      assert_equal :c, m.hi { |v| v }
+    end
+  end
+
+
+  def test_yields_syntax
+    FlexMock.use do |m|
+      m.should_receive(:hi).yields(:one)
+      assert_equal :one, m.hi { |a| a }
     end
   end
 

@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.6.3
+Version :: 0.6.4.1
 
 = Links
 
@@ -288,6 +288,18 @@ object. See theFlexMock::Expectation for more details.
   exception will be constructed from the class with +new+ given the
   supplied arguments.  If +exception+ is an instance of an exception
   class, then it will be raised directly.
+
+* <b>and_yield(values, ...)</b>
+
+  Declares that the mocked method will receive a block, and the mock
+  will call that block with the values given.  Not providing a block
+  will be an error.  Providing more than one +and_yield+ clause one a
+  single expectation will mean that subsquent mock method calls will
+  yield the values provided by the additional +and_yield+ clause.
+
+* <b>yields( ... )</b>
+
+  Alias for <tt>and_yield( ... )</tt>.
 
 * <b>zero_or_more_times</b>
 

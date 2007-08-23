@@ -47,6 +47,9 @@ class FlexMock
   class UsageError < RuntimeError
   end
 
+  class MockError < RuntimeError
+  end
+
   attr_reader :mock_name, :mock_groups
   attr_accessor :mock_current_order, :mock_container
 
