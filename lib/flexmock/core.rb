@@ -10,6 +10,7 @@
 #+++
 
 require 'flexmock/composite'
+require 'flexmock/ordering'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -42,6 +43,7 @@ require 'flexmock/composite'
 # call +super+.
 #
 class FlexMock
+  include Ordering
 
   # Error raised when flexmock is used incorrectly.
   class UsageError < RuntimeError
@@ -50,20 +52,21 @@ class FlexMock
   class MockError < RuntimeError
   end
 
-  attr_reader :mock_name, :mock_groups
-  attr_accessor :mock_current_order, :mock_container
+  attr_reader :mock_name
+  attr_accessor :mock_container
 
   # Create a FlexMock object with the given name.  The name is used in
   # error messages.
   def initialize(name="unknown")
     @mock_name = name
     @expectations = Hash.new
-    @allocated_order = 0
-    @mock_current_order = 0
     @mock_container = nil
-    @mock_groups = {}
     @ignore_missing = false
     @verified = false
+  end
+
+  def inspect
+    "<FlexMock:#{mock_name}>"
   end
 
   # Handle all messages denoted by +sym+ by calling the given block
@@ -89,11 +92,6 @@ class FlexMock
 
   # Teardown and infrastructure setup for this mock.
   def mock_teardown
-  end
-
-  # Allocation a new order number from the mock.
-  def mock_allocate_order
-    @allocated_order += 1
   end
 
   # Ignore all undefined (missing) method calls.

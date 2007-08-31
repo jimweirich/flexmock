@@ -13,6 +13,8 @@ require 'test/unit'
 require 'flexmock'
 
 class TestNaming < Test::Unit::TestCase
+  include FlexMock::TestCase
+  
   def test_name
     m = FlexMock.new("m")
     assert_equal "m", m.mock_name
@@ -48,4 +50,37 @@ class TestNaming < Test::Unit::TestCase
       assert_equal "yuk",  b.mock_name
     end
   end
+
+  def test_inspect_returns_reasonable_name
+    FlexMock.use("XYZZY") do |m|
+      assert_equal "XYZZY", m.mock_name
+      assert_equal "<FlexMock:XYZZY>", m.inspect
+    end
+  end
+
+  def test_mock_can_override_inspect
+    FlexMock.use("XYZZY") do |m|
+      m.should_receive(:inspect).with_no_args.and_return("MOCK-INSPECT")
+      assert_equal "MOCK-INSPECT", m.inspect
+    end
+  end
+
+  class Dummy
+    def inspect
+      "DUMMY-INSPECT"
+    end
+  end
+
+  def test_partial_mocks_use_original_inspect
+    dummy = Dummy.new
+    flexmock(dummy).should_receive(:msg)
+    assert_equal "DUMMY-INSPECT", dummy.inspect
+  end
+
+  def test_partial_mocks_can_override_inspect
+    dummy = Dummy.new
+    flexmock(dummy).should_receive(:inspect).and_return("MOCK-INSPECT")
+    assert_equal "MOCK-INSPECT", dummy.inspect
+  end
 end
+

@@ -10,6 +10,7 @@
 #+++
 
 require 'flexmock/noop'
+require 'flexmock/mock_container'
 
 class FlexMock
   class << self
@@ -60,16 +61,14 @@ class FlexMock
     #
     def use(*names)
       names = ["unknown"] if names.empty?
-      got_excecption = false
-      mocks = names.collect { |n| new(n) }
+      container = UseContainer.new
+      mocks = names.collect { |n| container.flexmock(n) }
       yield(*mocks)
     rescue Exception => ex
-      got_exception = true
+      container.got_exception = true
       raise
     ensure
-      mocks.each do |mock|
-        mock.mock_verify     unless got_exception
-      end
+      container.flexmock_teardown
     end
 
     # Class method to format a method name and argument list as a nice
@@ -86,6 +85,21 @@ class FlexMock
     # assertion failure is triggered with the given message.
     def check(msg, &block)  # :nodoc:
       FlexMock.framework_adapter.assert_block(msg, &block)
+    end
+
+    # Container object to be used by the FlexMock.use method.  
+    class UseContainer
+      include MockContainer
+
+      attr_accessor :got_exception
+
+      def initialize
+        @got_exception = false
+      end
+
+      def passed?
+        ! got_exception
+      end
     end
   end
 

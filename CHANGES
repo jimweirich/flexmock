@@ -3,6 +3,8 @@
 == Pre-Version 0.6.5
 
 * Added +and_yield+ as an expectation clause.
+* Inspect on Mocks now yield a more consise description.
+* Global ordering across all mocks in a container is now allowed.
 
 == Version 0.6.4
 

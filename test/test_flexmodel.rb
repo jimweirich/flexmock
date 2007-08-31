@@ -5,6 +5,9 @@ require 'test/unit'
 class DummyModel
 end
 
+class ChildModel < DummyModel
+end
+
 ######################################################################
 class TestFlexModel < Test::Unit::TestCase
   include FlexMock::TestCase
@@ -15,7 +18,20 @@ class TestFlexModel < Test::Unit::TestCase
     assert_equal model.id.to_s, model.to_params
     assert ! model.new_record?
     assert model.is_a?(DummyModel)
+    # TODO: Make these work!!!
     assert_equal DummyModel, model.class
+    assert model.instance_of?(DummyModel)
+    assert model.kind_of?(DummyModel)
+  end
+
+  def test_classifying_mock_models
+    model = flexmock(:model, ChildModel)
+
+    assert model.kind_of?(ChildModel)
+    assert model.instance_of?(ChildModel)
+
+    assert model.kind_of?(DummyModel)
+    assert ! model.instance_of?(DummyModel)
   end
 
   def test_mock_models_have_different_ids

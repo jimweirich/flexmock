@@ -1,0 +1,3 @@
+Autotest.add_hook :run do |at|
+  at.exceptions = /^(?:.\/)?(?:db|doc|log|public|script|sphinx|tmp|filestore|vendor\/rails)|\.svn|test_unit_integration|(?:.*_flymake\.rb$|\.log$)/
+end

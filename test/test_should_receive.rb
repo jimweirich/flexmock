@@ -24,13 +24,13 @@ module Kernel
 end
 
 class TestFlexMockShoulds < Test::Unit::TestCase
-
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/
   NO_MATCH_ERROR_MESSAGE = /\bno\s+matching\s+handler\b/
   AT_LEAST_ERROR_MESSAGE = /\bshould\s+be\s+called\s+at\s+least\b/
   AT_MOST_ERROR_MESSAGE = /\bshould\s+be\s+called\s+at\s+most\b/
   OUT_OF_ORDER_ERROR_MESSAGE = /\bcalled\s+out\s+of\s+order\b/
+  NON_CONTAINER_MESSAGE = /\bis\s+not\s+in\s+a\s+container\b/
   
   def test_defaults
     FlexMock.use do |m|
@@ -570,7 +570,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_match(/hi\(2\)/, ex.message)
   end
 
-  def test_ordered_calls_in_order
+  def test_ordered_calls_in_order_will_pass
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).ordered
       m.should_receive(:lo).ordered
@@ -580,7 +580,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_ordered_calls_out_of_order
+  def test_ordered_calls_out_of_order_will_fail
     ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered
@@ -592,7 +592,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_order_calls_with_different_arg_lists_and_in_order
+  def test_order_calls_with_different_arg_lists_and_in_order_will_pass
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).with("one").ordered
       m.should_receive(:hi).with("two").ordered
@@ -602,7 +602,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_order_calls_with_different_arg_lists_and_out_of_order
+  def test_order_calls_with_different_arg_lists_and_out_of_order_will_fail
     ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).with("one").ordered
@@ -628,7 +628,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_ordered_with_multiple_calls_is_ok
+  def test_ordered_with_multiple_calls_will_pass
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).ordered
       m.should_receive(:lo).ordered
@@ -718,7 +718,39 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.foo  
     end  
   end
+
+  def test_ordering_between_mocks_is_not_normally_defined
+    FlexMock.use("x", "y") do |x, y|
+      x.should_receive(:one).ordered
+      y.should_receive(:two).ordered
+
+      assert_nothing_raised do
+        y.two
+        x.one
+      end
+    end
+  end
   
+  def test_ordering_between_mocks_is_honored_for_global_ordering
+    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do 
+      FlexMock.use("x", "y") do |x, y|
+        x.should_receive(:one).globally.ordered
+        y.should_receive(:two).globally.ordered
+        
+        y.two
+        x.one
+      end
+    end
+  end
+
+  def test_global_ordering_on_non_container_mocks_is_an_error
+    m = FlexMock.new
+    ex = assert_raises(FlexMock::UsageError) do
+      m.should_receive(:msg).once.globally.ordered
+    end
+    assert_match NON_CONTAINER_MESSAGE, ex.message
+  end
+
   def test_expectation_formating
     exp = FlexMock.new("m").should_receive(:f).with(1,"two", /^3$/).and_return(0).at_least.once
     assert_equal 'f(1, "two", /^3$/)', exp.to_s

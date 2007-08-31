@@ -19,7 +19,7 @@ require 'rake/contrib/rubyforgepublisher'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.6.4.1'
+PKG_VERSION = '0.6.4.2'
 
 PKG_FILES = FileList[
   '[A-Z]*',
@@ -45,7 +45,7 @@ task :ta => [:test_all]
 
 Rake::TestTask.new do |t|
   t.pattern = 'test/test*.rb'
-  t.verbose = true
+  t.verbose = false
   t.warning = true
 end
 

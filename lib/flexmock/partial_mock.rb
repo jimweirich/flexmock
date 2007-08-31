@@ -24,8 +24,10 @@ class FlexMock
   # (e.g.  remove instance variables and mock singleton methods).
   #
   class PartialMockProxy
-    attr_reader :mock, :mock_groups
-    attr_accessor :mock_current_order, :mock_container
+    include Ordering
+
+    attr_reader :mock
+    attr_accessor :mock_container
 
     # The following methods are added to partial mocks so that they
     # can act like a mock.
@@ -41,9 +43,6 @@ class FlexMock
       @mock = mock
       @method_definitions = {}
       @methods_proxied = []
-      @allocated_order = 0
-      @mock_current_order = 0
-      @mock_groups = {}
       unless safe_mode
         MOCK_METHODS.each do |sym|
           add_mock_method(@obj, sym)
@@ -155,11 +154,6 @@ class FlexMock
         @obj.instance_variable_set("@flexmock_proxy", nil)
         @obj = nil
       end
-    end
-
-    # Allocation a new order number from the mock.
-    def mock_allocate_order
-      @allocated_order += 1
     end
 
     private

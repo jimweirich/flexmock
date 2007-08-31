@@ -42,6 +42,8 @@ class FlexMock
       @return_queue = []
       @yield_queue = []
       @order_number = nil
+      @global_order_number = nil
+      @globally = nil
     end
 
     def to_s
@@ -94,12 +96,12 @@ class FlexMock
 
     # Validate that the order
     def validate_order
-      return if @order_number.nil?
-      FlexMock.check("method #{to_s} called out of order " +
-      "(expected order #{@order_number}, was #{@mock.mock_current_order})") {
-        @order_number >= @mock.mock_current_order
-      }
-      @mock.mock_current_order = @order_number
+      if @order_number
+        @mock.mock_validate_order(to_s, @order_number)
+      end
+      if @global_order_number
+        @mock.mock_container.mock_validate_order(to_s, @global_order_number)
+      end
     end
     private :validate_order
 
@@ -299,16 +301,37 @@ class FlexMock
     #    m.should_receive(:end).ordered
     #
     def ordered(group_name=nil)
-      if group_name.nil?
-        @order_number = @mock.mock_allocate_order
-      elsif (num = @mock.mock_groups[group_name])
-        @order_number = num
+      if @globally
+        @global_order_number = define_ordered(group_name, @mock.mock_container)
       else
-        @order_number = @mock.mock_allocate_order
-        @mock.mock_groups[group_name] = @order_number
+        @order_number = define_ordered(group_name, @mock)
       end
+      @globally = false
       self
     end
+
+    # Modifier that changes the next ordered constraint to apply
+    # globally across all mock objects in the container.
+    def globally
+      @globally = true
+      self
+    end
+
+    # Helper method for defining ordered expectations.
+    def define_ordered(group_name, ordering)
+      fail UsageError, "Mock #{@mock.mock_name} is not in a container and cannot be globally ordered." if ordering.nil?
+      if group_name.nil?
+        result = ordering.mock_allocate_order
+      elsif (num = ordering.mock_groups[group_name])
+        result = num
+      else
+        result = ordering.mock_allocate_order
+        ordering.mock_groups[group_name] = result
+      end
+      result
+    end
+    private :define_ordered
+
   end
 
   ##########################################################################

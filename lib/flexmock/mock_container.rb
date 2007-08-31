@@ -22,6 +22,8 @@ class FlexMock
   # verified in the teardown of the test case.
   #   
   module MockContainer
+    include Ordering
+
     # Do the flexmock specific teardown stuff.  If you need finer control,
     # you can use either +flexmock_verify+ or +flexmock_close+.
     def flexmock_teardown
@@ -163,6 +165,12 @@ class FlexMock
         :errors => flexmock("errors", :count => 0))
       mock.should_receive(:is_a?).with(any).and_return { |other|
         other == model_class
+      }
+      mock.should_receive(:instance_of?).with(any).and_return { |other|
+        other == model_class
+      }
+      mock.should_receive(:kind_of?).with(any).and_return { |other|
+        model_class.ancestors.include?(other)
       }
     end
 
