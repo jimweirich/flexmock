@@ -16,12 +16,12 @@ class TestNaming < Test::Unit::TestCase
   include FlexMock::TestCase
   
   def test_name
-    m = FlexMock.new("m")
+    m = flexmock("m")
     assert_equal "m", m.mock_name
   end
 
   def test_name_in_no_handler_found_error
-    m = FlexMock.new("mmm")
+    m = flexmock("mmm")
     ex = assert_raises(Test::Unit::AssertionFailedError) {
       m.should_receive(:xx).with(1)
       m.xx(2)
@@ -30,7 +30,7 @@ class TestNaming < Test::Unit::TestCase
   end
 
   def test_name_in_received_count_error
-    m = FlexMock.new("mmm")
+    m = flexmock("mmm")
     ex = assert_raises(Test::Unit::AssertionFailedError) {
       m.should_receive(:xx).once
       m.mock_verify

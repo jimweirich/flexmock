@@ -24,6 +24,8 @@ module Kernel
 end
 
 class TestFlexMockShoulds < Test::Unit::TestCase
+  include FlexMock::TestCase
+
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/
   NO_MATCH_ERROR_MESSAGE = /\bno\s+matching\s+handler\b/
@@ -743,21 +745,18 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_global_ordering_on_non_container_mocks_is_an_error
-    m = FlexMock.new
-    ex = assert_raises(FlexMock::UsageError) do
-      m.should_receive(:msg).once.globally.ordered
-    end
-    assert_match NON_CONTAINER_MESSAGE, ex.message
-  end
-
   def test_expectation_formating
-    exp = FlexMock.new("m").should_receive(:f).with(1,"two", /^3$/).and_return(0).at_least.once
+    mock = flexmock("m")
+    exp = mock.should_receive(:f).with(1,"two", /^3$/).
+      and_return(0).at_least.once
+
+    mock.f(1, "two", 3)
     assert_equal 'f(1, "two", /^3$/)', exp.to_s
   end
 
   def test_multi_expectation_formatting
-    exp = FlexMock.new.should_receive(:f, :g).with(1)
+    mock = flexmock("mock")
+    exp = mock.should_receive(:f, :g).with(1)
     assert_equal "[f(1), g(1)]", exp.to_s
   end
 
@@ -781,20 +780,20 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_global_methods_can_be_mocked
-    m = FlexMock.new("m")
+    m = flexmock("m")
     m.should_receive(:mock_top_level_function).and_return(:mock)
     assert_equal :mock, m.mock_top_level_function
   end
 
   def test_kernel_methods_can_be_mocked
-    m = FlexMock.new("m")
+    m = flexmock("m")
     m.should_receive(:mock_kernel_function).and_return(:mock)
     assert_equal :mock, m.mock_kernel_function
   end
 
   def test_undefing_kernel_methods_dont_effect_other_mocks
-    m = FlexMock.new("m")
-    m2 = FlexMock.new("m2")
+    m = flexmock("m")
+    m2 = flexmock("m2")
     m.should_receive(:mock_kernel_function).and_return(:mock)
     assert_equal :mock, m.mock_kernel_function
     assert_equal :mkf, m2.mock_kernel_function

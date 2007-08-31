@@ -22,28 +22,26 @@ module FailureAssertion
 end
 
 class TestRecordMode < Test::Unit::TestCase
-  include FlexMock::ArgumentTypes
+  include FlexMock::TestCase
   include FailureAssertion
 
   def test_recording_mode_works
-    FlexMock.use("mock") do |mock|
-      mock.should_expect do |r|
-        r.f { :answer }
-      end
-      assert_equal :answer, mock.f
+    mock = flexmock("mock")
+    mock.should_expect do |recorder|
+      recorder.f { :answer }
     end
+    assert_equal :answer, mock.f
   end
 
   def test_arguments_are_passed_to_recording_mode_block
-    FlexMock.new("mock") do |mock|
-      mock.should_expect do |recorder|
-        recorder.f do |arg|
-          assert_equal :arg, arg
-          :answer
-        end
+    mock = flexmock("mock")
+    mock.should_expect do |recorder|
+      recorder.f(:arg) do |arg|
+        assert_equal :arg, arg
+        :answer
       end
-      assert_equal :answer, f(:arg)
     end
+    assert_equal :answer, mock.f(:arg)
   end
 
   def test_recording_mode_handles_multiple_returns
@@ -69,16 +67,15 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_gets_block_args_too
-    FlexMock.use("mock") do |mock|
-      mock.should_expect do |r|
-        r.f(1, Proc) { |arg, block|
-          assert_not_nil block
-          block.call
-        }
-      end
-
-      assert_equal :block_result, mock.f(1) { :block_result }
+    mock = flexmock("mock")
+    mock.should_expect do |r|
+      r.f(1, Proc) { |arg, block|
+        assert_not_nil block
+        block.call
+      }
     end
+
+    assert_equal :block_result, mock.f(1) { :block_result }
   end
 
   def test_recording_mode_should_validate_args_with_equals

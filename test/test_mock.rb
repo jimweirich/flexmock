@@ -13,8 +13,10 @@ require 'test/unit'
 require 'flexmock'
 
 class TestFlexMock < Test::Unit::TestCase
+  include FlexMock::TestCase
+
   def setup
-    @mock = FlexMock.new
+    @mock = flexmock('mock')
   end
 
   def test_handle

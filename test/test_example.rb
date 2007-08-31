@@ -25,9 +25,11 @@ class TemperatureSampler
 end
 
 class TestTemperatureSampler < Test::Unit::TestCase
+  include FlexMock::TestCase
+
   def test_tempurature_sampler
     readings = [10, 12, 14]
-    mock_sensor = FlexMock.new
+    mock_sensor = flexmock("sensor")
     mock_sensor.mock_handle(:read_temperature) { readings.shift }
     sampler = TemperatureSampler.new(mock_sensor)
     assert_equal 12, sampler.average_temp

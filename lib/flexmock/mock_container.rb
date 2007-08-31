@@ -140,9 +140,9 @@ class FlexMock
         result = domain_obj
       elsif model_class
         id = MockContainer.next_id
-        result = mock = FlexMock.new("#{model_class}_#{id}")
+        result = mock = FlexMock.new("#{model_class}_#{id}", self)
       else
-        result = mock = FlexMock.new(name || "unknown")
+        result = mock = FlexMock.new(name || "unknown", self)
       end
       flexmock_quick_define(mock, quick_defs)
       yield(mock) if block_given?
@@ -152,6 +152,14 @@ class FlexMock
     end
     alias flexstub flexmock
     
+    # Remember the mock object / stub in the mock container.
+    def flexmock_remember(mocking_object)
+      @flexmock_created_mocks ||= []
+      @flexmock_created_mocks << mocking_object
+      mocking_object.mock_container = self
+      mocking_object
+    end
+
     private
     
     # Automatically add mocks for some common methods in ActiveRecord
@@ -178,8 +186,10 @@ class FlexMock
     # the name of the mock object.
     def flexmock_make_partial_proxy(obj, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
+      container = self
       obj.instance_eval {
-        @flexmock_proxy ||= PartialMockProxy.new(obj, FlexMock.new(name), safe_mode)
+        mock = FlexMock.new(name, container)
+        @flexmock_proxy ||= PartialMockProxy.new(obj, mock, safe_mode)
       }
       obj.instance_variable_get("@flexmock_proxy")
     end
@@ -192,14 +202,6 @@ class FlexMock
       mock
     end
     
-    # Remember the mock object / stub in the mock container.
-    def flexmock_remember(mocking_object)
-      @flexmock_created_mocks ||= []
-      @flexmock_created_mocks << mocking_object
-      mocking_object.mock_container = self
-      mocking_object
-    end
-
     def MockContainer.next_id
       @id_counter ||= 0
       @id_counter += 1

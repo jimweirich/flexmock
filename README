@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.6.4.1
+Version :: 0.6.4.2
 
 = Links
 
@@ -348,6 +348,10 @@ object. See theFlexMock::Expectation for more details.
   declared ordered messages. Unordered messages are ignored when considering
   the message order.
 
+  Normally ordering is performed only against calls in the same mock
+  object.  If the "globally" adjective is used, then ordering is
+  performed against the other globally ordered method calls.
+
 * <b>ordered(<em>group</em>)</b>
 
   Declare that the expected message belongs to an order group. Methods within
@@ -365,6 +369,19 @@ object. See theFlexMock::Expectation for more details.
     m.should_receive(:flip).ordered(:flip_flop_group)
     m.should_receive(:flop).ordered(:flip_flop_group)
     m.should_receive(:end).ordered
+
+  Normally ordering is performed only against calls in the same mock
+  object.  If the "globally" adjective is used, then ordering is
+  performed against the other globally ordered method calls.
+
+* <b>globally.ordered</b>
+* <b>globally.ordered(<em>group_name</em>)</b>
+
+  When modified by the "globally" adjective, the mock call will be
+  ordered against other globally ordered methods in any of the mock
+  objects in the same container (i.e. same test).  All the options of
+  the per-mock ordering are available in the globally ordered method
+  calls.
 
 * <b>mock</b>
 

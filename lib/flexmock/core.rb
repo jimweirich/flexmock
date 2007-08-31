@@ -56,15 +56,19 @@ class FlexMock
   attr_accessor :mock_container
 
   # Create a FlexMock object with the given name.  The name is used in
-  # error messages.
-  def initialize(name="unknown")
+  # error messages.  If no container is given, create a new, one-off
+  # container for this mock.
+  def initialize(name="unknown", container=nil)
     @mock_name = name
     @expectations = Hash.new
     @mock_container = nil
     @ignore_missing = false
     @verified = false
+    container = MockContainer.new if container.nil?
+    container.flexmock_remember(self)
   end
 
+  # Return the inspection string for a mock.
   def inspect
     "<FlexMock:#{mock_name}>"
   end
