@@ -1,10 +1,12 @@
 = Changes for FlexMock
 
-== Pre-Version 0.6.5
+== Pre-Version 0.7.0
 
 * Added +and_yield+ as an expectation clause.
 * Inspect on Mocks now yield a more consise description.
 * Global ordering across all mocks in a container is now allowed.
+* Added support for Demeter chain mocking.
+* Deprecated a number of mock_* methods.
 
 == Version 0.6.4
 

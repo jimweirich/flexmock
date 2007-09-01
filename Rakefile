@@ -58,7 +58,7 @@ end
 task :rspec do
   ENV['RUBYLIB'] = "/Users/jim/working/svn/software/flexmock/lib"
   sh 'echo $RUBYLIB'
-  ruby "spec test/rspec_integration/*_spec.rb" rescue nil
+  sh "spec test/rspec_integration/*_spec.rb" rescue nil
   puts
   puts "*** There should be three failures in the above report. ***"
   puts
