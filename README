@@ -186,9 +186,14 @@ See FlexMock::MockContainer#flexmock for more details.
   * new_record? -- returns false.
   * errors -- returns an empty (mocked) errors object.
   * is_a?(other) -- returns true if other == YourModel.
+  * instance_of?(class) -- returns true if class == YourModel
+  * kind_of?(class) -- returns true if class is YourModel or one of its ancestors
   * class -- returns YourModel.
 
-<b>NOTE:</b>  Versions of FlexMock prior to 0.6.0 used +flexstub+ to create partial mocks.  The +flexmock+ method now assumes all the functionality that was spread out between two different methods.  +flexstub+ is still available for backward compatibility.
+<b>NOTE:</b> Versions of FlexMock prior to 0.6.0 used +flexstub+ to
+create partial mocks.  The +flexmock+ method now assumes all the
+functionality that was spread out between two different methods.
++flexstub+ is still available for backward compatibility.
 
 === Expectation Declarators
 
@@ -290,6 +295,21 @@ object. See theFlexMock::Expectation for more details.
   exception will be constructed from the class with +new+ given the
   supplied arguments.  If +exception+ is an instance of an exception
   class, then it will be raised directly.
+
+* <b>raises( ... )</b>
+
+  Alias for <tt>and_raise</tt>.
+
+* <b>and_throw(symbol)</b>
+* <b>and_throw(symbol, value)</b>
+
+  Declares that the expected messsage will throw the specified symbol.
+  If an optional value is included, then it will be the value returned
+  from the corresponding catch statement.
+
+* <b>throws( ... )</b>
+
+  Alias for <tt>and_throw</tt>.
 
 * <b>and_yield(values, ...)</b>
 
@@ -393,6 +413,10 @@ object. See theFlexMock::Expectation for more details.
   original mock object.
   
     m = flexmock.should_receive(:hello).once.and_return("World").mock
+
+  <b>NOTE:</b> <em>Using <b>mock</b> when specifying a Demeter mock
+  chain will return the last mock of the chain, which might not be
+  what you expect.
 
 === Argument Validation
 

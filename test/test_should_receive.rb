@@ -100,7 +100,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_and_yield
+  def test_and_yield_will_continue_to_yield_the_same_value
     FlexMock.use do |m|
       m.should_receive(:hi).and_yield(:yield_value)
       assert_equal :yield_value, m.hi { |v| v }
@@ -108,10 +108,19 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test_and_yield_multiple_values
+  def test_and_yield_with_multiple_values_yields_the_values
     FlexMock.use do |m|
       m.should_receive(:hi).and_yield(:one, :two).once
       assert_equal [:one, :two], m.hi { |a, b| [a, b] }
+    end
+  end
+
+  def test_multiple_yields_are_done_sequentially
+    FlexMock.use do |m|
+      m.should_receive(:msg).and_yield(:one).and_yield(:two)
+      assert_equal :one, m.msg { |a| a }
+      assert_equal :two, m.msg { |a| a }
+      assert_equal :two, m.msg { |a| a }
     end
   end
 
@@ -160,7 +169,6 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       assert_equal :c, m.hi { |v| v }
     end
   end
-
 
   def test_yields_syntax
     FlexMock.use do |m|
@@ -211,6 +219,63 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_multiple_and_raise_clauses_will_be_done_sequentially
+    FlexMock.use do |m|
+      m.should_receive(:failure).
+        and_raise(RuntimeError, "ONE").
+        and_raise(RuntimeError, "TWO")
+      ex = assert_raise RuntimeError do m.failure end
+      assert_equal "ONE", ex.message
+      ex = assert_raise RuntimeError do m.failure end
+      assert_equal "TWO", ex.message
+    end
+  end
+
+  def test_and_throw_will_throw_a_symbol
+    FlexMock.use do |m|
+      m.should_receive(:msg).and_throw(:sym)
+      value = catch(:sym) do
+        m.msg
+        fail "Should not reach this line"
+      end
+      assert_nil value
+    end
+  end
+
+  def test_and_throw_with_expression_will_throw
+    FlexMock.use do |m|
+      m.should_receive(:msg).and_throw(:sym, :return_value)
+      value = catch(:sym) do
+        m.msg
+        fail "Should not reach this line"
+      end
+      assert_equal :return_value, value
+    end
+  end
+
+  def test_throws_is_an_alias_for_and_throw
+    FlexMock.use do |m|
+      m.should_receive(:msg).throws(:sym, :return_value)
+      value = catch(:sym) do
+        m.msg
+        fail "Should not reach this line"
+      end
+      assert_equal :return_value, value
+    end
+  end
+
+  def test_multiple_throws_will_be_done_sequentially
+    FlexMock.use do |m|
+      m.should_receive(:toss).
+        and_throw(:sym, "ONE").
+        and_throw(:sym, "TWO")
+      value = catch(:sym) do m.toss end
+      assert_equal "ONE", value
+      value = catch(:sym) do m.toss end
+      assert_equal "TWO", value
+    end
+  end
+
   def test_multiple_expectations
     FlexMock.use do |m|
       m.should_receive(:hi).with(1).returns(10)
@@ -228,7 +293,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
-  def test__with_no_args_but_with_args
+  def test_with_no_args_but_with_args
     ex = assert_failure(NO_MATCH_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with_no_args

@@ -214,12 +214,26 @@ class FlexMock
     #   additional arguments in the argument list will be passed to
     #   the +new+ constructor when it is invoked.
     #   
-    # +raises+ is an alias for +and_return+.
+    # +raises+ is an alias for +and_raise+.
     #
     def and_raise(exception, *args)
       and_return { raise exception, *args }
     end
     alias :raises :and_raise
+
+    # :call-seq:
+    #   and_throw(a_symbol)
+    #   and_throw(a_symbol, value)
+    #
+    # Declares that the method will throw the given symbol (with an
+    # optional value) when executed.
+    #
+    # +throws+ is an alias for +and_throw+.
+    #
+    def and_throw(sym, value=nil)
+      and_return { throw sym, value }
+    end
+    alias :throws :and_throw
 
     # Declare that the method may be called any number of times.
     def zero_or_more_times
