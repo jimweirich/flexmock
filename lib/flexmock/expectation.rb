@@ -59,7 +59,13 @@ class FlexMock
       return_value(args)
     end
 
-    # Find the return value for this expectation.
+    # Public return value (odd name to avoid accidental use as a
+    # constraint).
+    def _return_value(args) # :nodoc:
+      return_value(args)
+    end
+
+    # Find the return value for this expectation. (private version)
     def return_value(args)
       case @return_queue.size
       when 0

@@ -35,13 +35,18 @@ class FlexMock
     # check for expectations that don't have any argument matching
     # criteria.
     def call(*args)
-      exp = @expectations.find { |e| e.match_args(args) && e.eligible? } ||
-      @expectations.find { |e| e.match_args(args) }
+      exp = find_expectation(*args)
       FlexMock.check("no matching handler found for " +
-      FlexMock.format_args(@sym, args)) { ! exp.nil? }
+        FlexMock.format_args(@sym, args)) { ! exp.nil? }
       exp.verify_call(*args)
     end
 
+    # Find an expectation matching the given arguments.
+    def find_expectation(*args)
+      @expectations.find { |e| e.match_args(args) && e.eligible? } ||
+        @expectations.find { |e| e.match_args(args) }
+    end
+    
     # Append an expectation to this director.
     def <<(expectation)
       @expectations << expectation

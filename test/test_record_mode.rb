@@ -11,19 +11,11 @@
 
 require 'test/unit'
 require 'flexmock'
-
-module FailureAssertion
-  private
-  def assert_fails
-    assert_raise(Test::Unit::AssertionFailedError) do
-      yield
-    end
-  end
-end
+require 'test/asserts'
 
 class TestRecordMode < Test::Unit::TestCase
   include FlexMock::TestCase
-  include FailureAssertion
+  include FlexMock::FailureAssertion
 
   def test_recording_mode_works
     mock = flexmock("mock")
@@ -79,7 +71,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_validate_args_with_equals
-    assert_fails do
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f(1)
@@ -90,7 +82,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_allow_arg_contraint_validation
-    assert_fails do
+    assert_failure do 
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f(1)
@@ -101,7 +93,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_handle_multiplicity_contraints
-    assert_fails do
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f { :result }.once
@@ -113,7 +105,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_exact_argument_matches
-    assert_fails do
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict
@@ -125,7 +117,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_exact_ordering
-    assert_fails do
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict
@@ -139,7 +131,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_once
-    assert_fails do
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict

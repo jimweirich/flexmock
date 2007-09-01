@@ -64,7 +64,7 @@ class FlexMock
     @mock_container = nil
     @ignore_missing = false
     @verified = false
-    container = MockContainer.new if container.nil?
+    container = UseContainer.new if container.nil?
     container.flexmock_remember(self)
   end
 
@@ -124,6 +124,12 @@ class FlexMock
     super || (@expectations[sym] ? true : @ignore_missing)
   end
 
+  # Find the mock expectation for method sym and arguments.
+  def flexmock_find_expectation(sym, *args)
+    exp = @expectations[sym]
+    exp ? exp.find_expectation(*args) : nil
+  end
+
   # Override the built-in +method+ to include the mocked methods.
   def method(sym)
     @expectations[sym] || super
@@ -155,7 +161,7 @@ class FlexMock
   # See Expectation for a list of declarators that can be used.
   #
   def should_receive(*args)
-    FlexMock.should_receive(args) do |sym|
+    mock_container.flexmock_parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym)
       @expectations[sym] << result

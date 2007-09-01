@@ -25,6 +25,7 @@ end
 
 class TestFlexMockShoulds < Test::Unit::TestCase
   include FlexMock::TestCase
+  include FlexMock::FailureAssertion
 
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/
@@ -799,21 +800,6 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_equal :mkf, m2.mock_kernel_function
   end
 
-  # Assertion helper used to assert validation failure.  If a 
-  # message is given, then the error message should match the 
-  # expected error message.
-  def assert_failure(message=nil)
-    ex = assert_raises(Test::Unit::AssertionFailedError) { yield }
-    if message
-      case message
-      when Regexp
-        assert_match message, ex.message
-      when String
-        assert ex.message.index(message), "Error message '#{ex.message}' should contain '#{message}'"
-      end
-    end
-    ex
-  end
 end
 
 class TestFlexMockShouldsWithInclude < Test::Unit::TestCase

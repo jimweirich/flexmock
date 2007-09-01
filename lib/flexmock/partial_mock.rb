@@ -27,7 +27,6 @@ class FlexMock
     include Ordering
 
     attr_reader :mock
-    attr_accessor :mock_container
 
     # The following methods are added to partial mocks so that they
     # can act like a mock.
@@ -71,7 +70,7 @@ class FlexMock
     #
     # See Expectation for a list of declarators that can be used.
     def should_receive(*args)
-      FlexMock.should_receive(args) do |sym|
+      mock_container.flexmock_parse_should_args(@mock, args) do |sym|
         unless @methods_proxied.include?(sym)
           hide_existing_method(sym)
         end
@@ -154,6 +153,16 @@ class FlexMock
         @obj.instance_variable_set("@flexmock_proxy", nil)
         @obj = nil
       end
+    end
+
+    # Forward to the mock's container.
+    def mock_container
+      @mock.mock_container
+    end
+
+    # Set the proxy's mock container.  This set value is ignored
+    # because the proxy always uses the container of its mock.
+    def mock_container=(container)
     end
 
     private

@@ -16,29 +16,6 @@ class FlexMock
   class << self
     attr_reader :framework_adapter
 
-    # :call-seq:
-    #   should_receive(args) { |symbol| ... }
-    #
-    # This method provides common handling for the various should_receive
-    # argument lists. It sorts out the differences between symbols, arrays and
-    # hashes, and identifies the method names specified by each.  As each
-    # method name is identified, create a mock expectation for it using the
-    # supplied block.
-    def should_receive(args)  # :nodoc:
-      result = CompositeExpectation.new
-      args.each do |arg|
-        case arg
-        when Hash
-          arg.each do |k,v|
-            result.add(yield(k.to_sym).and_return(v))
-          end
-        when Symbol, String
-          result.add(yield(arg.to_sym))
-        end
-      end
-      result
-    end
-    
     # Class method to make sure that verify is called at the end of a
     # test.  One mock object will be created for each name given to
     # the use method.  The mocks will be passed to the block as
@@ -87,20 +64,20 @@ class FlexMock
       FlexMock.framework_adapter.assert_block(msg, &block)
     end
 
-    # Container object to be used by the FlexMock.use method.  
-    class UseContainer
-      include MockContainer
-
-      attr_accessor :got_exception
-
-      def initialize
-        @got_exception = false
-      end
-
-      def passed?
-        ! got_exception
-      end
-    end
   end
 
+  # Container object to be used by the FlexMock.use method.  
+  class UseContainer
+    include MockContainer
+    
+    attr_accessor :got_exception
+    
+    def initialize
+      @got_exception = false
+    end
+    
+    def passed?
+      ! got_exception
+    end
+  end
 end
