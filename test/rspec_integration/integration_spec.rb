@@ -33,4 +33,10 @@ context "FlexMock in a RSpec example" do
   specify "Should show an example failure" do
     1.should == 2
   end
+
+  specify "Should show how mocks are displayed in error messages" do
+    m = flexmock("x")
+    m.should == 2
+  end
+
 end

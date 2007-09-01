@@ -103,17 +103,17 @@ class FlexMock
     # Validate that the order
     def validate_order
       if @order_number
-        @mock.mock_validate_order(to_s, @order_number)
+        @mock.flexmock_validate_order(to_s, @order_number)
       end
       if @global_order_number
-        @mock.mock_container.mock_validate_order(to_s, @global_order_number)
+        @mock.flexmock_container.flexmock_validate_order(to_s, @global_order_number)
       end
     end
     private :validate_order
 
     # Validate the correct number of calls have been made.  Called by
     # the teardown process.
-    def mock_verify
+    def flexmock_verify
       @count_validators.each do |v|
         v.validate(@actual_count)
       end
@@ -308,7 +308,7 @@ class FlexMock
     #
     def ordered(group_name=nil)
       if @globally
-        @global_order_number = define_ordered(group_name, @mock.mock_container)
+        @global_order_number = define_ordered(group_name, @mock.flexmock_container)
       else
         @order_number = define_ordered(group_name, @mock)
       end
@@ -325,14 +325,14 @@ class FlexMock
 
     # Helper method for defining ordered expectations.
     def define_ordered(group_name, ordering)
-      fail UsageError, "Mock #{@mock.mock_name} is not in a container and cannot be globally ordered." if ordering.nil?
+      fail UsageError, "Mock #{@mock.flexmock_name} is not in a container and cannot be globally ordered." if ordering.nil?
       if group_name.nil?
-        result = ordering.mock_allocate_order
-      elsif (num = ordering.mock_groups[group_name])
+         result = ordering.flexmock_allocate_order
+      elsif (num = ordering.flexmock_groups[group_name])
         result = num
       else
-        result = ordering.mock_allocate_order
-        ordering.mock_groups[group_name] = result
+        result = ordering.flexmock_allocate_order
+        ordering.flexmock_groups[group_name] = result
       end
       result
     end

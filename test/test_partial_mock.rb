@@ -64,7 +64,7 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock = flexmock(dog)
     partial_mock.should_receive(:bark).once.and_return(:growl)
     assert_equal :growl, dog.bark
-    partial_mock.mock_teardown
+    partial_mock.flexmock_teardown
     assert_equal :woof, dog.bark
     assert_equal nil, dog.instance_variable_get("@flexmock_proxy")
   end
@@ -74,7 +74,7 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock = flexmock(obj)
     partial_mock.should_receive(:hi).once.and_return(:ok)
     assert_equal :ok, obj.hi
-    partial_mock.mock_teardown
+    partial_mock.flexmock_teardown
     assert_raise(NoMethodError) { obj.hi }
   end
 
@@ -85,7 +85,7 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock.should_receive(:hi).with(2).once.and_return(:ok)
     assert_equal :ok, obj.hi(1)
     assert_equal :ok, obj.hi(2)
-    partial_mock.mock_teardown
+    partial_mock.flexmock_teardown
     assert_raise(NoMethodError) { obj.hi }
   end
   
@@ -93,7 +93,7 @@ class TestStubbing < Test::Unit::TestCase
     dog = Dog.new
     flexmock(dog).should_receive(:bark).and_return(:grrrr)
     flexmock(dog).should_receive(:wag).and_return(:happy)
-    flexmock(dog).mock_teardown
+    flexmock(dog).flexmock_teardown
     assert_equal :woof, dog.bark
     assert_raise(NoMethodError) { dog.wag }
   end
@@ -101,7 +101,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_original_behavior_is_restored_on_class_objects
     flexmock(Dog).should_receive(:create).once.and_return(:new_stub)
     assert_equal :new_stub, Dog.create
-    flexmock(Dog).mock_teardown
+    flexmock(Dog).flexmock_teardown
     assert_equal :new_dog, Dog.create    
   end
 
@@ -111,7 +111,7 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(obj).should_receive(:hi).once.and_return(:hola)
 
     assert_equal :hola, obj.hi
-    flexmock(obj).mock_teardown
+    flexmock(obj).flexmock_teardown
     assert_equal :hello, obj.hi
   end
 
@@ -123,7 +123,7 @@ class TestStubbing < Test::Unit::TestCase
 
     assert_equal :hola, obj.hi(1)
     assert_equal :hola, obj.hi(2)
-    flexmock(obj).mock_teardown
+    flexmock(obj).flexmock_teardown
     assert_equal "hello3", obj.hi(3)
   end
 
@@ -133,7 +133,7 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :ok1, Dir.chdir("xx")
     assert_equal :ok2, Dir.chdir("yy")
 
-    flexmock(Dir).mock_teardown
+    flexmock(Dir).flexmock_teardown
 
     x = :not_called
     Dir.chdir("test") do
@@ -146,7 +146,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_stubbing_file_shouldnt_break_writing
     flexmock(File).should_receive(:open).with("foo").once.and_return(:ok)
     assert_equal :ok, File.open("foo")
-    flexmock(File).mock_teardown
+    flexmock(File).flexmock_teardown
 
     File.open("dummy.txt", "w") do |out|
       assert out.is_a?(IO)
@@ -166,15 +166,15 @@ class TestStubbing < Test::Unit::TestCase
 
     # Now disable the mock so that it doesn't cause errors on normal
     # test teardown
-    m = flexmock(Dog).mock
-    def m.mock_verify() end
+    m = flexmock(Dog).flexmock_get
+    def m.flexmock_verify() end
   end
 
   def test_not_calling_stubbed_method_is_an_error
     dog = Dog.new
     flexmock(dog).should_receive(:bark).once
     assert_raise(Test::Unit::AssertionFailedError) { 
-      flexmock(dog).mock_verify
+      flexmock(dog).flexmock_verify
     }
     dog.bark
   end
@@ -184,20 +184,20 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock = flexmock(obj)
     partial_mock.should_receive(:hi).once.and_return(:ok)
     assert_raise(Test::Unit::AssertionFailedError) { 
-      partial_mock.mock_verify
+      partial_mock.flexmock_verify
     }
   end
   
   def test_stub_can_have_explicit_name
     obj = Object.new
     partial_mock = flexmock(obj, "Charlie")
-    assert_equal "Charlie", partial_mock.mock.mock_name
+    assert_equal "Charlie", partial_mock.flexmock_get.flexmock_name
   end
 
   def test_unamed_stub_will_use_default_naming_convention
     obj = Object.new
     partial_mock = flexmock(obj)
-    assert_equal "flexmock(Object)", partial_mock.mock.mock_name
+    assert_equal "flexmock(Object)", partial_mock.flexmock_get.flexmock_name
   end
 
   def test_partials_can_be_defined_in_a_block
@@ -223,7 +223,7 @@ class TestStubbing < Test::Unit::TestCase
 
   MOCK_METHOD_SUBSET = [
     :should_receive, :new_instances,
-    :mock, :mock_teardown, :mock_verify,
+    :flexmock_get,   :flexmock_teardown, :flexmock_verify,
   ]
 
   def test_domain_objects_do_not_have_mock_methods
@@ -244,7 +244,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_partial_mocks_do_not_have_mock_methods_after_teardown
     dog = Dog.new
     flexmock(dog)
-    dog.mock_teardown
+    dog.flexmock_teardown
     MOCK_METHOD_SUBSET.each do |sym|
       assert ! dog.respond_to?(sym), "should not have :#{sym} defined"
     end
@@ -254,7 +254,7 @@ class TestStubbing < Test::Unit::TestCase
     dog = Dog.new
     def dog.mock() :original end
     flexmock(dog)
-    dog.mock_teardown
+    dog.flexmock_teardown
     assert_equal :original, dog.mock
   end
 
@@ -267,7 +267,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_partial_mocks_with_mock_method_non_singleton_colision_have_original_defs_restored
     mc = MockColision.new
     flexmock(mc)
-    mc.mock_teardown
+    mc.flexmock_teardown
     assert_equal :original, mc.mock
   end
 

@@ -11,9 +11,11 @@
 
 require 'test/unit'
 require 'flexmock'
+require 'test/redirect_error'
 
 class TestNewInstances < Test::Unit::TestCase
   include FlexMock::TestCase
+  include FlexMock::RedirectError
   
   class Dog
     def bark
@@ -53,17 +55,6 @@ class TestNewInstances < Test::Unit::TestCase
     end
     m = Dog.new
     assert_equal :whimper,  m.bark
-  end
-  
-  def test_any_instance_still_works_for_backwards_compatibility
-    message = redirect_error { 
-      flexstub(Dog).any_instance do |obj|
-        obj.should_receive(:bark).and_return(:whimper)
-        assert_match(/deprecated/, message)
-      end
-    }
-    m = Dog.new
-    assert_equal :whimper,  m.bark   
   end
   
   def test_new_instances_stubs_still_have_existing_methods
@@ -214,17 +205,6 @@ class TestNewInstances < Test::Unit::TestCase
     dog.bite
     dog.bark
   end
-  
-  def redirect_error
-    require 'stringio'
-    old_err = $stderr
-    $stderr = StringIO.new
-    yield
-    $stderr.string
-  rescue
-    $stderr = old_err
-  end
-  private :redirect_error
 end
 
 

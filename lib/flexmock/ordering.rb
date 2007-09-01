@@ -20,32 +20,32 @@ class FlexMock
   module Ordering
 
     # Allocate the next available order number.
-    def mock_allocate_order
-      @mock_allocated_order ||= 0
-      @mock_allocated_order += 1
+    def flexmock_allocate_order
+      @flexmock_allocated_order ||= 0
+      @flexmock_allocated_order += 1
     end
 
     # Hash of groups defined in this ordering.
-    def mock_groups
-      @mock_groups ||= {}
+    def flexmock_groups
+      @flexmock_groups ||= {}
     end
 
     # Current order number in this ordering.
-    def mock_current_order
-      @mock_current_order ||= 0
+    def flexmock_current_order
+      @flexmock_current_order ||= 0
     end
 
     # Set the current order for this ordering.
-    def mock_current_order=(value)
-      @mock_current_order = value
+    def flexmock_current_order=(value)
+      @flexmock_current_order = value
     end
 
-    def mock_validate_order(method_name, order_number)
+    def flexmock_validate_order(method_name, order_number)
       FlexMock.check("method #{method_name} called out of order " +
-        "(expected order #{order_number}, was #{mock_current_order})") {
-        order_number >= self.mock_current_order
+        "(expected order #{order_number}, was #{flexmock_current_order})") {
+        order_number >= self.flexmock_current_order
       }
-      self.mock_current_order = order_number
+      self.flexmock_current_order = order_number
     end
   end
 end

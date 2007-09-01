@@ -37,7 +37,7 @@ class FlexMock
     def flexmock_verify
       @flexmock_created_mocks ||= []
       @flexmock_created_mocks.each do |m|
-        m.mock_verify
+        m.flexmock_verify
       end
     end
     
@@ -46,7 +46,7 @@ class FlexMock
     def flexmock_close
       @flexmock_created_mocks ||= []
       @flexmock_created_mocks.each do |m|
-        m.mock_teardown
+        m.flexmock_teardown
       end
       @flexmock_created_mocks = []
     end
@@ -148,7 +148,7 @@ class FlexMock
       mock.should_receive(quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
-      ContainerHelper.mock_model_methods(mock, model_class, id) if model_class
+      ContainerHelper.add_model_methods(mock, model_class, id) if model_class
       result
     end
     alias flexstub flexmock
@@ -157,7 +157,7 @@ class FlexMock
     def flexmock_remember(mocking_object)
       @flexmock_created_mocks ||= []
       @flexmock_created_mocks << mocking_object
-      mocking_object.mock_container = self
+      mocking_object.flexmock_container = self
       mocking_object
     end
   end
@@ -205,8 +205,8 @@ class FlexMock
 
     # Automatically add mocks for some common methods in ActiveRecord
     # models.
-    def mock_model_methods(mock, model_class, id)
-      container = mock.mock_container
+    def add_model_methods(mock, model_class, id)
+      container = mock.flexmock_container
       mock.should_receive(
         :id => id,
         :to_params => id.to_s,
@@ -272,7 +272,7 @@ class FlexMock
     # both chains.
     #
     def build_demeter_chain(mock, arg, &block)
-      container = mock.mock_container
+      container = mock.flexmock_container
       names = arg.to_s.split('.')
       check_method_names(names)
       exp = nil
@@ -307,7 +307,7 @@ class FlexMock
     def check_method_names(names)
       names.each do |name|
         fail FlexMock::UsageError, "Ill-formed method name '#{name}'" if
-          name !~ /^[A-Za-z_][A-Za-z0-9_]*[=?]?$/
+          name !~ /^[A-Za-z_][A-Za-z0-9_]*[=!?]?$/
       end
     end
   end

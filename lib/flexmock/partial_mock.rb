@@ -32,8 +32,8 @@ class FlexMock
     # can act like a mock.
     
     MOCK_METHODS = [
-      :should_receive, :new_instances, :any_instance,
-      :mock,           :mock_teardown, :mock_verify
+      :should_receive, :new_instances, 
+      :flexmock_get,   :flexmock_teardown, :flexmock_verify
     ]
 
     # Initialize a PartialMockProxy object.
@@ -47,6 +47,11 @@ class FlexMock
           add_mock_method(@obj, sym)
         end
       end
+    end
+
+    # Get the mock object for the partial mock.
+    def flexmock_get
+      @mock
     end
 
     # :call-seq:
@@ -113,20 +118,13 @@ class FlexMock
       allocators.each do |m|
         self.should_receive(m).and_return { |*args|
           new_obj = invoke_original(m, args)
-          mock = mock_container.flexmock(new_obj)
+          mock = flexmock_container.flexmock(new_obj)
           block.call(mock) if block_given?
           result.apply(mock)
           new_obj
         }
       end
       result
-    end
-
-    # any_instance is present for backwards compatibility with version 0.5.0.
-    # @deprecated
-    def any_instance(&block)
-      $stderr.puts "any_instance is deprecated, use new_instances instead."
-      new_instances(&block)
     end
 
     # Invoke the original definition of method on the object supported by
@@ -139,12 +137,12 @@ class FlexMock
 
     # Verify that the mock has been properly called.  After verification,
     # detach the mocking infrastructure from the existing object.
-    def mock_verify
-      @mock.mock_verify
+    def flexmock_verify
+      @mock.flexmock_verify
     end
 
     # Remove all traces of the mocking framework from the existing object.
-    def mock_teardown
+    def flexmock_teardown
       if ! detached?
         @methods_proxied.each do |method_name|
           remove_current_method(method_name)
@@ -156,13 +154,13 @@ class FlexMock
     end
 
     # Forward to the mock's container.
-    def mock_container
-      @mock.mock_container
+    def flexmock_container
+      @mock.flexmock_container
     end
 
     # Set the proxy's mock container.  This set value is ignored
     # because the proxy always uses the container of its mock.
-    def mock_container=(container)
+    def flexmock_container=(container)
     end
 
     private

@@ -17,7 +17,7 @@ class TestNaming < Test::Unit::TestCase
   
   def test_name
     m = flexmock("m")
-    assert_equal "m", m.mock_name
+    assert_equal "m", m.flexmock_name
   end
 
   def test_name_in_no_handler_found_error
@@ -33,27 +33,27 @@ class TestNaming < Test::Unit::TestCase
     m = flexmock("mmm")
     ex = assert_raises(Test::Unit::AssertionFailedError) {
       m.should_receive(:xx).once
-      m.mock_verify
+      m.flexmock_verify
     }
    assert_match(/'mmm'/, ex.message)
   end
 
   def test_naming_with_use
     FlexMock.use("blah") do |m|
-      assert_equal "blah", m.mock_name
+      assert_equal "blah", m.flexmock_name
     end
   end
 
   def test_naming_with_multiple_mocks_in_use
     FlexMock.use("blah", "yuk") do |a, b|
-      assert_equal "blah", a.mock_name
-      assert_equal "yuk",  b.mock_name
+      assert_equal "blah", a.flexmock_name
+      assert_equal "yuk",  b.flexmock_name
     end
   end
 
   def test_inspect_returns_reasonable_name
     FlexMock.use("XYZZY") do |m|
-      assert_equal "XYZZY", m.mock_name
+      assert_equal "XYZZY", m.flexmock_name
       assert_equal "<FlexMock:XYZZY>", m.inspect
     end
   end

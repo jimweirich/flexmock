@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.6.4.2
+Version :: 0.6.4.4
 
 = Links
 
@@ -82,7 +82,9 @@ include.
 
 == RSpec Integration
 
-FlexMock also supports integration with the RSpec behavior specification framework.  Starting with version 0.9.0 of RSpec, you will be able to say:
+FlexMock also supports integration with the RSpec behavior
+specification framework.  Starting with version 0.9.0 of RSpec, you
+will be able to say:
 
   Spec::Runner.configure do |config|
     config.mock_with :flexmock

@@ -87,8 +87,19 @@ class TestDemeterMocking < Test::Unit::TestCase
 
   def test_errors_on_ill_formed_method_names
     m = flexmock("a")
-    ['a(2)', '0', 'a-b', 'a b', ' ', 'a ', ' b'].each do |method|
+    [
+      'a(2)', '0a', 'a-b', 'a b', ' ', 'a ', ' b', 'a!b', "a?b", 'a=b'
+    ].each do |method|
       assert_raise FlexMock::UsageError do m.should_receive(method) end
+    end
+  end
+
+  def test_no_errors_on_well_formed_method_names
+    m = flexmock("a")
+    [
+      'a', 'a?', 'a!', 'a=', 'z0', 'save!'
+    ].each do |method|
+      assert_nothing_raised do m.should_receive(method) end
     end
   end
 

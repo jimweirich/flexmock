@@ -52,16 +52,15 @@ class FlexMock
   class MockError < RuntimeError
   end
 
-  attr_reader :mock_name
-  attr_accessor :mock_container
+  attr_reader :flexmock_name
+  attr_accessor :flexmock_container
 
   # Create a FlexMock object with the given name.  The name is used in
   # error messages.  If no container is given, create a new, one-off
   # container for this mock.
   def initialize(name="unknown", container=nil)
-    @mock_name = name
+    @flexmock_name = name
     @expectations = Hash.new
-    @mock_container = nil
     @ignore_missing = false
     @verified = false
     container = UseContainer.new if container.nil?
@@ -70,32 +69,23 @@ class FlexMock
 
   # Return the inspection string for a mock.
   def inspect
-    "<FlexMock:#{mock_name}>"
-  end
-
-  # Handle all messages denoted by +sym+ by calling the given block
-  # and passing any parameters to the block.  If we know exactly how
-  # many calls are to be made to a particular method, we may check
-  # that by passing in the number of expected calls as a second
-  # paramter.
-  def mock_handle(sym, expected_count=nil, &block) # :nodoc:
-    self.should_receive(sym).times(expected_count).returns(&block)
+    "<FlexMock:#{flexmock_name}>"
   end
 
   # Verify that each method that had an explicit expected count was
   # actually called that many times.
-  def mock_verify
+  def flexmock_verify
     return if @verified
     @verified = true
-    mock_wrap do
+    flexmock_wrap do
       @expectations.each do |sym, handler|
-        handler.mock_verify
+        handler.flexmock_verify
       end
     end
   end
 
   # Teardown and infrastructure setup for this mock.
-  def mock_teardown
+  def flexmock_teardown
   end
 
   # Ignore all undefined (missing) method calls.
@@ -106,7 +96,7 @@ class FlexMock
 
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
-    mock_wrap do
+    flexmock_wrap do
       if handler = @expectations[sym]
         args << block  if block_given?
         handler.call(*args)
@@ -190,11 +180,11 @@ class FlexMock
 
   # Wrap a block of code so the any assertion errors are wrapped so
   # that the mock name is added to the error message .
-  def mock_wrap(&block)
+  def flexmock_wrap(&block)
     yield
   rescue FlexMock.framework_adapter.assertion_failed_error => ex
     raise FlexMock.framework_adapter.assertion_failed_error,
-    "in mock '#{@mock_name}': #{ex.message}",
+    "in mock '#{@flexmock_name}': #{ex.message}",
     ex.backtrace
   end
   

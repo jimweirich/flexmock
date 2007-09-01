@@ -11,9 +11,16 @@
 
 require 'test/unit'
 require 'flexmock'
+require 'flexmock/deprecated_methods'
+require 'test/redirect_error'
 
 class TestFlexMock < Test::Unit::TestCase
   include FlexMock::TestCase
+  include FlexMock::RedirectError
+
+  def s(&block)
+    redirect_error(&block)
+  end
 
   def setup
     @mock = flexmock('mock')
@@ -21,26 +28,26 @@ class TestFlexMock < Test::Unit::TestCase
 
   def test_handle
     args = nil
-    @mock.mock_handle(:hi) { |a, b| args = [a,b] }
+    s { @mock.mock_handle(:hi) { |a, b| args = [a,b] } }
     @mock.hi(1,2)
     assert_equal [1,2], args
   end
 
   def test_handle_no_block
-    @mock.mock_handle(:blip)
+    s { @mock.mock_handle(:blip) }
     @mock.blip
     assert true, "just checking for failures"
   end
 
   def test_called_with_block
     called = false
-    @mock.mock_handle(:blip) { |block| block.call }
+    s { @mock.mock_handle(:blip) { |block| block.call } }
     @mock.blip { called = true }
     assert called, "Block to blip should be called"
   end
 
   def test_return_value
-    @mock.mock_handle(:blip) { 10 }
+    s { @mock.mock_handle(:blip) { 10 } }
     assert_equal 10, @mock.blip
   end
 
@@ -59,19 +66,19 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_good_counts
-    @mock.mock_handle(:blip, 3)
+    s { @mock.mock_handle(:blip, 3) }
     @mock.blip
     @mock.blip
     @mock.blip
-    @mock.mock_verify
+    @mock.flexmock_verify
   end
 
   def test_bad_counts
-    @mock.mock_handle(:blip, 3)
+    s { @mock.mock_handle(:blip, 3) }
     @mock.blip
     @mock.blip
     begin
-      @mock.mock_verify
+      @mock.flexmock_verify
     rescue Test::Unit::AssertionFailedError => err
     end
     assert_not_nil err
@@ -79,7 +86,7 @@ class TestFlexMock < Test::Unit::TestCase
 
   def test_undetermined_counts
     FlexMock.use('fs') { |m|
-      m.mock_handle(:blip)
+      s { m.mock_handle(:blip) }
       m.blip
       m.blip
       m.blip
@@ -89,7 +96,7 @@ class TestFlexMock < Test::Unit::TestCase
   def test_zero_counts
     assert_raises(Test::Unit::AssertionFailedError) do
       FlexMock.use { |m|
-        m.mock_handle(:blip, 0)
+        s { m.mock_handle(:blip, 0) }
         m.blip
       }
     end
@@ -98,7 +105,7 @@ class TestFlexMock < Test::Unit::TestCase
   def test_file_io_with_use
     file = FlexMock.use do |m|
       filedata = ["line 1", "line 2"]
-      m.mock_handle(:gets, 3) { filedata.shift }
+      s { m.mock_handle(:gets, 3) { filedata.shift } }
       assert_equal 2, count_lines(m)
     end
   end
@@ -114,7 +121,7 @@ class TestFlexMock < Test::Unit::TestCase
   def test_use
     assert_raises(Test::Unit::AssertionFailedError) {
       FlexMock.use do |m|
-	m.mock_handle(:blip, 2)
+	s { m.mock_handle(:blip, 2) }
 	m.blip
       end
     }
@@ -123,7 +130,7 @@ class TestFlexMock < Test::Unit::TestCase
   def test_failures_during_use
     ex = assert_raises(NameError) {
       FlexMock.use do |m|
-	m.mock_handle(:blip, 2)
+	s { m.mock_handle(:blip, 2) }
 	xyz
       end
     }
@@ -132,7 +139,7 @@ class TestFlexMock < Test::Unit::TestCase
 
   def test_sequential_values
     values = [1,4,9,16]
-    @mock.mock_handle(:get) { values.shift }
+    s { @mock.mock_handle(:get) { values.shift } }
     assert_equal 1, @mock.get
     assert_equal 4, @mock.get
     assert_equal 9, @mock.get
@@ -144,7 +151,7 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_respond_to_returns_true_for_explicit_methods
-    @mock.mock_handle(:xyz)
+    s { @mock.mock_handle(:xyz) }
     assert(@mock.respond_to?(:xyz), "should respond to test")
   end
 
@@ -166,7 +173,7 @@ class TestFlexMock < Test::Unit::TestCase
 
   def test_method_returns_callable_proc
     got_it = false
-    @mock.mock_handle(:xyzzy) { got_it = true }
+    s { @mock.mock_handle(:xyzzy) { got_it = true } }
     method_proc = @mock.method(:xyzzy)
     assert_not_nil method_proc
     method_proc.call
@@ -180,3 +187,41 @@ class TestFlexMock < Test::Unit::TestCase
     method_proc.call
   end
 end
+
+class TestDeprecatedOrderingMethods < Test::Unit::TestCase
+  include FlexMock::TestCase
+  include FlexMock::RedirectError
+
+  def test_deprecated_ordering_methods
+    flexmock(:x).should_receive(:msg).globally.ordered(:testgroup)
+    assert_equal({ :testgroup => 1 }, flexmock_groups)
+    message = redirect_error do
+      assert_equal({ :testgroup => 1 }, mock_groups)
+    end
+    assert_match(/deprecated/i, message)
+    assert_match(/\bmock_groups/, message)
+    assert_match(/\bflexmock_groups/, message)
+  end
+end
+
+class TestAnyInstance < Test::Unit::TestCase
+  include FlexMock::TestCase
+  include FlexMock::RedirectError
+
+  class Dog
+    def bark
+      :woof
+    end
+  end
+
+  def test_any_instance_still_works_for_backwards_compatibility
+    message = redirect_error do
+      flexstub(Dog).any_instance do |obj|
+        obj.should_receive(:bark).and_return(:whimper)
+        assert_match(/deprecated/, message)
+      end
+    end
+    m = Dog.new
+    assert_equal :whimper,  m.bark   
+  end
+end  

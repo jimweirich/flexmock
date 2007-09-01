@@ -21,7 +21,6 @@ class TemperatureSampler
     total = (0...3).collect { @sensor.read_temperature }.inject { |i, s| i + s }
     total / 3.0
   end
-    
 end
 
 class TestTemperatureSampler < Test::Unit::TestCase
@@ -30,7 +29,7 @@ class TestTemperatureSampler < Test::Unit::TestCase
   def test_tempurature_sampler
     readings = [10, 12, 14]
     mock_sensor = flexmock("sensor")
-    mock_sensor.mock_handle(:read_temperature) { readings.shift }
+    mock_sensor.should_receive(:read_temperature).and_return { readings.shift }
     sampler = TemperatureSampler.new(mock_sensor)
     assert_equal 12, sampler.average_temp
   end

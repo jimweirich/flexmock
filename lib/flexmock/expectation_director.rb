@@ -54,9 +54,9 @@ class FlexMock
 
     # Do the post test verification for this directory.  Check all the
     # expectations.
-    def mock_verify
+    def flexmock_verify
       @expectations.each do |exp|
-        exp.mock_verify
+        exp.flexmock_verify
       end
     end
   end

@@ -19,7 +19,7 @@ require 'rake/contrib/rubyforgepublisher'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.6.4.3'
+PKG_VERSION = '0.6.4.4'
 
 PKG_FILES = FileList[
   '[A-Z]*',
@@ -56,11 +56,11 @@ Rake::TestTask.new(:test_extended) do |t|
 end
 
 task :rspec do
-  ENV['RUBYLIB'] = "/Users/jim/working/svn/software/rspec/rspec/lib:/Users/jim/working/svn/software/flexmock/lib"
+  ENV['RUBYLIB'] = "/Users/jim/working/svn/software/flexmock/lib"
   sh 'echo $RUBYLIB'
-  ruby "/Users/jim/working/svn/software/rspec/rspec/bin/spec test/rspec_integration/*_spec.rb" rescue nil
+  ruby "spec test/rspec_integration/*_spec.rb" rescue nil
   puts
-  puts "*** There should be two failures in the above report. ***"
+  puts "*** There should be three failures in the above report. ***"
   puts
 end
 

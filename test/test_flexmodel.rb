@@ -14,7 +14,7 @@ class TestFlexModel < Test::Unit::TestCase
 
   def test_initial_conditions
     model = flexmock(:model, DummyModel)
-    assert_match(/^DummyModel_\d+/, model.mock_name)
+    assert_match(/^DummyModel_\d+/, model.flexmock_name)
     assert_equal model.id.to_s, model.to_params
     assert ! model.new_record?
     assert model.is_a?(DummyModel)

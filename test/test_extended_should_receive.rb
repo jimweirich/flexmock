@@ -36,7 +36,7 @@ module ExtendedShouldReceiveTests
   def test_count_contraints_apply_to_all_expectations
     @mock.should_receive(:foo, :bar => :baz).once
     @obj.foo
-    assert_raise(Test::Unit::AssertionFailedError) { @mock.mock_verify }
+    assert_raise(Test::Unit::AssertionFailedError) { @mock.flexmock_verify }
   end
   
   def test_multiple_should_receives_are_allowed
