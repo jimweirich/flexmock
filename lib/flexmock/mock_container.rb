@@ -10,6 +10,7 @@
 #+++
 
 require 'flexmock/noop'
+require 'flexmock/argument_types'
 
 class FlexMock
   
@@ -136,10 +137,10 @@ class FlexMock
       raise UsageError, "a block is required in safe mode" if safe_mode && ! block_given?
 
       if domain_obj
-        mock = flexmock_make_partial_proxy(domain_obj, name, safe_mode)
+        mock = ContainerHelper.make_partial_proxy(self, domain_obj, name, safe_mode)
         result = domain_obj
       elsif model_class
-        id = MockContainer.next_id
+        id = ContainerHelper.next_id
         result = mock = FlexMock.new("#{model_class}_#{id}", self)
       else
         result = mock = FlexMock.new(name || "unknown", self)
@@ -147,7 +148,7 @@ class FlexMock
       mock.should_receive(quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
-      flexmock_mock_model_methods(mock, model_class, id) if model_class
+      ContainerHelper.mock_model_methods(mock, model_class, id) if model_class
       result
     end
     alias flexstub flexmock
@@ -159,29 +160,79 @@ class FlexMock
       mocking_object.mock_container = self
       mocking_object
     end
+  end
+
+  # #################################################################
+  # Helper methods for mock containers.  MockContainer is a module
+  # that is designed to be mixed into other classes, particularly
+  # testing framework test cases.  Since we don't want to pollute the
+  # method namespace of the class that mixes in MockContainer, a
+  # number of MockContainer methods were moved into ContainerHelper to
+  # to isoloate the names.
+  #
+  class MockContainerHelper
+    include FlexMock::ArgumentTypes
+
+    # Return the next id for mocked models.
+    def next_id
+      @id_counter ||= 0
+      @id_counter += 1
+    end
 
     # :call-seq:
-    #   should_receive(args) { |symbol| ... }
+    #   parse_should_args(args) { |symbol| ... }
     #
     # This method provides common handling for the various should_receive
     # argument lists. It sorts out the differences between symbols, arrays and
     # hashes, and identifies the method names specified by each.  As each
     # method name is identified, create a mock expectation for it using the
     # supplied block.
-    def flexmock_parse_should_args(mock, args, &block)  # :nodoc:
+    def parse_should_args(mock, args, &block)  # :nodoc:
       result = CompositeExpectation.new
       args.each do |arg|
         case arg
         when Hash
           arg.each do |k,v|
-            exp = flexmock_build_demeter_chain(mock, k, &block).and_return(v)
+            exp = build_demeter_chain(mock, k, &block).and_return(v)
             result.add(exp)
           end
         when Symbol, String
-          result.add(flexmock_build_demeter_chain(mock, arg, &block))
+          result.add(build_demeter_chain(mock, arg, &block))
         end
       end
       result
+    end
+
+    # Automatically add mocks for some common methods in ActiveRecord
+    # models.
+    def mock_model_methods(mock, model_class, id)
+      container = mock.mock_container
+      mock.should_receive(
+        :id => id,
+        :to_params => id.to_s,
+        :new_record? => false,
+        :class => model_class,
+        :errors => container.flexmock("errors", :count => 0))
+      mock.should_receive(:is_a?).with(any).and_return { |other|
+        other == model_class
+      }
+      mock.should_receive(:instance_of?).with(any).and_return { |other|
+        other == model_class
+      }
+      mock.should_receive(:kind_of?).with(any).and_return { |other|
+        model_class.ancestors.include?(other)
+      }
+    end
+
+    # Create a PartialMockProxy for the given object.  Use +name+ as
+    # the name of the mock object.
+    def make_partial_proxy(container, obj, name, safe_mode)
+      name ||= "flexmock(#{obj.class.to_s})"
+      obj.instance_eval {
+        mock = FlexMock.new(name, container)
+        @flexmock_proxy ||= PartialMockProxy.new(obj, mock, safe_mode)
+      }
+      obj.instance_variable_get("@flexmock_proxy")
     end
 
     private
@@ -220,9 +271,10 @@ class FlexMock
     # It is important that the shared methods return the same mocks in
     # both chains.
     #
-    def flexmock_build_demeter_chain(mock, arg, &block)
+    def build_demeter_chain(mock, arg, &block)
+      container = mock.mock_container
       names = arg.to_s.split('.')
-      flexmock_check_method_names(names)
+      check_method_names(names)
       exp = nil
       next_exp = lambda { |n| block.call(n) }
       loop do
@@ -232,19 +284,19 @@ class FlexMock
         exp = next_exp.call(method_name) if need_new_exp
         break if names.empty?
         if need_new_exp
-          mock = flexmock("demeter_#{method_name}")
+          mock = container.flexmock("demeter_#{method_name}")
           exp.with_no_args.and_return(mock)
         else
           mock = exp._return_value([])
         end
-        flexmock_check_proper_mock(mock, method_name)
+        check_proper_mock(mock, method_name)
         next_exp = lambda { |n| mock.should_receive(n) }
       end
       exp
     end
     
     # Check that the given mock is a real FlexMock mock.
-    def flexmock_check_proper_mock(mock, method_name)
+    def check_proper_mock(mock, method_name)
       unless mock.kind_of?(FlexMock)
         fail FlexMock::UsageError,
           "Conflicting mock declaration for '#{method_name}' in demeter style mock"
@@ -252,49 +304,13 @@ class FlexMock
     end
     
     # Check that all the names in the list are valid method names.
-    def flexmock_check_method_names(names)
+    def check_method_names(names)
       names.each do |name|
         fail FlexMock::UsageError, "Ill-formed method name '#{name}'" if
           name !~ /^[A-Za-z_][A-Za-z0-9_]*[=?]?$/
       end
     end
-
-    # Automatically add mocks for some common methods in ActiveRecord
-    # models.
-    def flexmock_mock_model_methods(mock, model_class, id)
-      mock.should_receive(
-        :id => id,
-        :to_params => id.to_s,
-        :new_record? => false,
-        :class => model_class,
-        :errors => flexmock("errors", :count => 0))
-      mock.should_receive(:is_a?).with(any).and_return { |other|
-        other == model_class
-      }
-      mock.should_receive(:instance_of?).with(any).and_return { |other|
-        other == model_class
-      }
-      mock.should_receive(:kind_of?).with(any).and_return { |other|
-        model_class.ancestors.include?(other)
-      }
-    end
-
-    # Create a PartialMockProxy for the given object.  Use +name+ as
-    # the name of the mock object.
-    def flexmock_make_partial_proxy(obj, name, safe_mode)
-      name ||= "flexmock(#{obj.class.to_s})"
-      container = self
-      obj.instance_eval {
-        mock = FlexMock.new(name, container)
-        @flexmock_proxy ||= PartialMockProxy.new(obj, mock, safe_mode)
-      }
-      obj.instance_variable_get("@flexmock_proxy")
-    end
-
-    def MockContainer.next_id
-      @id_counter ||= 0
-      @id_counter += 1
-    end
   end
 
+  ContainerHelper = MockContainerHelper.new
 end

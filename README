@@ -586,6 +586,64 @@ methods at the same time. E.g.
         m.should_receive(:wag).at_least.once.and_return(:happy)
       end
 
+=== Mocking Law of Demeter Violations
+
+The Law of Demeter says that you should only invoke methods on objects
+to which you have a direct connection, e.g. parameters, instance
+variables, and local variables.  You can usually detect Law of Demeter
+violations by the excessive number of periods in an expression.  For
+example:
+
+     car.chassis.axle.universal_joint.cog.turn
+
+The Law of Demeter has a very big impact on mocking.  If you need to
+mock the "turn" method on "cog", you first have to mock chassis, axle,
+and universal_joint.
+
+    # Manually mocking a Law of Demeter violation
+    cog = flexmock("cog")
+    cog.should_receive(:turn).once.and_return(:ok)
+    joint = flexmock("gear", :cog => cog)
+    axle = flexmock("axle", :universal_joint => joint)
+    chassis = flexmock("chassis", :axle => axle)
+    car = flexmock("car", :chassis => chassis)
+
+Yuck!
+
+The best course of action is to avoid Law of Demeter violations.  Then
+your mocking exploits will be very simple.  However, sometimes you
+have to deal with code that already has a Demeter chain of method
+calls.  So for those cases where you can't avoid it, FlexMock will
+allow you to easily mock Demeter method chains.
+
+Here's an example of Demeter chain mocking:
+
+    # Demeter chain mocking using the short form.
+    car = flexmock("car")
+    car.should_receive( "chassis.axle.universal_joint.cog.turn" => :ok).once
+
+You can also use the long form:
+
+    # Demeter chain mocking using the long form.
+    car = flexmock("car")
+    car.should_receive("chassis.axle.universal_joint.cog.turn").once.
+      and_return(:ok)
+
+That's it.  Anywhere FlexMock accepts a method name for mocking, you
+can use a demeter chain and FlexMock will attempt to do the right
+thing.
+
+But beware, there are a few limitations.
+
+The all the methods in the chain, except for the last one, will mocked
+to return a mock object.  That mock object, in turn, will be mocked so
+as to respond to the next method in the chain, returning the following
+mock.  And so on. If you try to manually mock out any of the chained
+methods, you could easily interfer with the mocking specified by the
+Demeter chain.  FlexMock will attempt to catch problems when it can,
+but there are certainly scenarios where it cannot detect the problem
+beforehand.
+
 == Examples
 
 === Create a simple mock object that returns a value for a set of method calls

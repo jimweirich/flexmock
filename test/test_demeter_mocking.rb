@@ -85,11 +85,34 @@ class TestDemeterMocking < Test::Unit::TestCase
     assert_equal :z, a.b.c.d.zz
   end
 
-
   def test_errors_on_ill_formed_method_names
     m = flexmock("a")
     ['a(2)', '0', 'a-b', 'a b', ' ', 'a ', ' b'].each do |method|
       assert_raise FlexMock::UsageError do m.should_receive(method) end
     end
   end
+
+  def test_readme_example_1
+    cog = flexmock("cog")
+    cog.should_receive(:turn).once.and_return(:ok).mock
+    joint = flexmock("gear", :cog => cog)
+    axle = flexmock("axle", :universal_joint => joint)
+    chassis = flexmock("chassis", :axle => axle)
+    car = flexmock("car", :chassis => chassis)
+    assert_equal :ok, car.chassis.axle.universal_joint.cog.turn
+  end
+
+  def test_readme_example_2
+    car = flexmock("car")
+    car.should_receive("chassis.axle.universal_joint.cog.turn" => :ok).once
+    assert_equal :ok, car.chassis.axle.universal_joint.cog.turn
+  end
+
+  def test_readme_example_3
+    car = flexmock("car")
+    car.should_receive("chassis.axle.universal_joint.cog.turn").once.
+      and_return(:ok)
+    assert_equal :ok, car.chassis.axle.universal_joint.cog.turn
+  end
+
 end

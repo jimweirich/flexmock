@@ -161,7 +161,7 @@ class FlexMock
   # See Expectation for a list of declarators that can be used.
   #
   def should_receive(*args)
-    mock_container.flexmock_parse_should_args(self, args) do |sym|
+    ContainerHelper.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym)
       @expectations[sym] << result
