@@ -1,6 +1,11 @@
 = Changes for FlexMock
 
-== Pre-Version 0.7.0
+== Pre-Version 0.7.1
+
+* Updated install.rb to handle non-root destination directories via
+  DESTDIR.
+
+== Version 0.7.0
 
 * Added +and_yield+ as an expectation clause.
 * Inspect on Mocks now yield a more consise description.

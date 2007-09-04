@@ -26,6 +26,15 @@ unless $sitedir
   end
 end
 
+if (destdir = ENV['DESTDIR'])
+  $sitedir = destdir + $sitedir
+  File::makedirs($sitedir)
+end
+
+flexmock_dest = File.join($sitedir, "flexmock")
+File::makedirs(flexmock_dest, true)
+File::chmod(0755, flexmock_dest)
+
 # The library files
 
 file = 'flexmock.rb'
