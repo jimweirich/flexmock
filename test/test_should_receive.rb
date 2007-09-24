@@ -865,6 +865,41 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_equal :mkf, m2.mock_kernel_function
   end
 
+  def test_can_mock_operators
+    assert_operator(:[]) { |m| m[1] }
+    assert_operator(:[]=) { |m| m[1] = :value }
+    assert_operator(:**) { |m| m ** :x }
+    assert_operator(:+@) { |m| +m }
+    assert_operator(:-@) { |m| -m }
+    assert_operator(:+) { |m| m + :x }
+    assert_operator(:-) { |m| m - :x }
+    assert_operator(:*) { |m| m * :x }
+    assert_operator(:"/") { |m| m / :x }
+    assert_operator(:%) { |m| m % :x }
+    assert_operator(:~) { |m| ~m }
+    assert_operator(:&) { |m| m & :x }
+    assert_operator(:|) { |m| m | :x }
+    assert_operator(:^) { |m| m ^ :x }
+    assert_operator(:<) { |m| m < :x }
+    assert_operator(:>) { |m| m > :x }
+    assert_operator(:>=) { |m| m >= :x }
+    assert_operator(:<=) { |m| m <= :x }
+    assert_operator(:==) { |m| m == :x }
+    assert_operator(:===) { |m| m === :x }
+    assert_operator(:<<) { |m| m << :x }
+    assert_operator(:>>) { |m| m >> :x }
+    assert_operator(:<=>) { |m| m <=> :x }
+    assert_operator(:=~) { |m| m =~ :x }
+  end
+
+  private
+
+  def assert_operator(op, &block)
+    m = flexmock("mock")
+    m.should_receive(op).and_return(:value)
+    assert_equal :value, block.call(m)
+  end
+
 end
 
 class TestFlexMockShouldsWithInclude < Test::Unit::TestCase

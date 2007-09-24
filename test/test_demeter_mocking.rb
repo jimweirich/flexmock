@@ -16,6 +16,21 @@ class TestDemeterMocking < Test::Unit::TestCase
     assert_equal :first, m.children.first
   end
 
+  def test_demeter_mocking_with_operators
+    m = flexmock("A")
+    m.should_receive("children.+@.last").and_return(:value)
+    assert_kind_of FlexMock, m
+    assert_kind_of FlexMock, m.children
+    assert_kind_of FlexMock, + m.children
+    assert_equal :value, (+ m.children).last
+  end
+
+  def test_demeter_mocking_with_multiple_operators
+    m = flexmock("A")
+    m.should_receive("+@.-@.~").and_return(:value)
+    assert_equal :value, ~-+m
+  end
+
   def test_multiple_demeter_mocks_on_same_branch_is_ok
     m = flexmock("A")
     m.should_receive("child.x.y.z.first").and_return(:first)

@@ -34,7 +34,6 @@ end
 flexmock_dest = File.join($sitedir, "flexmock")
 File::makedirs(flexmock_dest, true)
 File::chmod(0755, flexmock_dest)
-
 # The library files
 
 file = 'flexmock.rb'

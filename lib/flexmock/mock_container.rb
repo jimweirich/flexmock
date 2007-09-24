@@ -303,11 +303,13 @@ class FlexMock
       end
     end
     
+    METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?||\*\*|<<|>>|<=>|[<>=]=|=~|===|[-+]@|[-+\*\/%&^|<>~])$/
+
     # Check that all the names in the list are valid method names.
     def check_method_names(names)
       names.each do |name|
         fail FlexMock::UsageError, "Ill-formed method name '#{name}'" if
-          name !~ /^[A-Za-z_][A-Za-z0-9_]*[=!?]?$/
+          name !~ METHOD_NAME_RE
       end
     end
   end

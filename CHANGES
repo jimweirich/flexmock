@@ -1,9 +1,10 @@
 = Changes for FlexMock
 
-== Pre-Version 0.7.1
+== Version 0.7.1
 
 * Updated install.rb to handle non-root destination directories via
   DESTDIR.
+* Fixed operator bug introduced in 0.7.0. 
 
 == Version 0.7.0
 
