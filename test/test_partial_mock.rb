@@ -311,5 +311,28 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(liar, :not_defined => :xyzzy)
     assert_equal :xyzzy, liar.not_defined
   end
+
+  # The following test was suggested by Pat Maddox for the RSpec
+  # mocks.  Evidently the (poorly implemented) == method caused issues
+  # with RSpec Mock's internals.  I'm just double checking for any
+  # similar issues in FlexMock as well.
+
+  class ValueObject
+    attr_reader :val
+
+    def initialize(val)
+      @val = val
+    end
+
+    def ==(other)
+      @val == other.val
+    end
+  end
+
+  def test_partial_mocks_in_the_presense_of_equal_definition
+    flexmock("existing obj", :foo => :foo)
+    obj = ValueObject.new(:bar)
+    flexmock(obj, :some_method => :some_method)
+  end
   
 end

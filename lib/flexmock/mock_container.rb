@@ -175,7 +175,7 @@ class FlexMock
 
     # Return the next id for mocked models.
     def next_id
-      @id_counter ||= 0
+      @id_counter ||= 10000
       @id_counter += 1
     end
 

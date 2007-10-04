@@ -1,5 +1,10 @@
 = Changes for FlexMock
 
+== Version 0.7.2
+
+* Changed initial model Id to 10000.
+* Added test suggested for RSpec Mocks, just to make sure we were good too.
+
 == Version 0.7.1
 
 * Updated install.rb to handle non-root destination directories via

@@ -19,7 +19,7 @@ require 'rake/contrib/rubyforgepublisher'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.7.1'
+PKG_VERSION = '0.7.2'
 
 PKG_FILES = FileList[
   '[A-Z]*',
@@ -200,15 +200,15 @@ end
 
 # Tagging ------------------------------------------------------------
 
-module Tags
-  RUBY_FILES = FileList['**/*.rb'].exclude("pkg")
-end
+# module Tags
+#   RUBY_FILES = FileList['**/*.rb'].exclude("pkg")
+# end
 
-namespace "tags" do
-  task :emacs => Tags::RUBY_FILES do
-    puts "Making Emacs TAGS file"
-    sh "xctags -e #{Tags::RUBY_FILES}", :verbose => false
-  end
-end
+# namespace "tags" do
+#   task :emacs => Tags::RUBY_FILES do
+#     puts "Making Emacs TAGS file"
+#     sh "xctags -e #{Tags::RUBY_FILES}", :verbose => false
+#   end
+# end
 
-task :tags => ["tags:emacs"]
+# task :tags => ["tags:emacs"]
