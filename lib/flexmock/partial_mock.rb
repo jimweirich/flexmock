@@ -163,6 +163,11 @@ class FlexMock
     def flexmock_container=(container)
     end
 
+    # Forward the request for the expectation director to the mock.
+    def flexmock_expectations_for(method_name)
+      @mock.flexmock_expectations_for(method_name)
+    end
+
     private
 
     # The singleton class of the object.

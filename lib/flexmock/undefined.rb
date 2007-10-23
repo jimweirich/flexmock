@@ -11,16 +11,16 @@
 
 class FlexMock
 
-  # Bottom is self preserving undefined object.  The result of any
-  # interaction with the bottom object will be the bottom object
-  # itself.
-  class Bottom 
+  # Undefined is a self preserving undefined object.  The result of
+  # any interaction with the undefined object will be the undefined
+  # object itself.
+  class Undefined
     def method_missing(sym, *args, &block)
       self
     end
 
     def to_s
-      "BOTTOM"
+      "-UNDEFINED-"
     end
 
     def inspect
@@ -32,14 +32,19 @@ class FlexMock
     end
     
     def coerce(other)
-      [BOTTOM, BOTTOM]
+      [FlexMock.undefined, FlexMock.undefined]
     end
   end
 
-  # Bottom is normally available as FlexMock::BOTTOM
-  BOTTOM = Bottom.new
+  # Single instance of undefined
+  @undefined = Undefined.new
+
+  # Undefined is normally available as FlexMock.undefined
+  def self.undefined
+    @undefined
+  end
   
-  class << Bottom
+  class << Undefined
     private :new
   end
 end 

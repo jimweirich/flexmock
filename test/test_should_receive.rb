@@ -83,6 +83,16 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_block_example_from_readme
+    FlexMock.use do |m|
+      m.should_receive(:foo).with(Integer,Proc).and_return(:got_block)
+      m.should_receive(:foo).with(Integer).and_return(:no_block)
+
+      assert_equal :no_block, m.foo(1)
+      assert_equal :got_block, m.foo(1) { }
+    end
+  end
+
   def test_return_with_and_without_block_interleaved
     FlexMock.use do |m|
       m.should_receive(:hi).and_return(:a).and_return { :b }.and_return(:c)
@@ -97,6 +107,16 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use do |m|
       m.should_receive(:hi).and_return(4)
       assert_equal 4, m.hi
+    end
+  end
+
+  def test_and_return_undefined
+    FlexMock.use do |m|
+      m.should_receive(:foo).and_return_undefined
+      m.should_receive(:phoo).returns_undefined
+      assert_equal FlexMock.undefined, m.foo
+      assert_equal FlexMock.undefined, m.foo.bar.baz.bing.ka_ching
+      assert_equal FlexMock.undefined, m.phoo.bar.baz.bing.ka_ching
     end
   end
 
@@ -913,6 +933,31 @@ class TestFlexMockShoulds < Test::Unit::TestCase
 
     m.bar
     m.foo
+  end
+
+  def test_partial_mocks_can_have_default_expectations
+    obj = Object.new
+    flexmock(obj).should_receive(:foo).and_return(:bar).by_default
+    assert_equal :bar, obj.foo
+  end
+
+  def test_partial_mocks_can_have_default_expectations_overridden
+    obj = Object.new
+    flexmock(obj).should_receive(:foo).and_return(:bar).by_default
+    flexmock(obj).should_receive(:foo).and_return(:baz)
+    assert_equal :baz, obj.foo
+  end
+
+  def test_wicked_and_evil_tricks_with_by_default_are_thwarted
+    mock = flexmock("mock")
+    exp = mock.should_receive(:foo).and_return(:first).once
+    mock.should_receive(:foo).and_return(:second)
+    ex = assert_raise(FlexMock::UsageError) do
+      exp.by_default
+    end
+    assert_match %r(previously defined), ex.message
+    assert_equal :first, mock.foo
+    assert_equal :second, mock.foo
   end
 
   def test_can_mock_operators

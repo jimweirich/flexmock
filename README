@@ -407,13 +407,14 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>by_default</b>
 
-  Marks the expectation as a default.  Default expectations are
-  removed whenever a a non-default expectation is added with the same
-  method name.
+  Marks the expectation as a default.  Default expectations act as
+  normal as long as there are no non-default expectations for the same
+  method name.  As soon as a non-default expectation is defined, all
+  default expectations for that method name are ignored.
 
   Default expectations allow you to setup a set of default behaviors
-  in the setup method of a test, and then override only what you need
-  to in the body of the test.
+  for various methods in the setup of a test suite, and then override
+  only the methods that need special handling in any given test.
 
 * <b>mock</b>
 
@@ -495,6 +496,19 @@ The following rules are used for argument matching:
       with(on { |arg| (arg % 2) == 0 } )
 
   will match any even integer.
+
+* If you wish to match a method call where a block is given, add
+  <tt>Proc</tt> as the last argument to <tt>with</tt>.
+
+  Example:
+
+      m.should_receive(:foo).with(Integer,Proc).and_return(:got_block)
+      m.should_receive(:foo).with(Integer).and_return(:no_block)
+
+  will cause the mock to return the following:
+
+     m.foo(1) { } => returns :got_block
+     m.foo(1)     => returns :no_block
 
 === Creating Partial Mocks
 
@@ -622,6 +636,35 @@ methods at the same time. E.g.
         m.should_receive(:wag).at_least.once.and_return(:happy)
       end
 
+=== Default Expectations on Mocks
+
+Sometimes you want to setup a bunch of default expectations that are
+pretty much for a number of different tests.  Then in the individual
+tests, you would like to override the default behavior on just that
+one method you are testing at the moment.  You can do that by using
+the <tt>by_default</tt> modifier.
+
+In your test setup you might have:
+
+  def setup
+    @mock_dog = flexmock("Fido")
+    @mock_dog.should_receive(:tail => :a_tail, :bark => "woof").by_default
+  end
+    
+The behaviors for :tail and :bark are good for most of the tests, but
+perhaps you wish to verify that :bark is called exactly once in a
+given test.  Since :bark by default has no count expectations, you can
+override the default in the given test.
+
+  def test_something_where_bark_must_be_called_once
+    @mock_dog.should_receive(:bark => "woof").once
+    ...
+  end 
+
+By setting defaults, your individual tests don't have to concern
+themselves with details of all the default setup.  But the details of
+the overrides are right there in the body of the test.
+
 === Mocking Law of Demeter Violations
 
 The Law of Demeter says that you should only invoke methods on objects
@@ -683,6 +726,18 @@ beforehand.
 == Examples
 
 === Create a simple mock object that returns a value for a set of method calls
+
+   require 'flexmock/test_unit'
+   
+   class TestSimple < Test::Unit::TestCase
+     def test_simple_mock
+       m = flexmock(:pi => 3.1416, :e => 2.71)
+       assert_equal 3.1416, m.pi
+       assert_equal 2.71, m.e
+     end
+   end
+
+=== Create a mock object that returns an undefined object for method calls
 
    require 'flexmock/test_unit'
    
@@ -763,8 +818,8 @@ specified indirectly using a symbol.
        rec.startup.once.ordered
        rec.query("CPWR") { 12.3 }.once.ordered(:queries)
        rec.query("MSFT") { 10.0 }.once.ordered(:queries)
-       rec.query("^....$/) { 3.3 }.at_least.once.ordered(:queries)
-       rec.finish)once.ordered
+       rec.query(/^....$/) { 3.3 }.at_least.once.ordered(:queries)
+       rec.finish.once.ordered
      end
      # test code here using +db+.
    end
@@ -818,12 +873,15 @@ ignoring.
      # test code here
    end
 
-<b>Note:</b> The original +mock_ignore_missing+ is now an alias for
-+should_ignore_missing+.
+When +should_ignore_missing+ is enabled, ignored missing methods will
+return an undefined object.  Any operation on the undefined object
+will return the undefined object.
 
 === Mock just one method on an existing object
 
-The Portfolio class calculate the value of a set of stocks by talking to a quote service via a web service.  Since we don't want to use a real web service in our unit tests, we will mock the quote service.
+The Portfolio class calculate the value of a set of stocks by talking
+to a quote service via a web service.  Since we don't want to use a
+real web service in our unit tests, we will mock the quote service.
 
   def test_portfolio_value
     flexmock(QuoteService).new_instances do |m|

@@ -44,7 +44,6 @@ class FlexMock
       @order_number = nil
       @global_order_number = nil
       @globally = nil
-      @by_default = false
     end
 
     def to_s
@@ -198,6 +197,34 @@ class FlexMock
     end
     alias :returns :and_return  # :nodoc:
 
+    # Declare that the method returns and undefined object
+    # (FlexMock.undefined).  Since the undefined object will always
+    # return itself for any message sent to it, it is a good "I don't
+    # care" value to return for methods that are commonly used in
+    # method chains.
+    #
+    # For example, if m.foo returns the undefined object, then:
+    #
+    #    m.foo.bar.baz
+    #
+    # returns the undefined object without throwing an exception.
+    #
+    def and_return_undefined
+      and_return(FlexMock.undefined)
+    end
+    alias :returns_undefined :and_return_undefined
+
+    # :call-seq:
+    #   and_yield(value1, value2, ...)
+    #
+    # Declare that the mocked method is expected to be given a block
+    # and that the block will be called with the values supplied to
+    # yield.  If the mock is called multiple times, mulitple
+    # <tt>and_yield</tt> declarations can be used to supply different
+    # values on each call.
+    #
+    # An error is raised if the mocked method is not called with a
+    # block.
     def and_yield(*yield_values)
       @yield_queue << yield_values
     end
@@ -360,7 +387,7 @@ class FlexMock
 
     def by_default
       expectations = mock.flexmock_expectations_for(@sym)
-      expectations.make_last_expectation_a_default if expectations
+      expectations.defaultify_expectation(self) if expectations
     end
 
   end

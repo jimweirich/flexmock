@@ -184,7 +184,7 @@ class TestFlexMock < Test::Unit::TestCase
     @mock.mock_ignore_missing
     method_proc = @mock.method(:plugh)
     assert_not_nil method_proc
-    method_proc.call
+    assert_equal FlexMock.undefined, method_proc.call
   end
 end
 

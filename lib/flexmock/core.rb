@@ -9,6 +9,7 @@
 # above copyright notice is included.
 #+++
 
+require 'flexmock/errors'
 require 'flexmock/composite'
 require 'flexmock/ordering'
 
@@ -44,13 +45,6 @@ require 'flexmock/ordering'
 #
 class FlexMock
   include Ordering
-
-  # Error raised when flexmock is used incorrectly.
-  class UsageError < RuntimeError
-  end
-
-  class MockError < RuntimeError
-  end
 
   attr_reader :flexmock_name
   attr_accessor :flexmock_container
@@ -94,31 +88,22 @@ class FlexMock
   end
   alias mock_ignore_missing should_ignore_missing
 
-  def should_respond_with_bottom
-    if @expectations[nil].nil?
-      exp = Expectation.new(self, nil)
-      exp.and_return(FlexMock::BOTTOM)
-      director = ExpectationDirector.new(nil)
-      director << exp
-      @expectations[nil] = director
-    end
-    self
-  end
-
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
     flexmock_wrap do
-      if handler = (@expectations[sym] || @expectations[nil])
+      if handler = @expectations[sym]
         args << block  if block_given?
         handler.call(*args)
+      elsif @ignore_missing
+        FlexMock.undefined
       else
-        super(sym, *args, &block)  unless @ignore_missing
+        super(sym, *args, &block)
       end
     end
   end
 
   # Save the original definition of respond_to? for use a bit later.
-  alias mock_respond_to? respond_to?
+  alias flexmock_respond_to? respond_to?
 
   # Override the built-in respond_to? to include the mocked methods.
   def respond_to?(sym)
@@ -126,13 +111,13 @@ class FlexMock
   end
 
   # Find the mock expectation for method sym and arguments.
-  def flexmock_find_expectation(method_name, *args)
+  def flexmock_find_expectation(method_name, *args) # :nodoc:
     exp = @expectations[method_name]
     exp ? exp.find_expectation(*args) : nil
   end
 
   # Return the expectation director for a method name.
-  def flexmock_expectations_for(method_name)
+  def flexmock_expectations_for(method_name) # :nodoc:
     @expectations[method_name]
   end
 
@@ -141,7 +126,7 @@ class FlexMock
     @expectations[sym] || super
   rescue NameError => ex
     if @ignore_missing
-      proc { }
+      proc { FlexMock.undefined }
     else
       raise ex
     end
@@ -171,7 +156,7 @@ class FlexMock
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym)
       @expectations[sym] << result
-      override_existing_method(sym) if mock_respond_to?(sym)
+      override_existing_method(sym) if flexmock_respond_to?(sym)
       result
     end
   end

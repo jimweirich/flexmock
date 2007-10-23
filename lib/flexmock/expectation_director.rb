@@ -10,9 +10,9 @@
 #+++
 
 require 'flexmock/noop'
+require 'flexmock/errors'
 
 class FlexMock
-
   ####################################################################
   # The expectation director is responsible for routing calls to the
   # correct expectations for a given argument list.
@@ -42,35 +42,42 @@ class FlexMock
       exp.verify_call(*args)
     end
 
-    # Find an expectation matching the given arguments.
-    def find_expectation(*args)
-      find_expectation_in(@expectations, *args) ||
-        find_expectation_in(@defaults, *args)
-    end
-
-    def find_expectation_in(expectations, *args)
-      expectations.find { |e| e.match_args(args) && e.eligible? } ||
-        expectations.find { |e| e.match_args(args) }
-    end
-    
     # Append an expectation to this director.
     def <<(expectation)
       @expectations << expectation
     end
 
-    # Move the last defined expectation a default.
-    def make_last_expectation_a_default
-      exp = @expectations.pop
-      @defaults << exp
+    # Find an expectation matching the given arguments.
+    def find_expectation(*args) # :nodoc:
+      find_expectation_in(@expectations, *args) ||
+        find_expectation_in(@defaults, *args)
     end
 
     # Do the post test verification for this directory.  Check all the
     # expectations.  Only check the default expecatations if there are
     # no non-default expectations.
-    def flexmock_verify
+    def flexmock_verify         # :nodoc:
       (@expectations.empty? ? @defaults : @expectations).each do |exp|
         exp.flexmock_verify
       end
+    end
+
+    # Move the last defined expectation a default.
+    def defaultify_expectation(exp) # :nodoc:
+      last_exp = @expectations.last
+      if last_exp != exp
+        fail UsageError,
+          "Cannot make a previously defined expection into a default"
+      end
+      @expectations.pop
+      @defaults << exp
+    end
+
+    private
+
+    def find_expectation_in(expectations, *args)
+      expectations.find { |e| e.match_args(args) && e.eligible? } ||
+        expectations.find { |e| e.match_args(args) }
     end
   end
 
