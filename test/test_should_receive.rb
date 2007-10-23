@@ -11,11 +11,11 @@
 
 require 'test/unit'
 require 'flexmock'
+require 'test/asserts'
 
 def mock_top_level_function
   :mtlf
 end
-
 
 module Kernel
   def mock_kernel_function
@@ -865,6 +865,56 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_equal :mkf, m2.mock_kernel_function
   end
 
+  def test_expectations_can_by_marked_as_default
+    m = flexmock("m")
+    m.should_receive(:foo).and_return(:bar).by_default
+    assert_equal :bar, m.foo
+  end
+    
+  def test_default_expectations_are_search_in_the_proper_order
+    m = flexmock("m")
+    m.should_receive(:foo).with(Integer).once.and_return(:first).by_default
+    m.should_receive(:foo).with(1).and_return(:second).by_default
+    assert_equal :first, m.foo(1)
+    assert_equal :second, m.foo(1)
+  end
+    
+  def test_expectations_with_count_constraints_can_by_marked_as_default
+    m = flexmock("m")
+    m.should_receive(:foo).and_return(:bar).once.by_default
+    assert_raise Test::Unit::AssertionFailedError do
+      flexmock_teardown
+    end
+  end
+
+  def test_default_expectations_are_overridden_by_later_expectations
+    m = flexmock("m")
+    m.should_receive(:foo).and_return(:bar).once.by_default
+    m.should_receive(:foo).and_return(:bar).twice
+    m.foo
+    m.foo
+  end
+
+  def test_ordered_default_expectations_can_be_specified
+    m = flexmock("m")
+    m.should_receive(:foo).ordered.by_default
+    m.should_receive(:bar).ordered.by_default
+    m.bar
+    assert_raise Test::Unit::AssertionFailedError do m.foo end
+  end
+
+  def test_ordered_default_expectations_can_be_overridden
+    m = flexmock("m")
+    m.should_receive(:foo).ordered.by_default
+    m.should_receive(:bar).ordered.by_default
+
+    m.should_receive(:bar).ordered
+    m.should_receive(:foo).ordered
+
+    m.bar
+    m.foo
+  end
+
   def test_can_mock_operators
     assert_operator(:[]) { |m| m[1] }
     assert_operator(:[]=) { |m| m[1] = :value }
@@ -876,7 +926,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_operator(:*) { |m| m * :x }
     assert_operator(:"/") { |m| m / :x }
     assert_operator(:%) { |m| m % :x }
-    assert_operator(:~) { |m| ~m }
+    assert_operator(:~) { |m| ~m }  # )
     assert_operator(:&) { |m| m & :x }
     assert_operator(:|) { |m| m | :x }
     assert_operator(:^) { |m| m ^ :x }
@@ -891,7 +941,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_operator(:<=>) { |m| m <=> :x }
     assert_operator(:=~) { |m| m =~ :x }
   end
-
+    
   private
 
   def assert_operator(op, &block)

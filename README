@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.7.1
+Version :: 0.7.2.1
 
 = Links
 
@@ -404,6 +404,16 @@ object. See theFlexMock::Expectation for more details.
   objects in the same container (i.e. same test).  All the options of
   the per-mock ordering are available in the globally ordered method
   calls.
+
+* <b>by_default</b>
+
+  Marks the expectation as a default.  Default expectations are
+  removed whenever a a non-default expectation is added with the same
+  method name.
+
+  Default expectations allow you to setup a set of default behaviors
+  in the setup method of a test, and then override only what you need
+  to in the body of the test.
 
 * <b>mock</b>
 

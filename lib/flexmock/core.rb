@@ -94,10 +94,21 @@ class FlexMock
   end
   alias mock_ignore_missing should_ignore_missing
 
+  def should_respond_with_bottom
+    if @expectations[nil].nil?
+      exp = Expectation.new(self, nil)
+      exp.and_return(FlexMock::BOTTOM)
+      director = ExpectationDirector.new(nil)
+      director << exp
+      @expectations[nil] = director
+    end
+    self
+  end
+
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
     flexmock_wrap do
-      if handler = @expectations[sym]
+      if handler = (@expectations[sym] || @expectations[nil])
         args << block  if block_given?
         handler.call(*args)
       else
@@ -115,9 +126,14 @@ class FlexMock
   end
 
   # Find the mock expectation for method sym and arguments.
-  def flexmock_find_expectation(sym, *args)
-    exp = @expectations[sym]
+  def flexmock_find_expectation(method_name, *args)
+    exp = @expectations[method_name]
     exp ? exp.find_expectation(*args) : nil
+  end
+
+  # Return the expectation director for a method name.
+  def flexmock_expectations_for(method_name)
+    @expectations[method_name]
   end
 
   # Override the built-in +method+ to include the mocked methods.

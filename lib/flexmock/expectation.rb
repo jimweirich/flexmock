@@ -44,6 +44,7 @@ class FlexMock
       @order_number = nil
       @global_order_number = nil
       @globally = nil
+      @by_default = false
     end
 
     def to_s
@@ -99,6 +100,11 @@ class FlexMock
     def eligible?
       @count_validators.all? { |v| v.eligible?(@actual_count) }
     end
+
+    # Is this expectation constrained by any call counts?
+    def call_count_constrained?
+      ! @count_validators.empty?
+    end      
 
     # Validate that the order
     def validate_order
@@ -351,6 +357,11 @@ class FlexMock
       result
     end
     private :define_ordered
+
+    def by_default
+      expectations = mock.flexmock_expectations_for(@sym)
+      expectations.make_last_expectation_a_default if expectations
+    end
 
   end
 

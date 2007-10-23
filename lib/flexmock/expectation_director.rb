@@ -23,6 +23,7 @@ class FlexMock
     def initialize(sym)
       @sym = sym
       @expectations = []
+      @defaults = []
       @expected_order = nil
     end
 
@@ -43,8 +44,13 @@ class FlexMock
 
     # Find an expectation matching the given arguments.
     def find_expectation(*args)
-      @expectations.find { |e| e.match_args(args) && e.eligible? } ||
-        @expectations.find { |e| e.match_args(args) }
+      find_expectation_in(@expectations, *args) ||
+        find_expectation_in(@defaults, *args)
+    end
+
+    def find_expectation_in(expectations, *args)
+      expectations.find { |e| e.match_args(args) && e.eligible? } ||
+        expectations.find { |e| e.match_args(args) }
     end
     
     # Append an expectation to this director.
@@ -52,10 +58,17 @@ class FlexMock
       @expectations << expectation
     end
 
+    # Move the last defined expectation a default.
+    def make_last_expectation_a_default
+      exp = @expectations.pop
+      @defaults << exp
+    end
+
     # Do the post test verification for this directory.  Check all the
-    # expectations.
+    # expectations.  Only check the default expecatations if there are
+    # no non-default expectations.
     def flexmock_verify
-      @expectations.each do |exp|
+      (@expectations.empty? ? @defaults : @expectations).each do |exp|
         exp.flexmock_verify
       end
     end
