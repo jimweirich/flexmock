@@ -1,5 +1,10 @@
 = Changes for FlexMock
 
+== Version pre-0.7.3
+
+* Added by_default
+* Added undefined behavior
+
 == Version 0.7.2
 
 * Changed initial model Id to 10000.
