@@ -88,6 +88,11 @@ class FlexMock
   end
   alias mock_ignore_missing should_ignore_missing
 
+  def by_default
+    @last_expectation.by_default
+    self
+  end
+
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
     flexmock_wrap do
@@ -106,7 +111,7 @@ class FlexMock
   alias flexmock_respond_to? respond_to?
 
   # Override the built-in respond_to? to include the mocked methods.
-  def respond_to?(sym)
+  def respond_to?(sym, *args)
     super || (@expectations[sym] ? true : @ignore_missing)
   end
 
@@ -152,13 +157,14 @@ class FlexMock
   # See Expectation for a list of declarators that can be used.
   #
   def should_receive(*args)
-    ContainerHelper.parse_should_args(self, args) do |sym|
+    @last_expectation = ContainerHelper.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym)
       @expectations[sym] << result
       override_existing_method(sym) if flexmock_respond_to?(sym)
       result
     end
+    @last_expectation
   end
   
   # Declare that the mock object should expect methods by providing a

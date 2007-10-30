@@ -25,6 +25,18 @@ class TestStubbing < Test::Unit::TestCase
     end
   end
 
+  class DogPlus < Dog
+    def should_receive
+      :dog_should
+    end
+    def new_instances
+      :dog_new
+    end
+    def by_default
+      :dog_by_default
+    end
+  end
+
   def test_stub_command_add_behavior_to_arbitrary_objects
     obj = Object.new
     flexmock(obj).should_receive(:hi).once.and_return(:stub_hi)
@@ -287,6 +299,13 @@ class TestStubbing < Test::Unit::TestCase
   def test_safe_partial_mocks_are_actually_mocked
     dog = flexmock(:safe, Dog.new) { |m| m.should_receive(:bark => :mocked) }
     assert_equal :mocked, dog.bark
+  end
+
+  def test_should_receive_does_not_override_preexisting_def
+    dog = flexmock(DogPlus.new)
+    assert_equal :dog_should,     dog.should_receive
+    assert_equal :dog_new,        dog.new_instances
+    assert_equal :dog_by_default, dog.by_default
   end
 
   class Liar

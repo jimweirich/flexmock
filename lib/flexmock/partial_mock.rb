@@ -44,7 +44,9 @@ class FlexMock
       @methods_proxied = []
       unless safe_mode
         MOCK_METHODS.each do |sym|
-          add_mock_method(@obj, sym)
+          unless @obj.respond_to?(sym)
+            add_mock_method(@obj, sym)
+          end
         end
       end
     end

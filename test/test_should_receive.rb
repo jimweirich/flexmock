@@ -935,6 +935,23 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m.foo
   end
 
+  def test_by_default_works_at_mock_level
+    m = flexmock("m",
+      :foo => :bar,
+      :pooh => :bear,
+      :who  => :dey).by_default
+    m.should_receive(:pooh => :winnie)
+    assert_equal :bar, m.foo
+    assert_equal :dey, m.who
+    assert_equal :winnie, m.pooh
+  end
+
+  def test_by_default_at_mock_level_does_nothing_with_no_expectations
+    assert_nothing_raised do
+      flexmock("m").by_default
+    end
+  end
+
   def test_partial_mocks_can_have_default_expectations
     obj = Object.new
     flexmock(obj).should_receive(:foo).and_return(:bar).by_default
@@ -958,6 +975,17 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_match %r(previously defined), ex.message
     assert_equal :first, mock.foo
     assert_equal :second, mock.foo
+  end
+
+  def test_mocks_can_handle_multi_parameter_respond_tos
+    mock = flexmock("a mock", :foo => :bar)
+    assert mock.respond_to?(:foo)
+    assert mock.respond_to?(:foo, true)
+    assert mock.respond_to?(:foo, false)
+
+    assert ! mock.respond_to?(:phoo)
+    assert ! mock.respond_to?(:phoo, false)
+    assert ! mock.respond_to?(:phoo, true)
   end
 
   def test_can_mock_operators

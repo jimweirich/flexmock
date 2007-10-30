@@ -4,6 +4,10 @@
 
 * Added by_default
 * Added undefined behavior
+* Mock methods are added to partial mocks only if they are not
+  previously defined.  This should reduce the need for safe mode.
+* respond_to? on mocks now accepts multiple arguments.  This eases
+  mocking in rails a little bit.
 
 == Version 0.7.2
 
