@@ -1,6 +1,6 @@
 = Changes for FlexMock
 
-== Version pre-0.7.3
+== Version 0.8.0
 
 * Added by_default
 * Added undefined behavior
@@ -8,6 +8,7 @@
   previously defined.  This should reduce the need for safe mode.
 * respond_to? on mocks now accepts multiple arguments.  This eases
   mocking in rails a little bit.
+* Added experimental view mocking for rails.
 
 == Version 0.7.2
 

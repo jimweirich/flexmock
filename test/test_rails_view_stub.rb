@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'test/unit'
-require 'flexmock/rails/view_mock'
+require 'flexmock/rails/view_mocking'
 
 ######################################################################
 class TestRailsViewStub < Test::Unit::TestCase
