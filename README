@@ -1,4 +1,4 @@
-= Flex Mock -- Making Mock Easy
+examples= Flex Mock -- Making Mock Easy
 
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
@@ -67,7 +67,7 @@ Your test case will look something like this:
 
   require 'flexmock/test_unit'
 
-  class TestDog < Test::Case::TestCase
+  class TestDog < Test::Unit::TestCase
     def test_dog_wags
       tail_mock = flexmock(:wag => :happy)
       assert_equal :happy, tail_mock.wag
@@ -550,11 +550,11 @@ Here's the test code:
     # Woofer and return a mock woofer.
     def setup
       @dog = Dog.new
-      flexmock(dog, :bark => :grrr)
+      flexmock(@dog, :bark => :grrr)
     end
 
     def test_dog
-      assert_equal :grrrr, @dog.bark   # Mocked Method
+      assert_equal :grrr, @dog.bark   # Mocked Method
       assert_equal :happy, @dog.wag    # Normal Method
     end
   end
@@ -658,7 +658,12 @@ override the default in the given test.
 
   def test_something_where_bark_must_be_called_once
     @mock_dog.should_receive(:bark => "woof").once
-    ...
+
+    # At this point, the default for :bark is ignored, 
+    # and the "woof" value will be returned.
+
+    # However, the default for :tail (which returns :a_tail)
+    # is still active.
   end 
 
 By setting defaults, your individual tests don't have to concern
@@ -741,11 +746,12 @@ beforehand.
 
    require 'flexmock/test_unit'
    
-   class TestSimple < Test::Unit::TestCase
-     def test_simple_mock
-       m = flexmock(:pi => 3.1416, :e => 2.71)
-       assert_equal 3.1416, m.pi
-       assert_equal 2.71, m.e
+   class TestUndefined < Test::Unit::TestCase
+     def test_undefined_values
+       m = flexmock("mock")
+       m.should_receive(:divide_by).with(0).
+         and_return_undefined
+       assert_equal FlexMock.undefined, m.divide_by(0)
      end
    end
 
