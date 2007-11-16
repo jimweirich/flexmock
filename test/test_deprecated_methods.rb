@@ -52,7 +52,7 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_handle_missing_method
-    expected_error = (VERSION >= "1.8.0") ? NoMethodError : NameError
+    expected_error = (RUBY_VERSION >= "1.8.0") ? NoMethodError : NameError
     ex = assert_raises(expected_error) {
       @mock.not_defined
     }

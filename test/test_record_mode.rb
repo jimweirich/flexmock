@@ -40,6 +40,9 @@ class TestRecordMode < Test::Unit::TestCase
     FlexMock.use("mock") do |mock|
       mock.should_expect do |r|
         answers = [1, 2]
+        # HACK: The following lambda is needed in Ruby 1.9 to cause
+        # the answers to be properly bound in the following block.
+        lambda { }
         r.f { answers.shift }
       end
       assert_equal 1, mock.f

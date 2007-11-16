@@ -213,6 +213,9 @@ class FlexMock
         :new_record? => false,
         :class => model_class,
         :errors => container.flexmock("errors", :count => 0))
+      # HACK: Ruby 1.9 needs the following lambda so that model_class
+      # is correctly bound below.
+      lambda { }
       mock.should_receive(:is_a?).with(any).and_return { |other|
         other == model_class
       }

@@ -117,9 +117,12 @@ class FlexMock
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
       allocators = [:new, :allocate] if allocators.empty?
       result = ExpectationRecorder.new
-      allocators.each do |m|
-        self.should_receive(m).and_return { |*args|
-          new_obj = invoke_original(m, args)
+      allocators.each do |allocate_method|
+        # HACK: Without the following lambda, Ruby 1.9 will not bind
+        # the allocate_method parameter correctly.
+        lambda { } 
+        self.should_receive(allocate_method).and_return { |*args|
+          new_obj = invoke_original(allocate_method, args)
           mock = flexmock_container.flexmock(new_obj)
           block.call(mock) if block_given?
           result.apply(mock)
