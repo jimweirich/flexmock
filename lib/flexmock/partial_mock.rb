@@ -104,18 +104,20 @@ class FlexMock
     # new_instances is a short cut method for overriding the behavior of any
     # new instances created via a mocked class object.
     #
-    # By default, new_instances will mock the behaviour of the :new and
-    # :allocate methods.  If you wish to mock a different set of class
-    # methods, just pass a list of symbols to as arguments.
+    # By default, new_instances will mock the behaviour of the :new
+    # method.  If you wish to mock a different set of class methods,
+    # just pass a list of symbols to as arguments.  (previous versions
+    # also mocked :allocate by default.  If you need :allocate to be
+    # mocked, just request it explicitly).
     #
-    # For example, to stub only objects created by :make (and not :new
-    # or :allocate), use:
+    # For example, to stub only objects created by :make (and not
+    # :new), use:
     #
     #    flexmock(ClassName).new_instances(:make).should_receive(...)
     #
     def new_instances(*allocators, &block)
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
-      allocators = [:new, :allocate] if allocators.empty?
+      allocators = [:new] if allocators.empty?
       result = ExpectationRecorder.new
       allocators.each do |allocate_method|
         # HACK: Without the following lambda, Ruby 1.9 will not bind

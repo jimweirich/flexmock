@@ -111,8 +111,16 @@ class TestNewInstances < Test::Unit::TestCase
     assert_match(/new_instances/, ex.message)
   end
   
-  def test_can_stub_objects_created_with_allocate_instead_of_new
+  def test_does_not_by_default_stub_objects_created_with_allocate
     flexstub(Dog).new_instances do |obj|
+      obj.should_receive(:bark).and_return(:whimper)
+    end
+    m = Dog.allocate
+    assert_equal :woof,  m.bark
+  end
+  
+  def test_can_explicitly_stub_objects_created_with_allocate
+    flexstub(Dog).new_instances(:allocate) do |obj|
       obj.should_receive(:bark).and_return(:whimper)
     end
     m = Dog.allocate
@@ -142,15 +150,6 @@ class TestNewInstances < Test::Unit::TestCase
     assert_equal 1, counter
   end
 
-  def test_stubbing_new_and_allocate_doesnt_double_stub_objects_on_allocate
-    counter = 0
-    flexstub(Dog).new_instances do |obj|
-      counter += 1
-    end
-    Dog.allocate
-    assert_equal 1, counter
-  end
-  
   # Current behavior does not install stubs into the block passed to new. 
   # This is rather difficult to achieve, although it would be nice.  For the
   # moment, we assure that they are not stubbed, but I am willing to change 

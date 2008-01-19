@@ -85,7 +85,7 @@ class FlexMock
       unless @yield_queue.empty?
         block = args.last
         values = (@yield_queue.size == 1) ? @yield_queue.first : @yield_queue.shift
-        if block.respond_to?(:call) 
+        if block && block.respond_to?(:call) 
           @return_value = block.call(*values)
         else
           fail MockError, "No Block given to mock with 'and_yield' expectation"
