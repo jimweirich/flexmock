@@ -1,5 +1,11 @@
 = Changes for FlexMock
 
+== Pre-Version 0.8.1
+
+* Added Joe O'Brien's patch to allow view stubbing in Rails 2.0
+* Added Evan Phoenix's patch to remove allocate from default
+  allocators in new_instances (for Rubinius compatibility).
+
 == Version 0.8.0
 
 * Added by_default
