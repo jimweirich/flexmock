@@ -25,8 +25,10 @@ class FlexMock
     def should_render_view(template_name=nil)
       if rails_version <= '1.2.4'
         should_render_view_prior_version_124(template_name)
-      else
+      elsif rails_version <= '2.0.0'
         should_render_view_after_version_124(template_name)
+      else
+        should_render_view_after_version_202(template_name)
       end
     end
 
@@ -73,6 +75,26 @@ class FlexMock
       # to 2.0.  The important thing is that it is checked at least once.
       flexmock(@response).should_receive(:template).and_return(view).
         at_least.once
+    end
+    
+    # This version of should_render_view will work with versions of
+    # Rails at Version 2.0.2 and after
+    def should_render_view_after_version_202(template_name)
+      viewmock = flexmock("ViewMock")
+      viewmock.should_receive(
+        :assigns => {},
+        :pick_template_extension => ".html",
+        :template_format =>nil,
+        :view_paths => nil,
+        :file_exists? => true,
+        :first_render => "")
+      if template_name
+        viewmock.should_receive(:render_file).with(/\/#{template_name}$/, any, any).
+          and_return(nil).once
+      else
+        viewmock.should_receive(:render_file).and_return(nil)
+      end
+      flexmock(ActionView::Base).should_receive(:new).and_return(viewmock)
     end
     
   end
