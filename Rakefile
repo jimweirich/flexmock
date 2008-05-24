@@ -71,7 +71,7 @@ begin
   
   Rcov::RcovTask.new do |t|
     t.libs << "test"
-    t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '--text-report']
+    t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '-x/Lib*', '--text-report', '--sort', 'coverage']
     t.test_files = FileList['test/test*.rb']
     t.verbose = true
   end
