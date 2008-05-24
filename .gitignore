@@ -1,3 +1,6 @@
 *~
 *.bak
 pkg
+.DS_Store
+coverage
+html
