@@ -29,9 +29,9 @@ module ViewTests
     end
   end
 
-  def test_view_mocks_with_expectation_wand_multiple_templates
+  def test_view_mocks_with_expectation_and_multiple_templates
     should_render_view("new")
-    render "controller/edit", "controller/new", "controller/show"
+    render "controller/edit", "controller/show", "controller/new"
   end
 
   private
@@ -91,4 +91,39 @@ class TestRailsViewStubForVersionsAfter_1_2_4 < Test::Unit::TestCase
     end
   end
 
+end
+
+######################################################################
+class TestRailsViewStubForVersionsAfter_2_0_2 < Test::Unit::TestCase
+  include FlexMock::TestCase
+  include ViewTests
+
+  def setup
+    @controller_class = flexmock("controller class")
+    @controller = flexmock("controller", :class => @controller_class)
+    @response = flexmock("Response")
+    pretend_to_be_rails_version("2.0.2")
+  end
+
+  # Simulate Rails rendering after Rails version 2.0.2
+  def render(*names)
+    v = ActionView::Base.new
+    v.assigns(:x => :y)
+    v.template_format
+    v.view_paths
+    v.pick_template_extension
+    names.each do |name|
+      v.file_exists?(name)
+    end
+    v.render_file(names.last, nil, nil)
+  end
+
+end
+
+######################################################################
+# Test Helper Classes
+
+module ActionView
+  class Base
+  end
 end
