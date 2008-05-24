@@ -1,9 +1,9 @@
-examples= Flex Mock -- Making Mock Easy
+= Flex Mock -- Making Mock Easy
 
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.8.0.4
+Version :: 0.8.2
 
 = Links
 
@@ -90,8 +90,8 @@ will be able to say:
     config.mock_with :flexmock
   end
 
-  context "Using FlexMock with RSpec" do
-    specify "should be able to create a mock" do
+  describe "Using FlexMock with RSpec" do
+    it "should be able to create a mock" do
       m = flexmock(:foo => :bar)
       m.foo.should === :bar
     end
