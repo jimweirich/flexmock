@@ -1,7 +1,12 @@
 = Changes for FlexMock
 
-== Pre-Version 0.8.1
+== Version 0.8.2
 
+* Added workaround for compatibility issues with RSpec on Rails.
+
+== Version 0.8.1
+
+* Additional fix for Rails 2.0.2
 * Added Joe O'Brien's patch to allow view stubbing in Rails 2.0
 * Added Evan Phoenix's patch to remove allocate from default
   allocators in new_instances (for Rubinius compatibility).
