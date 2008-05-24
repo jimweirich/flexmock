@@ -91,8 +91,9 @@ class FlexMock
       if template_name
         viewmock.should_receive(:render_file).with(/\/#{template_name}$/, any, any).
           and_return(nil).once
-      else
         viewmock.should_receive(:render_file).and_return(nil)
+      else
+        viewmock.should_receive(:render_file).at_least.once.and_return(nil)
       end
       flexmock(ActionView::Base).should_receive(:new).and_return(viewmock)
     end
