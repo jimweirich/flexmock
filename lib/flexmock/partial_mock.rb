@@ -43,6 +43,7 @@ class FlexMock
       @method_definitions = {}
       @methods_proxied = []
       unless safe_mode
+        add_mock_method(@obj, :should_receive)
         MOCK_METHODS.each do |sym|
           unless @obj.respond_to?(sym)
             add_mock_method(@obj, sym)

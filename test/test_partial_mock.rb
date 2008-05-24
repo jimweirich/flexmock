@@ -303,9 +303,13 @@ class TestStubbing < Test::Unit::TestCase
 
   def test_should_receive_does_not_override_preexisting_def
     dog = flexmock(DogPlus.new)
-    assert_equal :dog_should,     dog.should_receive
     assert_equal :dog_new,        dog.new_instances
     assert_equal :dog_by_default, dog.by_default
+  end
+
+  def test_should_receive_does_override_should_receive_preexisting_def
+    dog = flexmock(DogPlus.new)
+    assert_kind_of FlexMock::CompositeExpectation, dog.should_receive(:x)
   end
 
   class Liar
@@ -353,5 +357,5 @@ class TestStubbing < Test::Unit::TestCase
     obj = ValueObject.new(:bar)
     flexmock(obj, :some_method => :some_method)
   end
-  
+
 end
