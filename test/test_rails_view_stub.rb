@@ -121,6 +121,24 @@ class TestRailsViewStubForVersionsAfter_2_0_2 < Test::Unit::TestCase
 end
 
 ######################################################################
+class FlexMock
+  module MockContainer
+    module Rails
+      module VERSION
+        STRING = 1
+      end
+    end
+  end
+end
+
+class TestRailsVersion < Test::Unit::TestCase
+  include FlexMock::TestCase
+  def test_rails_version_to_get_code_coverage
+    rails_version
+  end
+end
+
+######################################################################
 # Test Helper Classes
 
 module ActionView
