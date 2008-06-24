@@ -120,7 +120,6 @@ class TestRailsViewStubForVersionsAfter_2_0_2 < Test::Unit::TestCase
 
 end
 
-######################################################################
 class FlexMock
   module MockContainer
     module Rails
@@ -138,7 +137,6 @@ class TestRailsVersion < Test::Unit::TestCase
   end
 end
 
-######################################################################
 # Test Helper Classes
 
 module ActionView
