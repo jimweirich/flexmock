@@ -1,5 +1,10 @@
 = Changes for FlexMock
 
+== Version 0.8.3
+
+* Fixed a bug where the by_default option was not completely honored
+  in some edge cases.
+
 == Version 0.8.2
 
 * Added workaround for compatibility issues with RSpec on Rails.
