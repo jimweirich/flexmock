@@ -915,6 +915,17 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m.foo
   end
 
+  def test_default_expectations_can_be_changed_by_later_expectations
+    m = flexmock("m")
+    m.should_receive(:foo).with(1).and_return(:bar).once.by_default
+    m.should_receive(:foo).with(2).and_return(:baz).once
+    assert_raise Test::Unit::AssertionFailedError do
+      # This expectation should be hidded by the non-result
+      m.foo(1)
+    end
+    m.foo(2)
+  end
+
   def test_ordered_default_expectations_can_be_specified
     m = flexmock("m")
     m.should_receive(:foo).ordered.by_default

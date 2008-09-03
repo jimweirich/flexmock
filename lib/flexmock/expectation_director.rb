@@ -49,8 +49,11 @@ class FlexMock
 
     # Find an expectation matching the given arguments.
     def find_expectation(*args) # :nodoc:
-      find_expectation_in(@expectations, *args) ||
+      if @expectations.empty?
         find_expectation_in(@defaults, *args)
+      else
+        find_expectation_in(@expectations, *args)
+      end
     end
 
     # Do the post test verification for this directory.  Check all the
