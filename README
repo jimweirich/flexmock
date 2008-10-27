@@ -470,12 +470,16 @@ The following rules are used for argument matching:
       with(eq(Integer))             will match       f(Integer)
       with(eq(Integer))             will NOT match   f(3)
 
-  Note: If you do not use the FlexMock::TestCase Test Unit integration
-  module, or the FlexMock::ArgumentTypes module, you will have to
-  fully qualify the +eq+ method:
+  <b>Note:</b> If you do not use the FlexMock::TestCase Test Unit
+  integration module, or the FlexMock::ArgumentTypes module, you will
+  have to fully qualify the +eq+ method.  This is true of all the
+  special argument matches (+eq+, +on+, +any+, +hsh+ and +ducktype+).
 
-      with(FlexMock.eq(Integer))    will match       f(Integer)
-      with(FlexMock.eq(Integer))    will NOT match   f(3)
+      with(FlexMock.eq(Integer))
+      with(FlexMock.on { code })
+      with(FlexMock.any)
+      with(FlexMock.hsh(:tag => 3))
+      with(FlexMock.ducktype(:wag => "dog"))
 
 * If you wish to match a hash on _some_ of its values, the
   FlexMock.hsh(...) method will work.  Only specify the hash values
@@ -483,11 +487,12 @@ The following rules are used for argument matching:
 
       with(hsh(:run => true))  will match    f(:run => true, :stop => false)
 
-* If you wish to match any object that responds to a set of methods,
-  use the FlexMock.ducktype method.
+* If you wish to match any object that responds to a certain set of
+  methods, use the FlexMock.ducktype method.
 
-      with(ducktype(:to_str))  will match   f("string")
-      with(ducktype(:to_str))  will match   f(object_implementing_to_str)
+      with(ducktype(:to_str))     will match   f("string")
+      with(ducktype(:wag, :bark)) will match   f(dog)
+                                  (assuming dog implements wag and bark)
 
 * If you wish to match _anything_, then use the <tt>FlexMock.any</tt>
   method in the with argument list.
