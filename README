@@ -477,6 +477,18 @@ The following rules are used for argument matching:
       with(FlexMock.eq(Integer))    will match       f(Integer)
       with(FlexMock.eq(Integer))    will NOT match   f(3)
 
+* If you wish to match a hash on _some_ of its values, the
+  FlexMock.hsh(...) method will work.  Only specify the hash values
+  you are interested in, the others will be ignored.
+
+      with(hsh(:run => true))  will match    f(:run => true, :stop => false)
+
+* If you wish to match any object that responds to a set of methods,
+  use the FlexMock.ducktype method.
+
+      with(ducktype(:to_str))  will match   f("string")
+      with(ducktype(:to_str))  will match   f(object_implementing_to_str)
+
 * If you wish to match _anything_, then use the <tt>FlexMock.any</tt>
   method in the with argument list.
 
