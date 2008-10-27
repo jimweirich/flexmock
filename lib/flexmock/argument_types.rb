@@ -36,6 +36,18 @@ class FlexMock
     def on(&block)
       ProcMatcher.new(&block)
     end
+
+    # Return an argument matcher that matches a hash with the given
+    # entries.
+    def hsh(hash)
+      HashMatcher.new(hash)
+    end
+
+    # Return an argument matcher that matches any object that
+    # implementes (i.e. responds to) the given method list.
+    def ducktype(*methods)
+      DuckMatcher.new(methods)
+    end
   end
   extend ArgumentTypes
 

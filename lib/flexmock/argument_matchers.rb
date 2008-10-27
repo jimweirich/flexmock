@@ -53,5 +53,34 @@ class FlexMock
     end
   end
   
+  ####################################################################
+  # Match only things where the block evaluates to true.
+  class HashMatcher
+    def initialize(hash)
+      @hash = hash
+    end
+    def ===(target)
+      @hash.all? { |k, v| target[k] == v }
+    end
+    def inspect
+      "hsh(#{@hash.inspect})"
+      "hsh(...)"
+    end
+  end
+  
+  ####################################################################
+  # Match only things where the block evaluates to true.
+  class DuckMatcher
+    def initialize(methods)
+      @methods = methods
+    end
+    def ===(target)
+      @methods.all? { |m| target.respond_to?(m) }
+    end
+    def inspect
+      "ducktype(#{@methods.map{|m| m.inspect}.join(',')})"
+    end
+  end
+  
   
 end

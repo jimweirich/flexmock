@@ -23,6 +23,14 @@ module Kernel
   end
 end
 
+# Used for testing
+class Cat
+  def purr
+  end
+  def meow
+  end
+end
+
 class TestFlexMockShoulds < Test::Unit::TestCase
   include FlexMock::TestCase
   include FlexMock::FailureAssertion
@@ -354,6 +362,38 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use('greeter') do |m|
       m.should_receive(:hi).with(FlexMock.eq(Object)).once
       m.hi(Object)
+    end
+  end
+
+  def test_with_ducktype_arg_matching
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(FlexMock.ducktype(:purr, :meow)).once
+      m.hi(Cat.new)
+    end
+  end
+
+  def test_with_ducktype_arg_matching_no_match
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(FlexMock.ducktype(:purr, :meow, :growl))
+      assert_failure {
+        m.hi(Cat.new)
+      }
+    end
+  end
+
+  def test_with_hash_matching
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(FlexMock.hsh(:a => 1, :b => 2)).once
+      m.hi(:a => 1, :b => 2, :c => 3)
+    end
+  end
+
+  def test_with_hash_non_matching
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(FlexMock.hsh(:a => 1, :b => 2))
+      assert_failure {
+        m.hi(:a => 1, :b => 4, :c => 3)
+      }
     end
   end
 
