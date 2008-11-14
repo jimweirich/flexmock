@@ -11,6 +11,7 @@
 
 require 'flexmock/noop'
 require 'flexmock/argument_types'
+require 'flexmock/ordering'
 
 class FlexMock
   
@@ -207,24 +208,28 @@ class FlexMock
     # models.
     def add_model_methods(mock, model_class, id)
       container = mock.flexmock_container
-      mock.should_receive(
-        :id => id,
-        :to_params => id.to_s,
-        :new_record? => false,
-        :class => model_class,
-        :errors => container.flexmock("errors", :count => 0))
+
+      mock_errors = container.flexmock("errors")
+      mock_errors.should_receive(:count).and_return(0).by_default
+
+      mock.should_receive(:id).and_return(id).by_default
+      mock.should_receive(:to_params).and_return(id.to_s).by_default
+      mock.should_receive(:new_record?).and_return(false).by_default
+      mock.should_receive(:class).and_return(model_class).by_default
+      mock.should_receive(:errors).and_return(mock_errors).by_default
+
       # HACK: Ruby 1.9 needs the following lambda so that model_class
       # is correctly bound below.
       lambda { }
       mock.should_receive(:is_a?).with(any).and_return { |other|
         other == model_class
-      }
+      }.by_default
       mock.should_receive(:instance_of?).with(any).and_return { |other|
         other == model_class
-      }
+      }.by_default
       mock.should_receive(:kind_of?).with(any).and_return { |other|
         model_class.ancestors.include?(other)
-      }
+      }.by_default
     end
 
     # Create a PartialMockProxy for the given object.  Use +name+ as
