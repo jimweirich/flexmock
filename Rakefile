@@ -145,7 +145,7 @@ else
 
     s.author = "Jim Weirich"
     s.email = "jim@weirichhouse.org"
-    s.homepage = "http://onestepback.org/software/flexmock"
+    s.homepage = "http://flexmock.rubyforge.org"
   end
 
   Rake::GemPackageTask.new(spec) do |pkg|
