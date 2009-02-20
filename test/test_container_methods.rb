@@ -23,7 +23,6 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
   end
   
   def test_mock_with_name
-    fail "OOPS"
     mock = flexmock("Danny")
     mock.should_receive(:xxx).with(1)
     ex = assert_raise(Test::Unit::AssertionFailedError) { mock.xxx }
