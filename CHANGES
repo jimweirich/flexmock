@@ -1,5 +1,9 @@
 = Changes for FlexMock
 
+== Version 0.8.4
+
+* Added support for rails 2.2.x in should_render_view.
+
 == Version 0.8.3
 
 * Fixed a bug where the by_default option was not completely honored
