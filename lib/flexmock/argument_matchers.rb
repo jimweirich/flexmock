@@ -64,7 +64,6 @@ class FlexMock
     end
     def inspect
       "hsh(#{@hash.inspect})"
-      "hsh(...)"
     end
   end
   
