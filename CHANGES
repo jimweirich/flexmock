@@ -1,5 +1,11 @@
 = Changes for FlexMock
 
+== Version 0.8.5
+
+* Fixed warning about a void context.
+* hsh() argument matcher now reports its matching constraints in error
+  messages.
+
 == Version 0.8.4
 
 * Added support for rails 2.2.x in should_render_view.
