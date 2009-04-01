@@ -43,6 +43,7 @@ class FlexMock
       view.should_receive(
         :assigns => {},
         :render_file => true,
+        :render_partial => true,
         :first_render => "dummy_template"
         )
       if template_name
@@ -63,6 +64,7 @@ class FlexMock
       view.should_receive(
         :assigns => {},
         :render_file => true,
+        :render_partial => true,
         :template_format => :dummy_format,
         :view_paths => :dummy_view_paths,
         :pick_template_extension => :dummy_extension
