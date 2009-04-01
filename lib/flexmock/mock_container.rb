@@ -211,6 +211,7 @@ class FlexMock
 
       mock_errors = container.flexmock("errors")
       mock_errors.should_receive(:count).and_return(0).by_default
+      mock_errors.should_receive(:full_messages).and_return([]).by_default
 
       mock.should_receive(:id).and_return(id).by_default
       mock.should_receive(:to_params).and_return(id.to_s).by_default
