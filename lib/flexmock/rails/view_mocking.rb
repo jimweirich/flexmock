@@ -29,10 +29,10 @@ class FlexMock
         should_render_view_after_version_124(template_name)
       elsif rails_version < '2.2'
         should_render_view_after_version_202(template_name)
-      elsif rails_version < '2.2.3'
+      elsif rails_version < '2.3'
         should_render_view_22x(template_name)    
       else
-        should_render_view_223(template_name)    
+        should_render_view_23x(template_name)    
       end
     end
 
@@ -125,8 +125,8 @@ class FlexMock
     end
 
     # This version of should_render_view will work with versions of
-    # Rails at Version 2.2.3.
-    def should_render_view_223(template_name)
+    # Rails at Version 2.3.x.
+    def should_render_view_23x(template_name)
       viewmock = flexmock("ViewMock")
       viewmock.should_receive(
         :view_paths => viewmock,
