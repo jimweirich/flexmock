@@ -29,8 +29,10 @@ class FlexMock
         should_render_view_after_version_124(template_name)
       elsif rails_version < '2.2'
         should_render_view_after_version_202(template_name)
-      else
+      elsif rails_version < '2.2.3'
         should_render_view_22x(template_name)    
+      else
+        should_render_view_223(template_name)    
       end
     end
 
@@ -119,6 +121,23 @@ class FlexMock
       else
         viewmock.should_receive(:_exempt_from_layout?).at_least.once.and_return(true)
       end
+      flexmock(ActionView::Base).should_receive(:new).and_return(viewmock)
+    end
+
+    # This version of should_render_view will work with versions of
+    # Rails at Version 2.2.3.
+    def should_render_view_223(template_name)
+      viewmock = flexmock("ViewMock")
+      viewmock.should_receive(
+        :view_paths => viewmock,
+        :render => "RENDERED TEXT")
+      if template_name
+        viewmock.should_receive(:find_template).
+          with(/\/#{template_name}$/, any).
+          and_return(FlexMock.undefined).
+          at_least.once
+      end
+      viewmock.should_ignore_missing
       flexmock(ActionView::Base).should_receive(:new).and_return(viewmock)
     end
   end
