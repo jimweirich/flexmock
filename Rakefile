@@ -30,7 +30,7 @@ PKG_FILES = FileList[
 ]
 
 RDOC_FILES = FileList[
-  'README',
+  'README.rdoc',
   'CHANGES',
   'lib/**/*.rb',
   'doc/**/*.rdoc',
@@ -80,7 +80,7 @@ end
 
 # RDoc Target --------------------------------------------------------
 
-task :rdoc => ["README"]
+task :rdoc => ["README.rdoc"]
 
 $rd = Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'html'
@@ -89,12 +89,12 @@ $rd = Rake::RDocTask.new("rdoc") do |rdoc|
   #  rdoc.template = 'kilmer'
   #  rdoc.template = 'css2'
   rdoc.title    = "Flex Mock"
-  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
+  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
   rdoc.rdoc_files.include(RDOC_FILES)
 end
 
-file "README" => ["Rakefile"] do
-  ruby %{-i.bak -pe 'sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README} # "
+file "README.rdoc" => ["Rakefile"] do
+  ruby %{-i.bak -pe 'sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
 end
 
 # Package Task -------------------------------------------------------
