@@ -10,6 +10,8 @@ Version :: 0.8.6
 <b>Documents</b>   :: http://flexmock.rubyforge.org
 <b>RubyGems</b>    :: Install with: <b>gem install flexmock</b>
 <b>Download</b>    :: Download from RubyForge at http://rubyforge.org/frs/?group_id=3433 (pre 0.6.0 versions may be found at http://rubyforge.org/frs/?group_id=170)
+<b>Issue Tracking</b> :: http://www.pivotaltracker.com/projects/28401
+<b>Bug Reports</b>    :: http://onestepback.org/cgi-bin/bugs.cgi?project=flexmock
 
 == Installation
 
