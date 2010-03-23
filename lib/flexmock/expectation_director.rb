@@ -56,7 +56,7 @@ class FlexMock
       end
     end
 
-    # Do the post test verification for this directory.  Check all the
+    # Do the post test verification for this director.  Check all the
     # expectations.  Only check the default expecatations if there are
     # no non-default expectations.
     def flexmock_verify         # :nodoc:
