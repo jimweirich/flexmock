@@ -36,17 +36,20 @@ class FlexMock
 
     # Perform verification on all mocks in the container.
     def flexmock_verify
-      @flexmock_created_mocks ||= []
-      @flexmock_created_mocks.each do |m|
+      flexmock_created_mocks.each do |m|
         m.flexmock_verify
       end
+    end
+    
+    # List of mocks created in this container
+    def flexmock_created_mocks
+      @flexmock_created_mocks ||= []
     end
     
     # Close all the mock objects in the container.  Closing a mock object
     # restores any original behavior that was displaced by the mock.
     def flexmock_close
-      @flexmock_created_mocks ||= []
-      @flexmock_created_mocks.each do |m|
+      flexmock_created_mocks.each do |m|
         m.flexmock_teardown
       end
       @flexmock_created_mocks = []
