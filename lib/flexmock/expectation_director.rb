@@ -29,7 +29,7 @@ class FlexMock
 
     # Invoke the expectations for a given set of arguments.
     #
-    # First, look for an expectation that matches the arguements and
+    # First, look for an expectation that matches the arguments and
     # is eligible to be called.  Failing that, look for a expectation
     # that matches the arguments (at this point it will be ineligible,
     # but at least we will get a good failure message).  Finally,

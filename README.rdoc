@@ -510,7 +510,7 @@ The following rules are used for argument matching:
 * If you wish to specify a complex matching criteria, use the
   <tt>FlexMock.on(&block)</tt> with the logic contained in the block.
 
-  Examples (assumes FlexMock::ArguementTypes has been included):
+  Examples (assumes FlexMock::ArgumentTypes has been included):
 
       with(on { |arg| (arg % 2) == 0 } )
 
