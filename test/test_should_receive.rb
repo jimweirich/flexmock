@@ -1064,6 +1064,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_operator(:>>) { |m| m >> :x }
     assert_operator(:<=>) { |m| m <=> :x }
     assert_operator(:=~) { |m| m =~ :x }
+    assert_operator(:"`") { |m| m.`("command") } # `
   end
     
   private

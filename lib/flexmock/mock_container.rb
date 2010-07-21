@@ -315,7 +315,7 @@ class FlexMock
       end
     end
     
-    METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?||\*\*|<<|>>|<=>|[<>=]=|=~|===|[-+]@|[-+\*\/%&^|<>~])$/
+    METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?||\*\*|<<|>>|<=>|[<>=]=|=~|===|[-+]@|[-+\*\/%&^|<>~`])$/
 
     # Check that all the names in the list are valid method names.
     def check_method_names(names)
