@@ -19,11 +19,11 @@ require 'rake/contrib/rubyforgepublisher'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.8.6'
+PKG_VERSION = '0.8.7'
 
 PKG_FILES = FileList[
   '[A-Z]*',
-  'lib/**/*.rb', 
+  'lib/**/*.rb',
   'test/**/*.rb',
   '*.blurb',
   'install.rb'
@@ -68,7 +68,7 @@ end
 
 begin
   require 'rcov/rcovtask'
-  
+
   Rcov::RcovTask.new do |t|
     t.libs << "test"
     t.rcov_opts = ['-xRakefile', '-xrakefile', '-xpublish.rf', '-x/Lib*', '--text-report', '--sort', 'coverage']
@@ -103,7 +103,7 @@ if ! defined?(Gem)
   puts "Package Target requires RubyGEMs"
 else
   spec = Gem::Specification.new do |s|
-    
+
     #### Basic information.
 
     s.name = 'flexmock'
@@ -111,15 +111,15 @@ else
     s.summary = "Simple and Flexible Mock Objects for Testing"
     s.description = %{
       FlexMock is a extremely simple mock object class compatible
-      with the Test::Unit framework.  Although the FlexMock's 
+      with the Test::Unit framework.  Although the FlexMock's
       interface is simple, it is very flexible.
     }				# '
 
     #### Dependencies and requirements.
-    
+
     #s.add_dependency('log4r', '> 1.0.4')
     #s.requirements << ""
-    
+
     #### Which files are to be included in this gem?  Everything!  (Except CVS directories.)
 
     s.files = PKG_FILES.to_a
