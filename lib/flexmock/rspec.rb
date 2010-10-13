@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003, 2004, 2005, 2006, 2007, 2010 by Jim Weirich (jim.weirich@gmail.com).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -12,10 +12,15 @@
 require 'flexmock/base'
 
 class FlexMock
-  
+  if defined?(::RSpec)
+    SpecModule = RSpec
+  else
+    SpecModule = Spec
+  end
+
   class RSpecFrameworkAdapter
     def assert_block(msg, &block)
-      Spec::Expectations.fail_with(msg) unless yield
+      SpecModule::Expectations.fail_with(msg) unless yield
     end
 
     def assert_equal(a, b, msg=nil)
@@ -25,10 +30,9 @@ class FlexMock
 
     class AssertionFailedError < StandardError; end
     def assertion_failed_error
-      Spec::Expectations::ExpectationNotMetError
+      SpecModule::Expectations::ExpectationNotMetError
     end
   end
 
   @framework_adapter = RSpecFrameworkAdapter.new
-
 end
