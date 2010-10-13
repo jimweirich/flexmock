@@ -85,7 +85,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_allow_arg_contraint_validation
-    assert_failure do 
+    assert_failure do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f(1)
