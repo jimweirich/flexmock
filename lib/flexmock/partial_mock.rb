@@ -90,12 +90,16 @@ class FlexMock
 
     def add_mock_method(obj, method_name)
       stow_existing_definition(method_name)
-      eval_line = __LINE__ + 1
-      eval %{
-        def obj.#{method_name}(*args, &block)
-          @flexmock_proxy.#{method_name}(*args, &block)
-        end
-      }, binding, __FILE__, eval_line
+      sclass.module_eval do
+        define_method(method_name) { |*args, &block|
+          proxy = instance_variable_get("@flexmock_proxy")
+          if proxy.nil?
+            fail "Missing FlexMock proxy " +
+              "(for method_name=#{method_name.inspect}, self=\#{self})"
+          end
+          proxy.send(method_name, *args, &block)
+        }
+      end
     end
 
     # :call-seq:
