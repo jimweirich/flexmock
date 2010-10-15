@@ -19,7 +19,7 @@ require 'rake/contrib/rubyforgepublisher'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.8.8'
+PKG_VERSION = '0.8.10'
 
 PKG_FILES = FileList[
   '[A-Z]*',
