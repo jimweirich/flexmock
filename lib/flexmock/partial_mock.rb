@@ -12,7 +12,7 @@
 require 'flexmock/noop'
 
 class FlexMock
-  
+
   # #########################################################################
   # PartialMockProxy is used to mate the mock framework to an existing
   # object.  The object is "enhanced" with a reference to a mock
@@ -30,9 +30,9 @@ class FlexMock
 
     # The following methods are added to partial mocks so that they
     # can act like a mock.
-    
+
     MOCK_METHODS = [
-      :should_receive, :new_instances, 
+      :should_receive, :new_instances,
       :flexmock_get,   :flexmock_teardown, :flexmock_verify
     ]
 
@@ -127,7 +127,7 @@ class FlexMock
       allocators.each do |allocate_method|
         # HACK: Without the following lambda, Ruby 1.9 will not bind
         # the allocate_method parameter correctly.
-        lambda { } 
+        lambda { }
         self.should_receive(allocate_method).and_return { |*args|
           new_obj = invoke_original(allocate_method, args)
           mock = flexmock_container.flexmock(new_obj)
@@ -249,14 +249,14 @@ class FlexMock
         eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
-            @flexmock_proxy.mock.__send__(:#{method_name}, *args, &block) 
+            @flexmock_proxy.mock.__send__(:#{method_name}, *args, &block)
           end
         }, __FILE__, eval_line
       else
         eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
-            @flexmock_proxy.mock.#{method_name}(*args, &block) 
+            @flexmock_proxy.mock.#{method_name}(*args, &block)
           end
         }, __FILE__, eval_line
         make_rcov_recognize_the_above_eval_is_covered = true
