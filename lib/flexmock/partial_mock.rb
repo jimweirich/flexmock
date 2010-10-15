@@ -16,7 +16,7 @@ class FlexMock
   # #########################################################################
   # PartialMockProxy is used to mate the mock framework to an existing
   # object.  The object is "enhanced" with a reference to a mock
-  # object (stored in <tt>@flexmock_mock</tt>).  When the
+  # object (stored in <tt>@flexmock_proxy</tt>).  When the
   # +should_receive+ method is sent to the proxy, it overrides the
   # existing object's method by creating singleton method that
   # forwards to the mock.  When testing is complete, PartialMockProxy
@@ -249,14 +249,14 @@ class FlexMock
         eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
-            @flexmock_proxy.mock.__send__(:#{method_name}, *args, &block)
+            instance_variable_get('@flexmock_proxy').mock.__send__(:#{method_name}, *args, &block)
           end
         }, __FILE__, eval_line
       else
         eval_line = __LINE__ + 1
         sclass.class_eval %{
           def #{method_name}(*args, &block)
-            @flexmock_proxy.mock.#{method_name}(*args, &block)
+            instance_variable_get('@flexmock_proxy').mock.#{method_name}(*args, &block)
           end
         }, __FILE__, eval_line
         make_rcov_recognize_the_above_eval_is_covered = true
