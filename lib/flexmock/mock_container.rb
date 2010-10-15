@@ -14,7 +14,7 @@ require 'flexmock/argument_types'
 require 'flexmock/ordering'
 
 class FlexMock
-  
+
   # ######################################################################
   # Mock container methods
   #
@@ -22,7 +22,7 @@ class FlexMock
   # is included, mocks may be created with a simple call to the +flexmock+
   # method.  Mocks created with via the method call will automatically be
   # verified in the teardown of the test case.
-  #   
+  #
   module MockContainer
     include Ordering
 
@@ -40,12 +40,12 @@ class FlexMock
         m.flexmock_verify
       end
     end
-    
+
     # List of mocks created in this container
     def flexmock_created_mocks
       @flexmock_created_mocks ||= []
     end
-    
+
     # Close all the mock objects in the container.  Closing a mock object
     # restores any original behavior that was displaced by the mock.
     def flexmock_close
@@ -54,7 +54,7 @@ class FlexMock
       end
       @flexmock_created_mocks = []
     end
-    
+
     # Create a mocking object in the FlexMock framework.  The +flexmock+
     # method has a number of options available, depending on just what kind of
     # mocking object your require.  Mocks created via +flexmock+ will be
@@ -86,9 +86,9 @@ class FlexMock
     #   mocks.
     #
     # expect_hash ::
-    #   Hash table of method names and values.  Each method/value pair is 
+    #   Hash table of method names and values.  Each method/value pair is
     #   used to setup a simple expectation so that if the mock object
-    #   receives a message matching an entry in the table, it returns 
+    #   receives a message matching an entry in the table, it returns
     #   the associated value.  No argument our call count constraints are
     #   added.  Using an expect_hash is identical to calling:
     #
@@ -97,24 +97,24 @@ class FlexMock
     #   for each of the method/value pairs in the hash.
     #
     # real_object ::
-    #   If a real object is given, then a partial mock is constructed 
-    #   using the real_object as a base. Partial mocks (formally referred 
-    #   to as stubs) behave as a mock object when an expectation is matched, 
-    #   and otherwise will behave like the original object.  This is useful 
-    #   when you want to use a real object for testing, but need to mock out 
-    #   just one or two methods.  
+    #   If a real object is given, then a partial mock is constructed
+    #   using the real_object as a base. Partial mocks (formally referred
+    #   to as stubs) behave as a mock object when an expectation is matched,
+    #   and otherwise will behave like the original object.  This is useful
+    #   when you want to use a real object for testing, but need to mock out
+    #   just one or two methods.
     #
     # :base ::
     #   Forces the following argument to be used as the base of a
-    #   partial mock object.  This explicit tag is only needed if you 
+    #   partial mock object.  This explicit tag is only needed if you
     #   want to use a string or a symbol as the mock base (string and
     #   symbols would normally be interpretted as the mock name).
-    #       
+    #
     # &block ::
     #   If a block is given, then the mock object is passed to the block and
     #   expectations may be configured within the block.  When a block is given
-    #   for a partial mock, flexmock will return the domain object rather than 
-    #   the mock object.  
+    #   for a partial mock, flexmock will return the domain object rather than
+    #   the mock object.
     #
     def flexmock(*args)
       name = nil
@@ -156,7 +156,7 @@ class FlexMock
       result
     end
     alias flexstub flexmock
-    
+
     # Remember the mock object / stub in the mock container.
     def flexmock_remember(mocking_object)
       @flexmock_created_mocks ||= []
@@ -240,15 +240,16 @@ class FlexMock
     # the name of the mock object.
     def make_partial_proxy(container, obj, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
-      obj.instance_eval {
+      if !obj.instance_variable_defined?("@flexmock_proxy") || obj.instance_variable_get("@flexmock_proxy").nil?
         mock = FlexMock.new(name, container)
-        @flexmock_proxy ||= PartialMockProxy.new(obj, mock, safe_mode)
-      }
+        proxy = PartialMockProxy.new(obj, mock, safe_mode)
+        obj.instance_variable_set("@flexmock_proxy", proxy)
+      end
       obj.instance_variable_get("@flexmock_proxy")
     end
 
     private
-    
+
     # Build the chain of mocks for demeter style mocking.
     #
     # Warning: Nasty code ahead.
@@ -306,7 +307,7 @@ class FlexMock
       end
       exp
     end
-    
+
     # Check that the given mock is a real FlexMock mock.
     def check_proper_mock(mock, method_name)
       unless mock.kind_of?(FlexMock)
@@ -314,7 +315,7 @@ class FlexMock
           "Conflicting mock declaration for '#{method_name}' in demeter style mock"
       end
     end
-    
+
     METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?||\*\*|<<|>>|<=>|[<>=]=|=~|===|[-+]@|[-+\*\/%&^|<>~`])$/
 
     # Check that all the names in the list are valid method names.
