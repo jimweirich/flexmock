@@ -43,10 +43,10 @@ class FlexMock
       @method_definitions = {}
       @methods_proxied = []
       unless safe_mode
-        add_mock_method(@obj, :should_receive)
+        add_mock_method(:should_receive)
         MOCK_METHODS.each do |sym|
           unless @obj.respond_to?(sym)
-            add_mock_method(@obj, sym)
+            add_mock_method(sym)
           end
         end
       end
@@ -88,7 +88,7 @@ class FlexMock
       end
     end
 
-    def add_mock_method(obj, method_name)
+    def add_mock_method(method_name)
       stow_existing_definition(method_name)
       sclass.module_eval do
         define_method(method_name) { |*args, &block|
