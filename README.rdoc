@@ -935,7 +935,7 @@ above copyright notice is included.
 = Other stuff
 
 Author::   Jim Weirich <jim@weirichhouse.org>
-Requires:: Ruby 1.8.x or later
+Requires:: Ruby 1.8.7 or later (Use Flexmock-0.8.8 for Ruby version 1.8.6)
 
 == Warranty
 
