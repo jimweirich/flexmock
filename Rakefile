@@ -165,15 +165,6 @@ require 'rake/contrib/sshpublisher'
 
 publisher = Rake::CompositePublisher.new
 publisher.add(Rake::RubyForgePublisher.new('flexmock', 'jimweirich'))
-publisher.add(Rake::SshFreshDirPublisher.new(
-    'umlcoop',
-    'htdocs/software/flexmock',
-    'html'))
-publisher.add(Rake::SshFilePublisher.new(
-    'umlcoop',
-    'htdocs/software/flexmock',
-    '.',
-    'flexmock.blurb'))
 
 desc "Publish the documentation on public websites"
 task :publish => [:rdoc] do
