@@ -45,6 +45,7 @@ task :ta => [:test_all]
 
 Rake::TestTask.new do |t|
   t.pattern = 'test/test*.rb'
+  t.libs << "."
   t.verbose = false
   t.warning = true
 end
