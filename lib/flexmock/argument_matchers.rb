@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 #
 # Permission is granted for use, copying, modification, distribution,
@@ -52,7 +52,7 @@ class FlexMock
       "on{...}"
     end
   end
-  
+
   ####################################################################
   # Match only things where the block evaluates to true.
   class HashMatcher
@@ -66,7 +66,7 @@ class FlexMock
       "hsh(#{@hash.inspect})"
     end
   end
-  
+
   ####################################################################
   # Match only things where the block evaluates to true.
   class DuckMatcher
@@ -80,6 +80,6 @@ class FlexMock
       "ducktype(#{@methods.map{|m| m.inspect}.join(',')})"
     end
   end
-  
-  
+
+
 end

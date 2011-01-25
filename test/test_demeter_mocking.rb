@@ -2,7 +2,7 @@
 
 require 'test/unit'
 require 'flexmock'
-require 'test/asserts'
+#require 'test/asserts'
 
 class TestDemeterMocking < Test::Unit::TestCase
   include FlexMock::TestCase

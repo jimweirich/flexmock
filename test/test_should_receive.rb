@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -42,7 +42,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   AT_MOST_ERROR_MESSAGE = /\bshould\s+be\s+called\s+at\s+most\b/
   OUT_OF_ORDER_ERROR_MESSAGE = /\bcalled\s+out\s+of\s+order\b/
   NON_CONTAINER_MESSAGE = /\bis\s+not\s+in\s+a\s+container\b/
-  
+
   def test_defaults
     FlexMock.use do |m|
       m.should_receive(:hi)
@@ -59,7 +59,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       assert_equal 1, m.hi(123)
     end
   end
-  
+
   def test_returns_with_multiple_values
     FlexMock.use do |m|
       m.should_receive(:hi).and_return(1,2,3)
@@ -308,7 +308,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use do |m|
       m.should_receive(:hi).with(1).returns(10)
       m.should_receive(:hi).with(2).returns(20)
-      
+
       assert_equal 10, m.hi(1)
       assert_equal 20, m.hi(2)
     end
@@ -425,7 +425,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use do |m|
       m.should_receive(:hi).with(/one/).returns(10)
       m.should_receive(:hi).with(/t/).returns(20)
-      
+
       assert_equal 10, m.hi("one")
       assert_equal 10, m.hi("done")
       assert_equal 20, m.hi("two")
@@ -444,7 +444,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use do |m|
       m.should_receive(:hi).with(Fixnum).returns(10)
       m.should_receive(:hi).with(Object).returns(20)
-      
+
       assert_equal 10, m.hi(319)
       assert_equal 10, m.hi(Fixnum)
       assert_equal 20, m.hi("hi")
@@ -512,7 +512,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_never_and_called_once
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do    
+    ex = assert_failure(COUNT_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).never
         m.hi(1)
@@ -724,7 +724,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).with("one").ordered
       m.should_receive(:hi).with("two").ordered
-      
+
       m.hi("one")
       m.hi("two")
     end
@@ -747,7 +747,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:blah)
       m.should_receive(:hi).ordered
       m.should_receive(:lo).ordered
-      
+
       m.blah
       m.hi
       m.blah
@@ -760,7 +760,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     FlexMock.use 'm' do |m|
       m.should_receive(:hi).ordered
       m.should_receive(:lo).ordered
-      
+
       m.hi
       m.hi
       m.lo
@@ -774,7 +774,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:flip).ordered(2)
       m.should_receive(:flop).ordered(2)
       m.should_receive(:final).ordered
-      
+
       m.start
       m.flop
       m.flip
@@ -789,7 +789,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:flip).ordered(:flip_flop_group)
       m.should_receive(:flop).ordered(:flip_flop_group)
       m.should_receive(:final).ordered
-      
+
       m.start
       m.flop
       m.flip
@@ -809,7 +809,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_explicit_ordering_with_explicit_misorders
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do 
+    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered(:first_group)
         m.should_receive(:lo).ordered(:second_group)
@@ -822,7 +822,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     # assert_match /first_group/, ex.message
     # assert_match /second_group/, ex.message
   end
-  
+
   # Test submitted by Mikael Pahmp to correct expectation matching.
   def test_ordering_with_explicit_no_args_matches_correctly
     FlexMock.use("m") do |m|
@@ -831,11 +831,11 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:foo).with_no_args.once.ordered
       m.foo
       m.bar
-      m.foo  
+      m.foo
     end
   end
 
-  # Test submitted by Mikael Pahmp to correct expectation matching.  
+  # Test submitted by Mikael Pahmp to correct expectation matching.
   def test_ordering_with_any_arg_matching_correctly_matches
     FlexMock.use("m") do |m|
       m.should_receive(:foo).with_any_args.once.ordered
@@ -843,8 +843,8 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       m.should_receive(:foo).with_any_args.once.ordered
       m.foo
       m.bar
-      m.foo  
-    end  
+      m.foo
+    end
   end
 
   def test_ordering_between_mocks_is_not_normally_defined
@@ -858,13 +858,13 @@ class TestFlexMockShoulds < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_ordering_between_mocks_is_honored_for_global_ordering
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do 
+    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use("x", "y") do |x, y|
         x.should_receive(:one).globally.ordered
         y.should_receive(:two).globally.ordered
-        
+
         y.two
         x.one
       end
@@ -930,7 +930,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m.should_receive(:foo).and_return(:bar).by_default
     assert_equal :bar, m.foo
   end
-    
+
   def test_default_expectations_are_search_in_the_proper_order
     m = flexmock("m")
     m.should_receive(:foo).with(Integer).once.and_return(:first).by_default
@@ -938,7 +938,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_equal :first, m.foo(1)
     assert_equal :second, m.foo(1)
   end
-    
+
   def test_expectations_with_count_constraints_can_by_marked_as_default
     m = flexmock("m")
     m.should_receive(:foo).and_return(:bar).once.by_default
@@ -1066,7 +1066,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert_operator(:=~) { |m| m =~ :x }
     assert_operator(:"`") { |m| m.`("command") } # `
   end
-    
+
   private
 
   def assert_operator(op, &block)

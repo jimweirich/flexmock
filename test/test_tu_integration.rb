@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -14,13 +14,13 @@ require 'flexmock'
 
 class TestTuIntegrationFlexMockMethod < Test::Unit::TestCase
   include FlexMock::TestCase
-  
+
   def test_can_construct_flexmock
     mock = flexmock("x")
     mock.should_receive(:hi).and_return(:hello)
     assert_equal :hello, mock.hi
   end
-  
+
   def test_can_construct_flexmock_with_block
     mock = flexmock("x") do |m|
       m.should_receive(:hi).and_return(:hello)

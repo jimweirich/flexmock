@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -14,7 +14,7 @@ require 'flexmock'
 
 class TestNaming < Test::Unit::TestCase
   include FlexMock::TestCase
-  
+
   def test_name
     m = flexmock("m")
     assert_equal "m", m.flexmock_name

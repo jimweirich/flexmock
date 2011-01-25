@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -13,13 +13,13 @@ require 'test/unit'
 require 'flexmock/base'
 
 class FlexMock
-  
+
   ####################################################################
   # Test::Unit::TestCase Integration.
   #
   # Include this module in any TestCase class in a Test::Unit test
   # suite to get integration with FlexMock.  When this module is
-  # included, the mock container methods (e.g. flexmock(), flexstub()) 
+  # included, the mock container methods (e.g. flexmock(), flexstub())
   # will be available.
   #
   # <b>Note:</b> If you define a +teardown+ method in the test case,
@@ -38,7 +38,7 @@ class FlexMock
     end
 
   end
-  
+
   ####################################################################
   # Adapter for adapting FlexMock to the Test::Unit framework.
   #

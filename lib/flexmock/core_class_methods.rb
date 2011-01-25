@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -66,16 +66,16 @@ class FlexMock
 
   end
 
-  # Container object to be used by the FlexMock.use method.  
+  # Container object to be used by the FlexMock.use method.
   class UseContainer
     include MockContainer
-    
+
     attr_accessor :got_exception
-    
+
     def initialize
       @got_exception = false
     end
-    
+
     def passed?
       ! got_exception
     end

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -64,7 +64,7 @@ end
 
 class TestDog < Test::Unit::TestCase
   include FlexMock::TestCase
-  
+
   def test_dog_wags
     tail_mock = flexmock(:wag => :happy)
     assert_equal :happy, tail_mock.wag
@@ -88,14 +88,14 @@ end
 
 class TestDogBarking < Test::Unit::TestCase
   include FlexMock::TestCase
-  
-  # Setup the tests by mocking the +new+ method of 
+
+  # Setup the tests by mocking the +new+ method of
   # Woofer and return a mock woofer.
   def setup
     @dog = Dog.new
     flexmock(@dog, :bark => :grrr)
   end
-  
+
   def test_dog
     assert_equal :grrr, @dog.bark   # Mocked Method
     assert_equal :happy, @dog.wag    # Normal Method
@@ -104,13 +104,13 @@ end
 
 class TestDogBarkingWithNewInstances < Test::Unit::TestCase
   include FlexMock::TestCase
-  
+
   # Setup the tests by mocking Woofer to always
   # return partial mocks.
   def setup
     flexmock(Woofer).new_instances.should_receive(:woof => :grrr)
   end
-  
+
   def test_dog
     assert_equal :grrr, Dog.new.bark  # All dog objects
     assert_equal :grrr, Dog.new.bark  # are mocked.
@@ -124,13 +124,13 @@ class TestDefaults < Test::Unit::TestCase
     @mock_dog = flexmock("Fido")
     @mock_dog.should_receive(:tail => :a_tail, :bark => "woof").by_default
   end
-  
+
   def test_something_where_bark_must_be_called_once
     @mock_dog.should_receive(:bark => "bow wow").once
 
     assert_equal "bow wow", @mock_dog.bark
     assert_equal :a_tail, @mock_dog.tail
-  end 
+  end
 end
 
 class TestDemeter < Test::Unit::TestCase
@@ -220,7 +220,7 @@ class TestDb < Test::Unit::TestCase
     db.query("asdf")
     db.finish
   end
-  
+
   def known_good_way_to_build_xml(builder)
     builder.html
   end
@@ -237,7 +237,7 @@ class TestDb < Test::Unit::TestCase
     end
     new_way_to_build_xml(builder)       # compare to new way
   end
-  
+
 end
 
 class TestMoreSamples < Test::Unit::TestCase

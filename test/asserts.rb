@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -15,8 +15,8 @@ class FlexMock
   module FailureAssertion
     private
 
-    # Assertion helper used to assert validation failure.  If a 
-    # message is given, then the error message should match the 
+    # Assertion helper used to assert validation failure.  If a
+    # message is given, then the error message should match the
     # expected error message.
     def assert_failure(message=nil)
       ex = assert_raises(Test::Unit::AssertionFailedError) { yield }

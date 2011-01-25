@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 #
 # Permission is granted for use, copying, modification, distribution,
@@ -16,7 +16,7 @@ require 'flexmock/ordering'
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
 #
-# FlexMock has a simple interface that's easy to remember, and leaves 
+# FlexMock has a simple interface that's easy to remember, and leaves
 # the hard stuff to all those other mock object implementations.
 #
 # Basic Usage:
@@ -166,7 +166,7 @@ class FlexMock
     end
     @last_expectation
   end
-  
+
   # Declare that the mock object should expect methods by providing a
   # recorder for the methods and having the user invoke the expected
   # methods in a block.  Further expectations may be applied the
@@ -194,8 +194,8 @@ class FlexMock
     "in mock '#{@flexmock_name}': #{ex.message}",
     ex.backtrace
   end
-  
-  
+
+
   # Override the existing definition of method +sym+ in the mock.
   # Most methods depend on the method_missing trick to be invoked.
   # However, if the method already exists, it will not call

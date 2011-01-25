@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -115,7 +115,7 @@ class TestFlexMock < Test::Unit::TestCase
     while line = stream.gets
       result += 1
     end
-    result    
+    result
   end
 
   def test_use
@@ -145,7 +145,7 @@ class TestFlexMock < Test::Unit::TestCase
     assert_equal 9, @mock.get
     assert_equal 16, @mock.get
   end
-  
+
   def test_respond_to_returns_false_for_non_handled_methods
     assert(!@mock.respond_to?(:blah), "should not respond to blah")
   end
@@ -222,6 +222,6 @@ class TestAnyInstance < Test::Unit::TestCase
       end
     end
     m = Dog.new
-    assert_equal :whimper,  m.bark   
+    assert_equal :whimper,  m.bark
   end
-end  
+end

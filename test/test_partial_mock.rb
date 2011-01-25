@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -15,7 +15,7 @@ require 'flexmock'
 
 class TestStubbing < Test::Unit::TestCase
   include FlexMock::TestCase
-  
+
   class Dog
     def bark
       :woof
@@ -42,7 +42,7 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(obj).should_receive(:hi).once.and_return(:stub_hi)
     assert_equal :stub_hi, obj.hi
   end
-  
+
   def test_stub_command_can_configure_via_block
     obj = Object.new
     flexmock(obj) do |m|
@@ -50,19 +50,19 @@ class TestStubbing < Test::Unit::TestCase
     end
     assert_equal :stub_hi, obj.hi
   end
-  
+
   def test_stubbed_methods_can_take_blocks
     obj = Object.new
     flexmock(obj).should_receive(:with_block).once.with(Proc).
       and_return { |block| block.call }
     assert_equal :block, obj.with_block { :block }
   end
-  
+
   def test_multiple_stubs_on_the_same_object_reuse_the_same_partial_mock
     obj = Object.new
     assert_equal flexmock(obj), flexmock(obj)
   end
-  
+
   def test_multiple_methods_can_be_stubbed
     dog = Dog.new
     flexmock(dog).should_receive(:bark).and_return(:grrrr)
@@ -70,7 +70,7 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :grrrr, dog.bark
     assert_equal :happy, dog.wag
   end
-  
+
   def test_original_behavior_can_be_restored
     dog = Dog.new
     partial_mock = flexmock(dog)
@@ -80,7 +80,7 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :woof, dog.bark
     assert_equal nil, dog.instance_variable_get("@flexmock_proxy")
   end
-  
+
   def test_original_missing_behavior_can_be_restored
     obj = Object.new
     partial_mock = flexmock(obj)
@@ -100,7 +100,7 @@ class TestStubbing < Test::Unit::TestCase
     partial_mock.flexmock_teardown
     assert_raise(NoMethodError) { obj.hi }
   end
-  
+
   def test_original_behavior_is_restored_when_multiple_methods_are_mocked
     dog = Dog.new
     flexmock(dog).should_receive(:bark).and_return(:grrrr)
@@ -114,7 +114,7 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(Dog).should_receive(:create).once.and_return(:new_stub)
     assert_equal :new_stub, Dog.create
     flexmock(Dog).flexmock_teardown
-    assert_equal :new_dog, Dog.create    
+    assert_equal :new_dog, Dog.create
   end
 
   def test_original_behavior_is_restored_on_singleton_methods
@@ -185,7 +185,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_not_calling_stubbed_method_is_an_error
     dog = Dog.new
     flexmock(dog).should_receive(:bark).once
-    assert_raise(Test::Unit::AssertionFailedError) { 
+    assert_raise(Test::Unit::AssertionFailedError) {
       flexmock(dog).flexmock_verify
     }
     dog.bark
@@ -195,11 +195,11 @@ class TestStubbing < Test::Unit::TestCase
     obj = Object.new
     partial_mock = flexmock(obj)
     partial_mock.should_receive(:hi).once.and_return(:ok)
-    assert_raise(Test::Unit::AssertionFailedError) { 
+    assert_raise(Test::Unit::AssertionFailedError) {
       partial_mock.flexmock_verify
     }
   end
-  
+
   def test_stub_can_have_explicit_name
     obj = Object.new
     partial_mock = flexmock(obj, "Charlie")

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -19,7 +19,7 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
   def setup
     @mock = flexmock("mock")
   end
-  
+
   def test_mocks_do_not_respond_to_undefined_methods
     assert !@mock.respond_to?(:unknown_foo)
   end

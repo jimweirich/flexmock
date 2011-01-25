@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -12,7 +12,7 @@
 require 'flexmock/noop'
 
 class FlexMock
-  
+
   ####################################################################
   # An Expectation is returned from each +should_receive+ message sent
   # to mock object.  Each expectation records how a message matching
@@ -85,7 +85,7 @@ class FlexMock
       unless @yield_queue.empty?
         block = args.last
         values = (@yield_queue.size == 1) ? @yield_queue.first : @yield_queue.shift
-        if block && block.respond_to?(:call) 
+        if block && block.respond_to?(:call)
           @return_value = block.call(*values)
         else
           fail MockError, "No Block given to mock with 'and_yield' expectation"
@@ -103,7 +103,7 @@ class FlexMock
     # Is this expectation constrained by any call counts?
     def call_count_constrained?
       ! @count_validators.empty?
-    end      
+    end
 
     # Validate that the order
     def validate_order
@@ -186,7 +186,7 @@ class FlexMock
     # +returns+ is an alias for +and_return+.
     #
     def and_return(*args, &block)
-      if block_given? 
+      if block_given?
         @return_queue << block
       else
         args.each do |arg|
@@ -230,7 +230,7 @@ class FlexMock
     end
     alias :yields :and_yield
 
-    
+
     # :call-seq:
     #   and_raise(an_exception)
     #   and_raise(SomeException)
@@ -241,12 +241,12 @@ class FlexMock
     #
     # * If an exception instance is given, then that instance will be
     #   raised.
-    #   
+    #
     # * If an exception class is given, the exception raised with be
     #   an instance of that class constructed with +new+.  Any
     #   additional arguments in the argument list will be passed to
     #   the +new+ constructor when it is invoked.
-    #   
+    #
     # +raises+ is an alias for +and_raise+.
     #
     def and_raise(exception, *args)
@@ -418,7 +418,7 @@ class FlexMock
 
     # The following methods return a value, so we make an arbitrary choice
     # and return the value for the first expectation in the composite.
-    
+
     # Return the order number of the first expectation in the list.
     def order_number
       @expectations.first.order_number
@@ -428,7 +428,7 @@ class FlexMock
     def mock
       @expectations.first.mock
     end
-    
+
     # Start a new method expectation.  The following constraints will be
     # applied to the new expectation.
     def should_receive(*args, &block)
@@ -462,7 +462,7 @@ class FlexMock
       @expectations << [sym, args, block]
       self
     end
-    
+
     # Apply the recorded messages to the given object in a chaining fashion
     # (i.e. the result of the previous call is used as the target of the next
     # call).

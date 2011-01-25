@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -49,7 +49,7 @@ class TestExamplesFromReadme < Test::Unit::TestCase
     m.should_receive(:foo).and_return_undefined
     m.foo.bar.baz
   end
-  
+
   def test_db
     db = flexmock('db')
     db.should_receive(:query).and_return([1,2,3])
@@ -85,7 +85,7 @@ class TestExamplesFromReadme < Test::Unit::TestCase
     assert_equal 12.3, db.query("GOOG")
     db.finish
   end
-  
+
   def test_ordered_queries_in_record_mode
     db = flexmock('db')
     db.should_expect do |rec|
@@ -146,7 +146,7 @@ class TestExamplesFromReadme < Test::Unit::TestCase
       QuoteService.new.quote
     end
   end
-  
+
   def test_portfolio_value
     flexmock(QuoteService).new_instances do |m|
       m.should_receive(:quote).and_return(100)
