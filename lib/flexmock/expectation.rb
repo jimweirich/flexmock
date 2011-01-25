@@ -69,7 +69,7 @@ class FlexMock
     def return_value(args)
       case @return_queue.size
       when 0
-        block = lambda { |*args| @return_value }
+        block = lambda { |*a| @return_value }
       when 1
         block = @return_queue.first
       else
