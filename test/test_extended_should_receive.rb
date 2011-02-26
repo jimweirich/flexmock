@@ -9,8 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require "test/unit"
-require "flexmock"
+require "test/test_setup"
 
 module ExtendedShouldReceiveTests
   def test_accepts_expectation_hash
@@ -28,15 +27,15 @@ module ExtendedShouldReceiveTests
 
   def test_contraints_apply_to_all_expectations
     @mock.should_receive(:foo, :bar => :baz).with(1)
-    ex = assert_raise(Test::Unit::AssertionFailedError) { @obj.foo(2) }
-    ex = assert_raise(Test::Unit::AssertionFailedError) { @obj.bar(2) }
+    ex = assert_raise(assertion_failed_error) { @obj.foo(2) }
+    ex = assert_raise(assertion_failed_error) { @obj.bar(2) }
     assert_equal :baz, @obj.bar(1)
   end
 
   def test_count_contraints_apply_to_all_expectations
     @mock.should_receive(:foo, :bar => :baz).once
     @obj.foo
-    assert_raise(Test::Unit::AssertionFailedError) { @mock.flexmock_verify }
+    assert_raise(assertion_failed_error) { @mock.flexmock_verify }
   end
 
   def test_multiple_should_receives_are_allowed

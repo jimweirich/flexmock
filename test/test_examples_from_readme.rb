@@ -9,8 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
+require 'test/test_setup'
 
 class TemperatureSampler
   def initialize(sensor)

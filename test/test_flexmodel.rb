@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/unit'
-require 'flexmock'
+require 'test/test_setup'
 
 class DummyModel
 end

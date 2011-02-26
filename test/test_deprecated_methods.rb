@@ -9,10 +9,8 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
+require 'test/test_setup'
 require 'flexmock/deprecated_methods'
-require 'test/redirect_error'
 
 class TestFlexMock < Test::Unit::TestCase
   include FlexMock::TestCase

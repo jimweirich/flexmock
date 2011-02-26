@@ -9,9 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
-require 'test/redirect_error'
+require 'test/test_setup'
 
 class TestNewInstances < Test::Unit::TestCase
   include FlexMock::TestCase

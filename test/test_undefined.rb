@@ -9,8 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require "test/unit"
-require "flexmock"
+require "test/test_setup"
 
 class UndefinedTest < Test::Unit::TestCase
   def test_undefined_method_calls_return_undefined

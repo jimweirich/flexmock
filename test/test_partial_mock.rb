@@ -9,9 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'fileutils'
-require 'flexmock'
+require 'test/test_setup'
 
 class TestStubbing < Test::Unit::TestCase
   include FlexMock::TestCase

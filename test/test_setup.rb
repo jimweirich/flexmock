@@ -1,6 +1,8 @@
 require 'test/unit'
-require 'flexmock'
+require 'fileutils'
 
+require 'flexmock'
+require 'test/redirect_error'
 
 class FlexMock
   module TestCase

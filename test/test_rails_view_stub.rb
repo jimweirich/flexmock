@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/unit'
+require 'test/test_setup'
 require 'flexmock/rails/view_mocking'
 
 module ViewTests
