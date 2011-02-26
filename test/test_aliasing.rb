@@ -36,21 +36,21 @@ class AliasingTest < Test::Unit::TestCase
     assert_equal :woof!, m.pat
     assert_equal :woof!, m.pat
   end
-  
+
   def test_once_mocking
     m = mock("a cute dog").expects(:pat).and_return(:woof!).mock
   end
-  
+
   def test_twice_mocking
     m = mock("a cute dog").expects(:pat).and_return(:woof!).twice.mock
     assert_raises(Test::Unit::AssertionFailedError) { m.flexmock_verify }
   end
-  
+
   def test_stubbing
     m = stub("a cute dog").expects(:pat).and_return(:woof!).mock
     assert_equal :woof!, m.pat
   end
-  
+
   def test_partial
     obj = Object.new
     stub(obj).stubs(:wag).and_return(:tail)
