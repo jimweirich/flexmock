@@ -11,11 +11,9 @@
 
 require 'test/unit'
 require 'flexmock'
-require 'test/asserts'
 
 class TestRecordMode < Test::Unit::TestCase
   include FlexMock::TestCase
-  include FlexMock::FailureAssertion
 
   def test_recording_mode_works
     mock = flexmock("mock")

@@ -9,9 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
-require 'test/asserts'
+require 'test/test_setup'
 
 def mock_top_level_function
   :mtlf
@@ -33,7 +31,6 @@ end
 
 class TestFlexMockShoulds < Test::Unit::TestCase
   include FlexMock::TestCase
-  include FlexMock::FailureAssertion
 
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/

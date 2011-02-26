@@ -9,9 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
-require 'test/asserts'
+require 'test/test_setup'
 
 class TestShouldIgnoreMissing < Test::Unit::TestCase
   include FlexMock::TestCase
