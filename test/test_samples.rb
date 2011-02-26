@@ -9,8 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
-require 'flexmock'
+require 'test/test_setup'
 
 # Sample FlexMock Usage.
 
@@ -180,7 +179,7 @@ class TestDb < Test::Unit::TestCase
     db.should_receive(:query).and_return([1,2,3]).ordered
     db.should_receive(:update).and_return(nil).ordered
     # test code here
-    assert_raises(Test::Unit::AssertionFailedError) do
+    assert_raises(assertion_failed_error) do
       db.update
       db.query
     end

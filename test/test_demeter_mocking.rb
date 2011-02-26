@@ -1,12 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'test/unit'
-require 'flexmock'
-require 'test/asserts'
+require 'test/test_setup'
 
 class TestDemeterMocking < Test::Unit::TestCase
   include FlexMock::TestCase
-  include FlexMock::FailureAssertion
 
   def test_demeter_mocking
     m = flexmock("A")
