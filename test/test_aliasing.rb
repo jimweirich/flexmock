@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'test/unit'
-require 'flexmock'
+require 'test/test_setup'
 
 class FlexMock
   module StubsAndExpects
@@ -43,7 +42,7 @@ class AliasingTest < Test::Unit::TestCase
 
   def test_twice_mocking
     m = mock("a cute dog").expects(:pat).and_return(:woof!).twice.mock
-    assert_raises(Test::Unit::AssertionFailedError) { m.flexmock_verify }
+    assert_raises(assertion_failed_error) { m.flexmock_verify }
   end
 
   def test_stubbing
