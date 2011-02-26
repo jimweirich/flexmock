@@ -95,7 +95,7 @@ class TestNewInstances < Test::Unit::TestCase
     end
 
     fido = Dog.new
-    ex = assert_raise(Test::Unit::AssertionFailedError) { flexmock_teardown }
+    ex = assert_raise(assertion_failed_error) { flexmock_teardown }
     assert_match(/method 'bark\(.*\)' called incorrect number of times/, ex.message)
   end
 

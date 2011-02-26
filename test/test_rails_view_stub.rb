@@ -11,7 +11,7 @@ module ViewTests
 
   def test_fails_if_no_render
     should_render_view
-    assert_raise(Test::Unit::AssertionFailedError) do
+    assert_raise(assertion_failed_error) do
       flexmock_verify
     end
   end
@@ -24,7 +24,7 @@ module ViewTests
   def test_view_mocks_with_expectation_fails_with_different_template
     should_render_view("new")
     render "controller/edit"
-    assert_raise(Test::Unit::AssertionFailedError) do
+    assert_raise(assertion_failed_error) do
       flexmock_verify
     end
   end

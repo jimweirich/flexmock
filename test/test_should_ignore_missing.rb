@@ -65,7 +65,7 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
     @mock.should_receive(:known_foo).once
     method_proc = @mock.method(:known_foo)
     assert_not_nil method_proc
-    assert_raises Test::Unit::AssertionFailedError do
+    assert_raises assertion_failed_error do
       flexmock_teardown
     end
   end

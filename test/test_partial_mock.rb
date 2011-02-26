@@ -183,7 +183,7 @@ class TestStubbing < Test::Unit::TestCase
   def test_not_calling_stubbed_method_is_an_error
     dog = Dog.new
     flexmock(dog).should_receive(:bark).once
-    assert_raise(Test::Unit::AssertionFailedError) {
+    assert_raise(assertion_failed_error) {
       flexmock(dog).flexmock_verify
     }
     dog.bark
@@ -193,7 +193,7 @@ class TestStubbing < Test::Unit::TestCase
     obj = Object.new
     partial_mock = flexmock(obj)
     partial_mock.should_receive(:hi).once.and_return(:ok)
-    assert_raise(Test::Unit::AssertionFailedError) {
+    assert_raise(assertion_failed_error) {
       partial_mock.flexmock_verify
     }
   end

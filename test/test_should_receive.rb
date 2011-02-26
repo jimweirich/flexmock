@@ -939,7 +939,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_expectations_with_count_constraints_can_by_marked_as_default
     m = flexmock("m")
     m.should_receive(:foo).and_return(:bar).once.by_default
-    assert_raise Test::Unit::AssertionFailedError do
+    assert_raise assertion_failed_error do
       flexmock_teardown
     end
   end
@@ -956,7 +956,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m = flexmock("m")
     m.should_receive(:foo).with(1).and_return(:bar).once.by_default
     m.should_receive(:foo).with(2).and_return(:baz).once
-    assert_raise Test::Unit::AssertionFailedError do
+    assert_raise assertion_failed_error do
       # This expectation should be hidded by the non-result
       m.foo(1)
     end
@@ -968,7 +968,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     m.should_receive(:foo).ordered.by_default
     m.should_receive(:bar).ordered.by_default
     m.bar
-    assert_raise Test::Unit::AssertionFailedError do m.foo end
+    assert_raise assertion_failed_error do m.foo end
   end
 
   def test_ordered_default_expectations_can_be_overridden

@@ -24,14 +24,14 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
   def test_mock_with_name
     mock = flexmock("Danny")
     mock.should_receive(:xxx).with(1)
-    ex = assert_raise(Test::Unit::AssertionFailedError) { mock.xxx }
+    ex = assert_raise(assertion_failed_error) { mock.xxx }
     assert_match(/Danny/, ex.message)
   end
 
   def test_mock_with_symbol_name
     mock = flexmock(:Danny)
     mock.should_receive(:xxx).with(1)
-    ex = assert_raise(Test::Unit::AssertionFailedError) { mock.xxx }
+    ex = assert_raise(assertion_failed_error) { mock.xxx }
     assert_match(/Danny/, ex.message)
   end
 
@@ -46,7 +46,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     mock.should_receive(:xxx).with(1)
     assert_equal :lo, mock.hi
     assert_equal :bye, mock.good
-    ex = assert_raise(Test::Unit::AssertionFailedError) { mock.xxx }
+    ex = assert_raise(assertion_failed_error) { mock.xxx }
     assert_match(/Danny/, ex.message)
   end
 
@@ -69,7 +69,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     fido = Object.new
     mock = flexmock(fido, "Danny")
     mock.should_receive(:xxx).with(1).and_return(:happy)
-    ex = assert_raise(Test::Unit::AssertionFailedError) { fido.xxx }
+    ex = assert_raise(assertion_failed_error) { fido.xxx }
     assert_match(/Danny/, ex.message)
   end
 
@@ -83,7 +83,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     fido = Object.new
     mock = flexmock(fido, "Danny", :wag => :happy)
     mock.should_receive(:xxx).with(1).and_return(:happy)
-    ex = assert_raise(Test::Unit::AssertionFailedError) { fido.xxx }
+    ex = assert_raise(assertion_failed_error) { fido.xxx }
     assert_match(/Danny/, ex.message)
     assert_equal :happy, fido.wag
   end
@@ -92,7 +92,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     fido = Object.new
     mock = flexmock(fido)
     mock.should_receive(:hi).once
-    ex = assert_raise(Test::Unit::AssertionFailedError) { flexmock_verify }
+    ex = assert_raise(assertion_failed_error) { flexmock_verify }
   end
 
   def test_stubbing_a_string

@@ -32,7 +32,7 @@ class TestTuIntegrationMockVerificationInTeardown < Test::Unit::TestCase
   include FlexMock::TestCase
 
   def teardown
-    assert_raise(Test::Unit::AssertionFailedError) do
+    assert_raise(assertion_failed_error) do
       super
     end
   end
@@ -46,7 +46,7 @@ class TestTuIntegrationMockVerificationWithoutSetup < Test::Unit::TestCase
   include FlexMock::TestCase
 
   def teardown
-    assert_raise(Test::Unit::AssertionFailedError) do
+    assert_raise(assertion_failed_error) do
       super
     end
   end
@@ -60,7 +60,7 @@ class TestTuIntegrationMockVerificationForgetfulSetup < Test::Unit::TestCase
   include FlexMock::TestCase
 
   def teardown
-    assert_raise(Test::Unit::AssertionFailedError) do
+    assert_raise(assertion_failed_error) do
       super
     end
   end

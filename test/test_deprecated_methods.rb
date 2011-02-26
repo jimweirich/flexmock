@@ -77,7 +77,7 @@ class TestFlexMock < Test::Unit::TestCase
     @mock.blip
     begin
       @mock.flexmock_verify
-    rescue Test::Unit::AssertionFailedError => err
+    rescue assertion_failed_error => err
     end
     assert_not_nil err
   end
@@ -92,7 +92,7 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_zero_counts
-    assert_raises(Test::Unit::AssertionFailedError) do
+    assert_raises(assertion_failed_error) do
       FlexMock.use { |m|
         s { m.mock_handle(:blip, 0) }
         m.blip
@@ -117,7 +117,7 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_use
-    assert_raises(Test::Unit::AssertionFailedError) {
+    assert_raises(assertion_failed_error) {
       FlexMock.use do |m|
 	s { m.mock_handle(:blip, 2) }
 	m.blip
