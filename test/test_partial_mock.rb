@@ -171,7 +171,11 @@ class TestStubbing < Test::Unit::TestCase
 
   def test_original_behavior_is_restored_even_when_errors
     flexmock(Dog).should_receive(:create).once.and_return(:mock)
-    flexmock_teardown rescue nil
+    begin
+      flexmock_teardown
+    rescue assertion_failed_error => ex
+      nil
+    end
     assert_equal :new_dog, Dog.create
 
     # Now disable the mock so that it doesn't cause errors on normal
