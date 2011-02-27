@@ -9,11 +9,17 @@
 # above copyright notice is included.
 #+++
 
-Spec::Runner.configure do |config|
-   config.mock_with :flexmock
+if defined?(RSpec)
+  RSpec.configure do |config|
+    config.mock_with :flexmock
+  end
+else
+  Spec::Runner.configure do |config|
+    config.mock_with :flexmock
+  end
 end
 
-context "FlexMock in a RSpec example" do
+describe "FlexMock in a RSpec example" do
   specify "should be able to create a mock" do
     m = flexmock()
   end
