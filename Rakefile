@@ -10,11 +10,12 @@
 #+++
 task :noop
 require 'rubygems'
-require 'rake/gempackagetask'
 require 'rake/clean'
-require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rake/contrib/rubyforgepublisher'
+
+require 'rubygems/package_task'
+require 'rdoc/task'
 
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
@@ -149,7 +150,7 @@ else
     s.homepage = "http://flexmock.rubyforge.org"
   end
 
-  Rake::GemPackageTask.new(spec) do |pkg|
+  Gem::PackageTask.new(spec) do |pkg|
     pkg.need_zip = true
     pkg.need_tar = true
   end
