@@ -140,13 +140,13 @@ else
     #### Author and project details.
 
     s.author = "Jim Weirich"
-    s.email = "jim@weirichhouse.org"
-    s.homepage = "http://flexmock.rubyforge.org"
+    s.email = "jim.weirich@gmail.com"
+    s.homepage = "https://github.com/jimweirich/flexmock"
   end
 
   Gem::PackageTask.new(spec) do |pkg|
     pkg.need_zip = true
-    pkg.need_tar = true
+    pkg.need_tar = false
   end
 end
 
