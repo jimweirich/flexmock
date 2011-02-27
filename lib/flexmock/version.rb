@@ -4,6 +4,8 @@ class FlexMock
       MAJOR = 0,
       MINOR = 9,
       BUILD = 0,
+      BETA = "beta",
+      BETANUM = '1'
     ]
   end
 
