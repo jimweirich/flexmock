@@ -11,83 +11,89 @@
 
 require 'test/test_setup'
 
-class TestTuIntegrationFlexMockMethod < Test::Unit::TestCase
-  include FlexMock::TestCase
+# The following tests exercise Test::Unit integration.  They are
+# disabled if actually running under MiniTest because the MiniTest is
+# different enough internally that the tests are not worthwhile.
 
-  def test_can_construct_flexmock
-    mock = flexmock("x")
-    mock.should_receive(:hi).and_return(:hello)
-    assert_equal :hello, mock.hi
-  end
+unless MiniTest
+  class TestTuIntegrationFlexMockMethod < Test::Unit::TestCase
+    include FlexMock::TestCase
 
-  def test_can_construct_flexmock_with_block
-    mock = flexmock("x") do |m|
-      m.should_receive(:hi).and_return(:hello)
+    def test_can_construct_flexmock
+      mock = flexmock("x")
+      mock.should_receive(:hi).and_return(:hello)
+      assert_equal :hello, mock.hi
     end
-    assert_equal :hello, mock.hi
-  end
-end
 
-class TestTuIntegrationMockVerificationInTeardown < Test::Unit::TestCase
-  include FlexMock::TestCase
-
-  def teardown
-    assert_raise(assertion_failed_error) do
-      super
+    def test_can_construct_flexmock_with_block
+      mock = flexmock("x") do |m|
+        m.should_receive(:hi).and_return(:hello)
+      end
+      assert_equal :hello, mock.hi
     end
   end
 
-  def test_mock_verification_occurs_during_teardown
-    flexmock("xyz").should_receive(:hi).with(any).once
-  end
-end
+  class TestTuIntegrationMockVerificationInTeardown < Test::Unit::TestCase
+    include FlexMock::TestCase
 
-class TestTuIntegrationMockVerificationWithoutSetup < Test::Unit::TestCase
-  include FlexMock::TestCase
+    def teardown
+      assert_raise(assertion_failed_error) do
+        super
+      end
+    end
 
-  def teardown
-    assert_raise(assertion_failed_error) do
-      super
+    def test_mock_verification_occurs_during_teardown
+      flexmock("xyz").should_receive(:hi).with(any).once
     end
   end
 
-  def test_mock_verification_occurs_during_teardown
-    flexmock("xyz").should_receive(:hi).with(any).once
-  end
-end
+  class TestTuIntegrationMockVerificationWithoutSetup < Test::Unit::TestCase
+    include FlexMock::TestCase
 
-class TestTuIntegrationMockVerificationForgetfulSetup < Test::Unit::TestCase
-  include FlexMock::TestCase
+    def teardown
+      assert_raise(assertion_failed_error) do
+        super
+      end
+    end
 
-  def teardown
-    assert_raise(assertion_failed_error) do
-      super
+    def test_mock_verification_occurs_during_teardown
+      flexmock("xyz").should_receive(:hi).with(any).once
     end
   end
 
-  def test_mock_verification_occurs_during_teardown
-    flexmock("xyz").should_receive(:hi).with(any).once
-  end
-end
+  class TestTuIntegrationMockVerificationForgetfulSetup < Test::Unit::TestCase
+    include FlexMock::TestCase
 
-class TestTuIntegrationSetupOverridenAndNoMocksOk < Test::Unit::TestCase
-  include FlexMock::TestCase
+    def teardown
+      assert_raise(assertion_failed_error) do
+        super
+      end
+    end
 
-  def test_mock_verification_occurs_during_teardown
-  end
-end
-
-class TestTuIntegrationFailurePreventsVerification < Test::Unit::TestCase
-  include FlexMock::TestCase
-
-  def test_mock_verification_occurs_during_teardown
-    flexmock('m').should_receive(:hi).once
-    simulate_failure
+    def test_mock_verification_occurs_during_teardown
+      flexmock("xyz").should_receive(:hi).with(any).once
+    end
   end
 
-  private
+  class TestTuIntegrationSetupOverridenAndNoMocksOk < Test::Unit::TestCase
+    include FlexMock::TestCase
 
-  def simulate_failure
-    @test_passed = false
+    def test_mock_verification_occurs_during_teardown
+    end
+  end
+
+  class TestTuIntegrationFailurePreventsVerification < Test::Unit::TestCase
+    include FlexMock::TestCase
+
+    def test_mock_verification_occurs_during_teardown
+      flexmock('m').should_receive(:hi).once
+      simulate_failure
+    end
+
+    private
+
+    def simulate_failure
+      @test_passed = false
+    end
   end
 end
