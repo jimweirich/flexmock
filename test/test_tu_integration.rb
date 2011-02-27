@@ -15,7 +15,7 @@ require 'test/test_setup'
 # disabled if actually running under MiniTest because the MiniTest is
 # different enough internally that the tests are not worthwhile.
 
-unless MiniTest
+unless defined?(MiniTest)
   class TestTuIntegrationFlexMockMethod < Test::Unit::TestCase
     include FlexMock::TestCase
 
