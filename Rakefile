@@ -20,7 +20,9 @@ require 'rdoc/task'
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
 
-PKG_VERSION = '0.8.11'
+load './lib/flexmock/version.rb'
+
+PKG_VERSION = FlexMock::VERSION
 
 PKG_FILES = FileList[
   '[A-Z]*',
