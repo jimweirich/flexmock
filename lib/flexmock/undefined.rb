@@ -31,6 +31,10 @@ class FlexMock
       self
     end
 
+    def <=>(other)
+      self
+    end
+
     def coerce(other)
       [FlexMock.undefined, FlexMock.undefined]
     end
