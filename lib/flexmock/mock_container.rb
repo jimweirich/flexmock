@@ -29,7 +29,7 @@ class FlexMock
     # Do the flexmock specific teardown stuff.  If you need finer control,
     # you can use either +flexmock_verify+ or +flexmock_close+.
     def flexmock_teardown
-      flexmock_verify if passed?
+      flexmock_verify unless flexmock_test_has_failed?
     ensure
       flexmock_close
     end
@@ -163,6 +163,16 @@ class FlexMock
       @flexmock_created_mocks << mocking_object
       mocking_object.flexmock_container = self
       mocking_object
+    end
+
+    private
+
+    # In frameworks (e.g. MiniTest) passed? will return nil to
+    # indicate the test isn't over yet.  From our point of view we are
+    # only interested if the test has actually failed, so we wrap the
+    # raw call to passed? and handle accordingly.
+    def flexmock_test_has_failed?
+      passed? == false
     end
   end
 
