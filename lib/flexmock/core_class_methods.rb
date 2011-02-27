@@ -41,7 +41,7 @@ class FlexMock
       container = UseContainer.new
       mocks = names.collect { |n| container.flexmock(n) }
       yield(*mocks)
-    rescue Exception => ex
+    rescue Exception => _
       container.got_exception = true
       raise
     ensure

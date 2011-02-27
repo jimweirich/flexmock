@@ -75,7 +75,7 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
 
   def test_stub_with_quick_definitions
     fido = Object.new
-    mock = flexmock(fido, :wag => :happy)
+    flexmock(fido, :wag => :happy)
     assert_equal :happy, fido.wag
   end
 
@@ -92,12 +92,12 @@ class TestFlexmockContainerMethods < Test::Unit::TestCase
     fido = Object.new
     mock = flexmock(fido)
     mock.should_receive(:hi).once
-    ex = assert_raise(assertion_failed_error) { flexmock_verify }
+    assert_raise(assertion_failed_error) { flexmock_verify }
   end
 
   def test_stubbing_a_string
     s = "hello"
-    mock = flexmock(:base, s, :length => 2)
+    flexmock(:base, s, :length => 2)
     assert_equal 2, s.length
   end
 

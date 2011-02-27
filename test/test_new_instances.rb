@@ -94,7 +94,7 @@ class TestNewInstances < Test::Unit::TestCase
       obj.should_receive(:bark).once.and_return(nil)
     end
 
-    fido = Dog.new
+    Dog.new
     ex = assert_raise(assertion_failed_error) { flexmock_teardown }
     assert_match(/method 'bark\(.*\)' called incorrect number of times/, ex.message)
   end

@@ -242,7 +242,7 @@ class FlexMock
           end
         end
         new_alias
-      rescue NameError => ex
+      rescue NameError => _
         # Alias attempt failed
         nil
       end
@@ -266,7 +266,7 @@ class FlexMock
             instance_variable_get('@flexmock_proxy').mock.#{method_name}(*args, &block)
           end
         }, __FILE__, eval_line
-        make_rcov_recognize_the_above_eval_is_covered = true
+        _ = true       # make rcov recognize the above eval is covered
       end
     end
 

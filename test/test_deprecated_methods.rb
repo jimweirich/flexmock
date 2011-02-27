@@ -101,7 +101,7 @@ class TestFlexMock < Test::Unit::TestCase
   end
 
   def test_file_io_with_use
-    file = FlexMock.use do |m|
+    FlexMock.use do |m|
       filedata = ["line 1", "line 2"]
       s { m.mock_handle(:gets, 3) { filedata.shift } }
       assert_equal 2, count_lines(m)
@@ -110,7 +110,7 @@ class TestFlexMock < Test::Unit::TestCase
 
   def count_lines(stream)
     result = 0
-    while line = stream.gets
+    while stream.gets
       result += 1
     end
     result

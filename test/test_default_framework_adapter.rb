@@ -17,7 +17,7 @@ class TestFlexmockDefaultFrameworkAdapter < Test::Unit::TestCase
   end
 
   def test_assert_block_raises_exception
-    ex = assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
+    assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
       @adapter.assert_block("failure message") { false }
     }
   end
@@ -31,7 +31,7 @@ class TestFlexmockDefaultFrameworkAdapter < Test::Unit::TestCase
   end
 
   def test_assert_equal_can_fail
-    ex = assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
+    assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
       @adapter.assert_equal("a", "b", "a should not equal b")
     }
   end

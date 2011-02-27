@@ -173,7 +173,7 @@ class TestStubbing < Test::Unit::TestCase
     flexmock(Dog).should_receive(:create).once.and_return(:mock)
     begin
       flexmock_teardown
-    rescue assertion_failed_error => ex
+    rescue assertion_failed_error => _
       nil
     end
     assert_equal :new_dog, Dog.create
@@ -295,7 +295,7 @@ class TestStubbing < Test::Unit::TestCase
 
   def test_safe_partial_mocks_require_block
     dog = Dog.new
-    ex = assert_raise(FlexMock::UsageError) { flexmock(:safe, dog) }
+    assert_raise(FlexMock::UsageError) { flexmock(:safe, dog) }
   end
 
   def test_safe_partial_mocks_are_actually_mocked

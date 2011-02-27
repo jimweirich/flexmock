@@ -37,7 +37,7 @@ class AliasingTest < Test::Unit::TestCase
   end
 
   def test_once_mocking
-    m = mock("a cute dog").expects(:pat).and_return(:woof!).mock
+    mock("a cute dog").expects(:pat).and_return(:woof!).mock
   end
 
   def test_twice_mocking

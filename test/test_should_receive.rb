@@ -238,7 +238,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_raises_is_an_alias_for_and_raise
     FlexMock.use do |m|
       m.should_receive(:failure).raises(RuntimeError)
-      ex = assert_raise RuntimeError do
+      assert_raise RuntimeError do
         m.failure
       end
     end
@@ -319,7 +319,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_with_no_args_but_with_args
-    ex = assert_failure(NO_MATCH_ERROR_MESSAGE) do
+    assert_failure(NO_MATCH_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with_no_args
         m.hi(1)
@@ -509,7 +509,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_never_and_called_once
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_failure(COUNT_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).never
         m.hi(1)
@@ -525,7 +525,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_once_but_never_called
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_failure(COUNT_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).once
       end
@@ -533,7 +533,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_once_but_called_twice
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_failure(COUNT_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).once
         m.hi(1)
@@ -585,7 +585,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_least_but_never_called
-    ex = assert_failure(AT_LEAST_ERROR_MESSAGE) do
+    assert_failure(AT_LEAST_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once
       end
@@ -601,7 +601,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_least_and_exact
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_failure(COUNT_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.once
         m.hi(1)
@@ -624,7 +624,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_called_twice
-    ex = assert_failure(AT_MOST_ERROR_MESSAGE) do
+    assert_failure(AT_MOST_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_most.once
         m.hi(1)
@@ -634,7 +634,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_and_at_least_called_never
-    ex = assert_failure(AT_LEAST_ERROR_MESSAGE) do
+    assert_failure(AT_LEAST_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.at_most.twice
       end
@@ -657,7 +657,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_and_at_least_called_three_times
-    ex = assert_failure(AT_MOST_ERROR_MESSAGE) do
+    assert_failure(AT_MOST_ERROR_MESSAGE) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.at_most.twice
         m.hi(1)
@@ -706,7 +706,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_ordered_calls_out_of_order_will_fail
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered
         m.should_receive(:lo).ordered
@@ -728,7 +728,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_order_calls_with_different_arg_lists_and_out_of_order_will_fail
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).with("one").ordered
         m.should_receive(:hi).with("two").ordered
@@ -806,7 +806,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_explicit_ordering_with_explicit_misorders
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered(:first_group)
         m.should_receive(:lo).ordered(:second_group)
@@ -857,7 +857,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_ordering_between_mocks_is_honored_for_global_ordering
-    ex = assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
       FlexMock.use("x", "y") do |x, y|
         x.should_receive(:one).globally.ordered
         y.should_receive(:two).globally.ordered
