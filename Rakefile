@@ -150,12 +150,6 @@ else
   end
 end
 
-desc "Display a list of all the rubyfiles in the project."
-task :rubyfiles do
-  puts FileList['**/*.rb']
-end
-task :rf => :rubyfiles
-
 require 'rake/contrib/publisher'
 require 'rake/contrib/sshpublisher'
 
@@ -167,8 +161,6 @@ task :publish => [:rdoc] do
   publisher.upload
 end
 
-SVNHOME = 'svn://localhost/software/flexmock'
-
 task :specs do
   specs = FileList['test/spec_*.rb']
   ENV['RUBYLIB'] = "lib:test:#{ENV['RUBYLIB']}"
@@ -176,26 +168,5 @@ task :specs do
 end
 
 task :tag do
-  sh "svn copy #{SVNHOME}/trunk #{SVNHOME}/tags/rel-#{PKG_VERSION} -m 'Release #{PKG_VERSION}'"
+  sh "git tag 'flexmock-#{PKG_VERSION}'"
 end
-
-RUBY_FILES = FileList['**/*.rb']
-RUBY_FILES.exclude(/^pkg/)
-task :dbg do
-  RUBY_FILES.egrep(/DBG/)
-end
-
-# Tagging ------------------------------------------------------------
-
-# module Tags
-#   RUBY_FILES = FileList['**/*.rb'].exclude("pkg")
-# end
-
-# namespace "tags" do
-#   task :emacs => Tags::RUBY_FILES do
-#     puts "Making Emacs TAGS file"
-#     sh "xctags -e #{Tags::RUBY_FILES}", :verbose => false
-#   end
-# end
-
-# task :tags => ["tags:emacs"]
