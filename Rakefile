@@ -46,14 +46,14 @@ task :ta => [:test_all]
 # Test Targets -------------------------------------------------------
 
 Rake::TestTask.new do |t|
-  t.test_files = FileList['test/test*.rb']
+  t.test_files = FileList['test/*_test.rb']
   t.libs << "."
   t.verbose = false
   t.warning = true
 end
 
 Rake::TestTask.new(:test_extended) do |t|
-  t.test_files = FileList['test/extended/test_*.rb']
+  t.test_files = FileList['test/extended/*_test.rb']
   t.verbose = true
   t.warning = true
 end
