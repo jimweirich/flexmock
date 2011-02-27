@@ -15,7 +15,6 @@ require 'rake/testtask'
 require 'rake/contrib/rubyforgepublisher'
 
 require 'rubygems/package_task'
-require 'rdoc/task'
 
 CLEAN.include('*.tmp')
 CLOBBER.include("html", 'pkg')
@@ -84,21 +83,14 @@ end
 
 # RDoc Target --------------------------------------------------------
 
-task :rdoc => ["README.rdoc"]
+task :rdoc => ["html/index.html"]
 
-$rd = Rake::RDocTask.new("rdoc") do |rdoc|
-  rdoc.rdoc_dir = 'html'
-  rdoc.template = 'doc/jamis.rb'
-  #  rdoc.template = 'html'
-  #  rdoc.template = 'kilmer'
-  #  rdoc.template = 'css2'
-  rdoc.title    = "Flex Mock"
-  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README.rdoc'
-  rdoc.rdoc_files.include(RDOC_FILES)
+file "html/index.html" => ["Rakefile"] + RDOC_FILES do
+  sh "rdoc -o html --title FlexMock --line-numbers -m README.rdoc #{RDOC_FILES}"
 end
 
-file "README.rdoc" => ["Rakefile"] do
-  ruby %{-i.bak -pe 'sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
+file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do
+  ruby %{-i.bak -pe '$_.sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
 end
 
 # Package Task -------------------------------------------------------
@@ -139,10 +131,10 @@ else
     #### Documentation and testing.
 
     s.has_rdoc = true
-    s.extra_rdoc_files = $rd.rdoc_files.reject { |fn| fn =~ /\.rb$/ }.to_a
+    s.extra_rdoc_files = RDOC_FILES.reject { |fn| fn =~ /\.rb$/ }.to_a
     s.rdoc_options <<
-      '--title' <<  'Flex Mock' <<
-      '--main' << 'README' <<
+      '--title' <<  'FlexMock' <<
+      '--main' << 'README.rdoc' <<
       '--line-numbers'
 
     #### Author and project details.
