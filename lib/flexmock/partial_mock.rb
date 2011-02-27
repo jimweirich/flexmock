@@ -125,6 +125,7 @@ class FlexMock
       allocators = [:new] if allocators.empty?
       result = ExpectationRecorder.new
       allocators.each do |allocate_method|
+        check_allocate_method(allocate_method)
         # HACK: Without the following lambda, Ruby 1.9 will not bind
         # the allocate_method parameter correctly.
         lambda { }
@@ -181,6 +182,12 @@ class FlexMock
     end
 
     private
+
+    def check_allocate_method(allocate_method)
+      if allocate_method == :allocate && RUBY_VERSION >= "1.9"
+        fail UsageError, "Cannot mock the allocation method using new_instances in Ruby 1.9"
+      end
+    end
 
     # The singleton class of the object.
     def sclass

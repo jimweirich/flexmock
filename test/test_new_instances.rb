@@ -117,12 +117,22 @@ class TestNewInstances < Test::Unit::TestCase
     assert_equal :woof,  m.bark
   end
 
-  def test_can_explicitly_stub_objects_created_with_allocate
-    flexstub(Dog).new_instances(:allocate) do |obj|
-      obj.should_receive(:bark).and_return(:whimper)
+  if RUBY_VERSION >= "1.9"
+    def test_explicitly_mocking_allocation_in_new_instances_fails_in_ruby_19
+      assert_raise FlexMock::UsageError do
+        flexstub(Dog).new_instances(:allocate) do |obj|
+          obj.should_receive(:bark).and_return(:whimper)
+        end
+      end
     end
-    m = Dog.allocate
-    assert_equal :whimper,  m.bark
+  else
+    def test_can_explicitly_stub_objects_created_with_allocate
+      flexstub(Dog).new_instances(:allocate) do |obj|
+        obj.should_receive(:bark).and_return(:whimper)
+      end
+      m = Dog.allocate
+      assert_equal :whimper,  m.bark
+    end
   end
 
   def test_can_stub_objects_created_with_arbitrary_class_methods
