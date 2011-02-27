@@ -164,7 +164,7 @@ end
 task :specs do
   specs = FileList['test/spec_*.rb']
   ENV['RUBYLIB'] = "lib:test:#{ENV['RUBYLIB']}"
-  sh %{spec #{specs}}
+  sh %{rspec #{specs}}
 end
 
 task :tag do
