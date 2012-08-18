@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2012 by Jim Weirich (jim.weirich@gmail.com).
 # All rights reserved.
 
 # Permission is granted for use, copying, modification, distribution,
@@ -213,5 +213,3 @@ class TestNewInstances < Test::Unit::TestCase
     dog.bark
   end
 end
-
-
