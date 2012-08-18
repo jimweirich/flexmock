@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #---
-# Copyright 2003-2011 by Jim Weirich (jim@weirichhouse.org).
+# Copyright 2003-2012 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
 #
 # Permission is granted for use, copying, modification, distribution,
@@ -54,7 +54,7 @@ class FlexMock
   end
 
   ####################################################################
-  # Match only things where the block evaluates to true.
+  # Match hashes that match all the fields of +hash+.
   class HashMatcher
     def initialize(hash)
       @hash = hash
@@ -68,7 +68,7 @@ class FlexMock
   end
 
   ####################################################################
-  # Match only things where the block evaluates to true.
+  # Match objects that implement all the methods in +methods+.
   class DuckMatcher
     def initialize(methods)
       @methods = methods
@@ -80,6 +80,5 @@ class FlexMock
       "ducktype(#{@methods.map{|m| m.inspect}.join(',')})"
     end
   end
-
 
 end
