@@ -107,4 +107,10 @@ class TestDemeterMocking < Test::Unit::TestCase
       @spy.baz
     end
   end
+
+  def test_can_spy_on_explicit_stubbed_methods
+    @spy.should_receive(:baz).and_return(:bag)
+    @spy.baz
+    assert @spy.flexmock_was_called_with?(:baz, [])
+  end
 end
