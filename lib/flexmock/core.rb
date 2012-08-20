@@ -12,6 +12,7 @@
 require 'flexmock/errors'
 require 'flexmock/composite'
 require 'flexmock/ordering'
+require 'flexmock/argument_matching'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -57,6 +58,7 @@ class FlexMock
     @expectations = Hash.new
     @ignore_missing = false
     @verified = false
+    @calls = []
     container = UseContainer.new if container.nil?
     container.flexmock_remember(self)
   end
@@ -85,6 +87,7 @@ class FlexMock
   # Ignore all undefined (missing) method calls.
   def should_ignore_missing
     @ignore_missing = true
+    self
   end
   alias mock_ignore_missing should_ignore_missing
 
@@ -95,6 +98,7 @@ class FlexMock
 
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
+    @calls << [sym, args, block]
     flexmock_wrap do
       if handler = @expectations[sym]
         args << block  if block_given?
@@ -124,6 +128,21 @@ class FlexMock
   # Return the expectation director for a method name.
   def flexmock_expectations_for(method_name) # :nodoc:
     @expectations[method_name]
+  end
+
+  def flexmock_was_called_with?(sym, args, options={})
+    count = 0
+    @calls.each { |call_sym, call_args, call_block|
+      count += 1 if ((call_sym == sym) &&
+        ArgumentMatching.all_match?(args, call_args) &&
+        ArgumentMatching.block_match?(options[:with_block], call_block))
+    }
+    if options[:times]
+      result = count == options[:times]
+    else
+      result = count > 0
+    end
+    result
   end
 
   # Override the built-in +method+ to include the mocked methods.

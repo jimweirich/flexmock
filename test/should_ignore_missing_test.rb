@@ -32,6 +32,11 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
     assert @mock.respond_to?(:unknown_foo)
   end
 
+  def test_should_ignore_missing_returns_mock
+    result = @mock.should_ignore_missing
+    assert_equal result, @mock
+  end
+
   def test_ignored_methods_return_undefined
     @mock.should_ignore_missing
     assert_equal FlexMock.undefined, @mock.unknown_foo

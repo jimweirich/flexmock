@@ -128,7 +128,7 @@ class FlexMock
     # Does the argument list match this expectation's argument
     # specification.
     def match_args(args)
-      ArgumentMatching.match_args?(@expected_args, args)
+      ArgumentMatching.all_match?(@expected_args, args)
     end
 
     # Declare that the method should expect the given argument list.
