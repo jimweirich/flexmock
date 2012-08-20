@@ -6,10 +6,16 @@ require 'test/test_setup'
 class TestDemeterMocking < Test::Unit::TestCase
   include FlexMock::TestCase
 
+  class FooBar
+    def foo
+    end
+    def bar
+    end
+  end
+
   def setup
     super
-    @spy = flexmock("spy")
-    @spy.should_ignore_missing
+    @spy = flexmock("spy", :spy_on, FooBar)
   end
 
   def test_spy_detects_simple_call
