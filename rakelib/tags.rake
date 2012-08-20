@@ -3,7 +3,7 @@
 
 module Tags
   RUBY_FILES = FileList['**/*.rb'].exclude("pkg")
-  PROG = 'xctags'
+  PROG = ENV['TAGS'] || 'ctags'
 end
 
 namespace "tags" do
