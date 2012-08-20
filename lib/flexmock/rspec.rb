@@ -9,6 +9,8 @@
 # above copyright notice is included.
 #+++
 
+
+
 require 'flexmock/base'
 
 class FlexMock
@@ -36,3 +38,5 @@ class FlexMock
 
   @framework_adapter = RSpecFrameworkAdapter.new
 end
+
+require 'flexmock/rspec_spy_matcher'

@@ -59,6 +59,7 @@ class FlexMock
     @ignore_missing = false
     @verified = false
     @calls = []
+    @spy_base = nil
     container = UseContainer.new if container.nil?
     container.flexmock_remember(self)
   end
@@ -103,6 +104,8 @@ class FlexMock
       if handler = @expectations[sym]
         args << block  if block_given?
         handler.call(*args)
+      elsif @spy_base && @spy_base.instance_methods.include?(sym)
+        FlexMock.undefined
       elsif @ignore_missing
         FlexMock.undefined
       else
@@ -128,6 +131,10 @@ class FlexMock
   # Return the expectation director for a method name.
   def flexmock_expectations_for(method_name) # :nodoc:
     @expectations[method_name]
+  end
+
+  def flexmock_spies_on(spy_base)
+    @spy_base = spy_base
   end
 
   def flexmock_was_called_with?(sym, args, options={})

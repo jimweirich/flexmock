@@ -134,6 +134,7 @@ class FlexMock
         when :spy_on
           args.shift
           spy_base = args.shift
+          name ||= "#{spy_base} Spy"
         when String, Symbol
           name = args.shift.to_s
         when Hash
@@ -157,7 +158,7 @@ class FlexMock
       yield(mock) if block_given?
       flexmock_remember(mock)
       ContainerHelper.add_model_methods(mock, model_class, id) if model_class
-      ContainerHelper.add_spy_methods(mock, spy_base) if spy_base
+      mock.flexmock_spies_on(spy_base) if spy_base
       result
     end
     alias flexstub flexmock
@@ -220,14 +221,6 @@ class FlexMock
         end
       end
       result
-    end
-
-    # Add default mocks for all instance methods in the spy base class
-    def add_spy_methods(mock, spy_base_class)
-      spy_base_class.instance_methods.each do |method_name|
-        next if method_name.to_s =~ /^(__|object_id$)/
-        mock.should_receive(method_name).and_return(nil).by_default
-      end
     end
 
     # Automatically add mocks for some common methods in ActiveRecord

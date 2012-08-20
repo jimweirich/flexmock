@@ -38,7 +38,7 @@ RDOC_FILES = FileList[
   'doc/**/*.rdoc',
 ]
 
-task :default => [:test_all]
+task :default => [:test_all, :rspec]
 task :test_all => [:test]
 task :test_units => [:test]
 task :ta => [:test_all]
@@ -59,12 +59,7 @@ Rake::TestTask.new(:test_extended) do |t|
 end
 
 task :rspec do
-  ENV['RUBYLIB'] = "/Users/jim/working/svn/software/flexmock/lib"
-  sh 'echo $RUBYLIB'
-  sh "spec test/rspec_integration/*_spec.rb" rescue nil
-  puts
-  puts "*** There should be three failures in the above report. ***"
-  puts
+  sh "rspec test/rspec_integration"
 end
 
 # RCov Target --------------------------------------------------------

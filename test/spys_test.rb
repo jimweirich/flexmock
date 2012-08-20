@@ -94,4 +94,17 @@ class TestDemeterMocking < Test::Unit::TestCase
     @spy.foo { }
     assert @spy.flexmock_was_called_with?(:foo, nil), "should ignore the status of the block"
   end
+
+  def test_spy_methods_can_be_stubbed
+    @spy.should_receive(:foo).and_return(:hi)
+    result = @spy.foo
+    assert_equal result, :hi
+    assert @spy.flexmock_was_called_with?(:foo, nil)
+  end
+
+  def test_calling_non_spy_base_methods_is_an_error
+    assert_raise(NoMethodError) do
+      @spy.baz
+    end
+  end
 end
