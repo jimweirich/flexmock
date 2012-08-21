@@ -49,7 +49,7 @@ class FlexMock
       end
 
       def call_description(sym, args, any_args)
-        if any_args
+        if any_args || args.nil?
           "#{sym}(...)"
         else
           "#{sym}(#{args.map { |o| o.inspect }.join(', ')})"

@@ -6,10 +6,10 @@ class FlexMock
     class HaveReceived
       include SpyDescribers
 
-      def initialize(sym, args, block)
-        @sym = sym
-        @args = args
-        @block = block
+      def initialize(method_name)
+        @method_name = method_name
+        @args = nil
+        @block = nil
         @times = nil
         @needs_block = nil
       end
@@ -20,15 +20,20 @@ class FlexMock
         @options[:times] = @times if @times
         @options[:with_block] = @needs_block unless @needs_block.nil?
         @options[:any_args] = @any_args unless @any_args.nil?
-        @spy.flexmock_was_called_with?(@sym, @args, @options)
+        @spy.flexmock_was_called_with?(@method_name, @args, @options)
       end
 
       def failure_message_for_should
-        describe_spy_expectation(@spy, @sym, @args, @options)
+        describe_spy_expectation(@spy, @method_name, @args, @options)
       end
 
       def failure_message_for_should_not
-        describe_spy_negative_expectation(@spy, @sym, @args, @options)
+        describe_spy_negative_expectation(@spy, @method_name, @args, @options)
+      end
+
+      def with(*args)
+        @args = args
+        self
       end
 
       def with_a_block
@@ -64,14 +69,8 @@ class FlexMock
       end
     end
 
-    class HaveReceivedCatcher
-      def method_missing(sym, *args, &block)
-        HaveReceived.new(sym, args, block)
-      end
-    end
-
-    def have_received
-      HaveReceivedCatcher.new
+    def have_received(method_name)
+      HaveReceived.new(method_name)
     end
   end
 end
