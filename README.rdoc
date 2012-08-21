@@ -37,8 +37,8 @@ Here's the complete example:
     end
 
     def average_temp
-      total = (0...3).collect { 
-        @sensor.read_temperature 
+      total = (0...3).collect {
+        @sensor.read_temperature
       }.inject { |i, s| i + s }
       total / 3.0
     end
@@ -88,7 +88,7 @@ FlexMock also supports integration with the RSpec behavior
 specification framework.  Starting with version 0.9.0 of RSpec, you
 will be able to say:
 
-  Spec::Runner.configure do |config|
+  RSpec.configure do |config|
     config.mock_with :flexmock
   end
 
@@ -99,12 +99,18 @@ will be able to say:
     end
   end
 
-If you wish to try this prior to the release of RSpec 0.9.0, check out
-the trunk of the RSpec subversion repository.
+<b>NOTE:</b> <em>Older versions of RSpec used the Spec::Runner for
+configuration. If you are running with a very old RSpec, you may need
+the following:</em>
+
+  # Configuration for RSpec prior to RSpec 2.x
+  Spec::Runner.configure do |config|
+    config.mock_with :flexmock
+  end
 
 == Quick Reference
 
-=== Creating Mock Objects 
+=== Creating Mock Objects
 
 The +flexmock+ method is used to create mocks in various
 configurations.  Here's a quick rundown of the most common options.
@@ -112,7 +118,7 @@ See FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock("joe")</b>
 
-  Create a mock object named "joe" (the name is used in reporting errors).  
+  Create a mock object named "joe" (the name is used in reporting errors).
 
 * <b>mock = flexmock(:foo => :bar, :baz => :froz)</b>
 
@@ -131,7 +137,7 @@ See FlexMock::MockContainer#flexmock for more details.
   that real object as a base for a partial mock object. The return value +m+
   may be used to set expectations. The real_object should be used in the
   reference portion of the test.
-  
+
 * <b>partial_mock = flexmock(real_object, "name", :foo => :baz)</b>
 
   Names and expectation hashes may be used with partial mocks as well.
@@ -163,7 +169,7 @@ See FlexMock::MockContainer#flexmock for more details.
   * any_instance  (note: deprecated)
   * mock
   * mock_teardown
-  * mock_setup    
+  * mock_setup
 
 * <b>mock = flexmock(...) { |mock| mock.should_receive(...) }</b>
 
@@ -191,6 +197,8 @@ See FlexMock::MockContainer#flexmock for more details.
   * instance_of?(class) -- returns true if class == YourModel
   * kind_of?(class) -- returns true if class is YourModel or one of its ancestors
   * class -- returns YourModel.
+
+* <b>mock = flexmock(... :spy_on, class_object, ...)</b>
 
 <b>NOTE:</b> Versions of FlexMock prior to 0.6.0 used +flexstub+ to
 create partial mocks.  The +flexmock+ method now assumes all the
@@ -386,7 +394,7 @@ object. See theFlexMock::Expectation for more details.
   any order (because they are in the same group), but must occur strictly
   after +start+ but before +end+. The message +any_time+ may be received at
   any time because it is not ordered.
-  
+
     m = flexmock()
     m.should_receive(:any_time)
     m.should_receive(:start).ordered
@@ -424,12 +432,12 @@ object. See theFlexMock::Expectation for more details.
   constraints can be chained. If you wish to do a one-liner and assign the
   mock to a variable, the +mock+ method on an expectation will return the
   original mock object.
-  
+
     m = flexmock.should_receive(:hello).once.and_return("World").mock
 
   <b>NOTE:</b> <em>Using <b>mock</b> when specifying a Demeter mock
   chain will return the last mock of the chain, which might not be
-  what you expect.
+  what you expect.</em>
 
 === Argument Validation
 
@@ -565,7 +573,7 @@ Here's the test code:
   class TestDogBarking < Test::Unit::TestCase
     include FlexMock::TestCase
 
-    # Setup the tests by mocking the +new+ method of 
+    # Setup the tests by mocking the +new+ method of
     # Woofer and return a mock woofer.
     def setup
       @dog = Dog.new
@@ -608,7 +616,7 @@ return mocks for us.
   class TestDogBarking < Test::Unit::TestCase
     include FlexMock::TestCase
 
-    # Setup the tests by mocking the +new+ method of 
+    # Setup the tests by mocking the +new+ method of
     # Woofer and return a mock woofer.
     def setup
       flexmock(Woofer).should_receive(:new).
@@ -669,7 +677,7 @@ In your test setup you might have:
     @mock_dog = flexmock("Fido")
     @mock_dog.should_receive(:tail => :a_tail, :bark => "woof").by_default
   end
-    
+
 The behaviors for :tail and :bark are good for most of the tests, but
 perhaps you wish to verify that :bark is called exactly once in a
 given test.  Since :bark by default has no count expectations, you can
@@ -678,12 +686,12 @@ override the default in the given test.
   def test_something_where_bark_must_be_called_once
     @mock_dog.should_receive(:bark => "woof").once
 
-    # At this point, the default for :bark is ignored, 
+    # At this point, the default for :bark is ignored,
     # and the "woof" value will be returned.
 
     # However, the default for :tail (which returns :a_tail)
     # is still active.
-  end 
+  end
 
 By setting defaults, your individual tests don't have to concern
 themselves with details of all the default setup.  But the details of
@@ -752,7 +760,7 @@ beforehand.
 === Create a simple mock object that returns a value for a set of method calls
 
    require 'flexmock/test_unit'
-   
+
    class TestSimple < Test::Unit::TestCase
      def test_simple_mock
        m = flexmock(:pi => 3.1416, :e => 2.71)
@@ -764,7 +772,7 @@ beforehand.
 === Create a mock object that returns an undefined object for method calls
 
    require 'flexmock/test_unit'
-   
+
    class TestUndefined < Test::Unit::TestCase
      def test_undefined_values
        m = flexmock("mock")
@@ -835,7 +843,7 @@ values to figure out what value to return.
 The record mode interface offers much the same features as the
 +should_receive+ interface introduced so far, but it allows the
 messages to be sent directly to a recording object rather than be
-specified indirectly using a symbol. 
+specified indirectly using a symbol.
 
    def test_ordered_queries_in_record_mode
      db = flexmock('db')
