@@ -258,6 +258,12 @@ class FlexMock
     end
     alias :throws :and_throw
 
+    def pass_thru
+      and_return { |*args|
+        @mock.flexmock_invoke_original(@sym, args)
+      }
+    end
+
     # Declare that the method may be called any number of times.
     def zero_or_more_times
       at_least.never

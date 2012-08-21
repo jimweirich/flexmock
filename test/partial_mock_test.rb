@@ -61,6 +61,12 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal flexmock(obj), flexmock(obj)
   end
 
+  def test_stubbed_methods_can_invoke_original_behavior
+    dog = Dog.new
+    flexmock(dog).should_receive(:bark).pass_thru.once
+    assert_equal :woof, dog.bark
+  end
+
   def test_multiple_methods_can_be_stubbed
     dog = Dog.new
     flexmock(dog).should_receive(:bark).and_return(:grrrr)

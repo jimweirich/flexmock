@@ -149,6 +149,10 @@ class FlexMock
     end
     private :invoke_original
 
+    def flexmock_invoke_original(method, args)
+      invoke_original(method, args)
+    end
+
     # Verify that the mock has been properly called.  After verification,
     # detach the mocking infrastructure from the existing object.
     def flexmock_verify

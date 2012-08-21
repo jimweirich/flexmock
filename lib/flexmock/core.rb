@@ -151,6 +151,10 @@ class FlexMock
     result
   end
 
+  def flexmock_invoke_original(sym, args)
+    return FlexMock.undefined
+  end
+
   # Override the built-in +method+ to include the mocked methods.
   def method(sym)
     @expectations[sym] || super

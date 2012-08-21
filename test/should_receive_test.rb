@@ -301,6 +301,13 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_pass_thru_just_returns_undefined_on_mocks
+    FlexMock.use do |m|
+      m.should_receive(:hi).pass_thru
+      assert_equal FlexMock.undefined, m.hi
+    end
+  end
+
   def test_multiple_expectations
     FlexMock.use do |m|
       m.should_receive(:hi).with(1).returns(10)
