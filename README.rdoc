@@ -7,10 +7,10 @@ Version :: 1.0.0.beta.1
 
 = Links
 
-<b>Documents</b>   :: http://flexmock.rubyforge.org
-<b>RubyGems</b>    :: Install with: <b>gem install flexmock</b>
-<b>Source</b>      :: https://github.com/jimweirich/flexmock
-<b>Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
+<b>Documents</b>                      :: http://flexmock.rubyforge.org
+<b>RubyGems</b>                       :: Install with: <b>gem install flexmock</b>
+<b>Source</b>                         :: https://github.com/jimweirich/flexmock
+<b>Bug Reports and Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
 
 == Installation
 
@@ -148,8 +148,8 @@ FlexMock::MockContainer#flexmock for more details.
 
   If you you give <code>flexmock</code> a real object in the argument
   list, it will treat that real object as a base for a partial mock
-  object. The return value <code>m</code> may be used to set
-  expectations. The real_object should be used in the reference
+  object. The return value <code>partial_mock</code> may be used to
+  set expectations. The real_object should be used in the reference
   portion of the test.
 
 * <b>partial_mock = flexmock(real_object, "name", :foo => :baz)</b>
