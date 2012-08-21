@@ -4,3 +4,14 @@ Short term things to do:
 * Consolidate mock argument matching and spy argument matching
 * Consolidate mock block detection and spy block detection.
 * Consolidate the :on option with mocks
+* Pass through mode for partial mocks
+* Update readme
+
+IDEAS
+
+spy.should have_received(:foo).with(arg1, arg2)
+spy.should have_received.foo(arg1, arg2)
+
+
+assert_called spy, :foo, arg1, arg2
+assert_spy(spy).received(:foo).with(arg1, arg2)
