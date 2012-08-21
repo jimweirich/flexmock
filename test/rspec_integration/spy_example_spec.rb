@@ -31,13 +31,13 @@ describe "Dog" do
     end
 
     it "rejects wag(:foot)" do
-      should_fail(/expected wag\(:foot\) to be called on <FlexMock:Dog Spy>/i) do
+      should_fail(/^expected wag\(:foot\) to be called on <FlexMock:Dog Spy>/i) do
         dog.should have_received.wag(:foot)
       end
     end
 
     it "rejects not wag(:tail)" do
-      should_fail(/expected wag\(:foot\) to be called on <FlexMock:Dog Spy>/i) do
+      should_fail(/^expected wag\(:foot\) to be called on <FlexMock:Dog Spy>/i) do
         dog.should_not have_received.wag(:tail)
       end
     end
@@ -58,7 +58,7 @@ describe "Dog" do
     end
 
     it "rejects wags(:tail) wrong times value" do
-      should_fail(/expected wags\(:tail\) to be called on <FlexMock:Dog Spy>/i) do
+      should_fail(/^expected wags\(:tail\) to be called on <FlexMock:Dog Spy>/i) do
         dog.should have_received.wags(:tail).times(2)
       end
     end
@@ -68,7 +68,7 @@ describe "Dog" do
     end
 
     it "rejects an incorrect once" do
-      should_fail(/expected wags\(:tail\) to be called on <FlexMock:Dog Spy> once/i) do
+      should_fail(/^expected wags\(:tail\) to be called on <FlexMock:Dog Spy> once/i) do
         dog.should have_received.wags(:tail).once
       end
     end
@@ -78,7 +78,7 @@ describe "Dog" do
     end
 
     it "rejects an incorrect twice" do
-      should_fail(/expected wags\(:tail\) to be called on <FlexMock:Dog Spy> twice/) do
+      should_fail(/^expected wags\(:tail\) to be called on <FlexMock:Dog Spy> twice/) do
         dog.should have_received.wags(:tail).twice
       end
     end
@@ -88,7 +88,7 @@ describe "Dog" do
     end
 
     it "rejects an incorrect never" do
-      should_fail(/expected barks\(\) to be called on <FlexMock:Dog Spy> never/i) do
+      should_fail(/^expected barks\(\) to be called on <FlexMock:Dog Spy> never/i) do
         dog.should have_received.barks.never
       end
     end

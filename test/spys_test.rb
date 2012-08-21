@@ -1,10 +1,11 @@
-
 #!/usr/bin/env ruby
 
 require 'test/test_setup'
+require 'flexmock/spy_describers'
 
-class TestDemeterMocking < Test::Unit::TestCase
+class TestSpys < Test::Unit::TestCase
   include FlexMock::TestCase
+  include FlexMock::SpyDescribers
 
   class FooBar
     def foo
@@ -15,7 +16,7 @@ class TestDemeterMocking < Test::Unit::TestCase
 
   def setup
     super
-    @spy = flexmock("spy", :spy_on, FooBar)
+    @spy = flexmock(:spy_on, FooBar)
   end
 
   def test_spy_detects_simple_call
@@ -112,5 +113,20 @@ class TestDemeterMocking < Test::Unit::TestCase
     @spy.should_receive(:baz).and_return(:bag)
     @spy.baz
     assert @spy.flexmock_was_called_with?(:baz, [])
+  end
+
+  def test_can_spy_on_partial_mocks
+    @foo = FooBar.new
+    @spy = flexmock(@foo)
+    @foo.should_receive(:foo => :baz)
+    result = @foo.foo
+    assert_equal :baz, result
+    assert_spy_called @foo, :foo
+  end
+
+  def test_can_spy_on_class_methods
+    flexmock(FooBar).should_receive(:new).and_return(:dummy)
+    FooBar.new
+    assert_spy_called FooBar, :new,
   end
 end

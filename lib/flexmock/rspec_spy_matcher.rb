@@ -1,30 +1,33 @@
+require 'flexmock/spy_describers'
 
 class FlexMock
   module RSpecMatchers
 
     class HaveReceived
+      include SpyDescribers
+
       def initialize(sym, args, block)
         @sym = sym
         @args = args
         @block = block
         @times = nil
-        @need_block = nil
+        @needs_block = nil
       end
 
       def matches?(spy)
         @spy = spy
-        options = {}
-        options[:times] = @times if @times
-        options[:with_block] = @needs_block unless @needs_block.nil?
-        @spy.flexmock_was_called_with?(@sym, @args, options)
+        @options = {}
+        @options[:times] = @times if @times
+        @options[:with_block] = @needs_block unless @needs_block.nil?
+        @spy.flexmock_was_called_with?(@sym, @args, @options)
       end
 
       def failure_message_for_should
-        "expected #{call_description(@sym, @args)} to be called on #{@spy.inspect}#{times_description}#{block_description}."
+        describe_spy_expectation(@spy, @sym, @args, @options)
       end
 
       def failure_message_for_should_not
-        "expected #{call_description(@sym, @args)} to not be called on #{@spy.inspect}#{times_description}#{block_description}."
+        describe_spy_negative_expectation(@spy, @sym, @args, @options)
       end
 
       def with_a_block
@@ -52,36 +55,6 @@ class FlexMock
 
       def twice
         times(2)
-      end
-
-      private
-
-      def times_description
-        case @times
-        when 0
-          " never"
-        when 1
-          " once"
-        when 2
-          " twice"
-        else
-          ""
-        end
-      end
-
-      def block_description
-        case @needs_block
-        when true
-          " with a block"
-        when false
-          " without a block"
-        else
-          ""
-        end
-      end
-
-      def call_description(sym, args)
-        "#{sym}(#{args.map { |o| o.inspect }.join(', ')})"
       end
     end
 

@@ -33,7 +33,8 @@ class FlexMock
 
     MOCK_METHODS = [
       :should_receive, :new_instances,
-      :flexmock_get,   :flexmock_teardown, :flexmock_verify
+      :flexmock_get,   :flexmock_teardown, :flexmock_verify,
+      :flexmock_was_called_with?,
     ]
 
     # Initialize a PartialMockProxy object.
@@ -169,6 +170,11 @@ class FlexMock
     # Forward to the mock's container.
     def flexmock_container
       @mock.flexmock_container
+    end
+
+    # Forward to the mock
+    def flexmock_was_called_with?(*args)
+      @mock.flexmock_was_called_with?(*args)
     end
 
     # Set the proxy's mock container.  This set value is ignored

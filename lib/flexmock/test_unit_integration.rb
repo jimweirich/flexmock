@@ -11,6 +11,7 @@
 
 require 'test/unit'
 require 'flexmock/base'
+require 'flexmock/test_unit_assert_spy_called'
 
 class FlexMock
 
@@ -29,6 +30,7 @@ class FlexMock
   module TestCase
     include ArgumentTypes
     include MockContainer
+    include TestUnitAssertions
 
     # Teardown the test case, verifying any mocks that might have been
     # defined in this test case.
