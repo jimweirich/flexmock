@@ -489,7 +489,7 @@ The following rules are used for argument matching:
       with(FlexMock.on { code })
       with(FlexMock.any)
       with(FlexMock.hsh(:tag => 3))
-      with(FlexMock.ducktype(:wag => "dog"))
+      with(FlexMock.ducktype(:wag, :bark))
 
 * If you wish to match a hash on _some_ of its values, the
   FlexMock.hsh(...) method will work.  Only specify the hash values
