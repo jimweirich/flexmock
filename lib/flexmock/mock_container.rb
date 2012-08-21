@@ -122,7 +122,7 @@ class FlexMock
       domain_obj = nil
       safe_mode = false
       model_class = nil
-      spy_base = nil
+      base_class = nil
       while ! args.empty?
         case args.first
         when :base, :safe
@@ -131,10 +131,10 @@ class FlexMock
         when :model
           args.shift
           model_class = args.shift
-        when :spy_on
+        when :on
           args.shift
-          spy_base = args.shift
-          name ||= "#{spy_base} Spy"
+          base_class = args.shift
+          name ||= "#{base_class} Mock"
         when String, Symbol
           name = args.shift.to_s
         when Hash
@@ -158,7 +158,7 @@ class FlexMock
       yield(mock) if block_given?
       flexmock_remember(mock)
       ContainerHelper.add_model_methods(mock, model_class, id) if model_class
-      mock.flexmock_spies_on(spy_base) if spy_base
+      mock.flexmock_spies_on(base_class) if base_class
       result
     end
     alias flexstub flexmock

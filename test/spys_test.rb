@@ -16,7 +16,7 @@ class TestSpys < Test::Unit::TestCase
 
   def setup
     super
-    @spy = flexmock(:spy_on, FooBar)
+    @spy = flexmock(:on, FooBar)
   end
 
   def test_spy_detects_simple_call
@@ -128,5 +128,12 @@ class TestSpys < Test::Unit::TestCase
     flexmock(FooBar).should_receive(:new).and_return(:dummy)
     FooBar.new
     assert_spy_called FooBar, :new,
+  end
+
+  def test_can_spy_on_regular_mocks
+    mock = flexmock("regular mock")
+    mock.should_receive(:foo => :bar)
+    mock.foo
+    assert_spy_called mock, :foo
   end
 end
