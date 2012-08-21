@@ -417,6 +417,14 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_with_optional_proc_distinquishes_between_nil_and_missing
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(optional_proc).never
+      m.should_receive(:hi).with(nil).once
+      m.hi(nil)
+    end
+  end
+
   def test_with_arbitrary_arg_matching
     FlexMock.use('greeter') do |m|
       m.should_receive(:hi).with(FlexMock.on { |arg| arg % 2 == 0 rescue nil }).twice

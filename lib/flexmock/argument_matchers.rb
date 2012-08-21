@@ -87,7 +87,7 @@ class FlexMock
     def initialize
     end
     def ===(target)
-      target.nil? || Proc === target
+      ArgumentMatching.missing?(target) || Proc === target
     end
     def inspect
       "optional_proc"
