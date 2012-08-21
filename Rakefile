@@ -78,7 +78,7 @@ end
 
 # RDoc Target --------------------------------------------------------
 
-task :rdoc => ["html/index.html"]
+task :rdoc => ["html/index.html", :fixcss]
 
 file "html/index.html" => ["Rakefile"] + RDOC_FILES do
   sh "rdoc -o html --title FlexMock --line-numbers -m README.rdoc #{RDOC_FILES}"
@@ -86,6 +86,25 @@ end
 
 file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do
   ruby %{-i.bak -pe '$_.sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
+end
+
+task :fixcss do
+  open("html/rdoc.css") do |ins|
+    open("html/rdoc.new", "w") do |outs|
+      count = 0
+      ins.each do |line|
+        if line =~ /^ *margin: +0;$/
+          count += 1
+          if count == 3
+            line = "  margin: 0.5em 0;"
+          end
+        end
+        outs.puts line
+      end
+    end
+  end
+  rm_f "html/rdoc.css"
+  mv "html/rdoc.new", "html/rdoc.css"
 end
 
 # Package Task -------------------------------------------------------
