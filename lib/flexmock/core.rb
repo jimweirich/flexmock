@@ -215,9 +215,8 @@ class FlexMock
       result = Expectation.new(self, sym)
       @expectations[sym] << result
       override_existing_method(sym) if flexmock_respond_to?(sym)
-      if @base_class && ! @base_class.instance_methods.include?(sym)
-        result = ExplicitNeeded.new(result, sym, @base_class)
-      end
+      result = ExplicitNeeded.new(result, sym, @base_class) if
+        @base_class && ! @base_class.instance_methods.include?(sym)
       result
     end
   end
