@@ -1,11 +1,14 @@
 
 Short term things to do:
 
-* Consolidate mock argument matching and spy argument matching
-* Consolidate mock block detection and spy block detection.
 * Consolidate the :on option with mocks
 * Pass through mode for partial mocks
 * Update readme
+
+DONE
+
+* Consolidate mock argument matching and spy argument matching
+* Consolidate mock block detection and spy block detection.
 
 IDEAS
 

@@ -375,6 +375,12 @@ class FlexMock
     end
     private :define_ordered
 
+    # No-op for allowing explicit calls when explicit not explicitly
+    # needed.
+    def explicit
+      self
+    end
+
     def by_default
       expectations = mock.flexmock_expectations_for(@sym)
       expectations.defaultify_expectation(self) if expectations
