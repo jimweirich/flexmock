@@ -63,6 +63,10 @@ describe "Dog" do
       end
     end
 
+    it "detects any_args" do
+      dog.should have_received.wags.with_any_args.times(4)
+    end
+
     it "accepts once" do
       dog.should have_received.wags(:head, :tail).once
     end
