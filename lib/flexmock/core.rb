@@ -13,6 +13,7 @@ require 'flexmock/errors'
 require 'flexmock/composite'
 require 'flexmock/ordering'
 require 'flexmock/argument_matching'
+require 'flexmock/explicit_needed'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -180,35 +181,6 @@ class FlexMock
   #
   # See Expectation for a list of declarators that can be used.
   #
-  class ExplicitNeeded
-    def initialize(expectation, method_name, base_class)
-      @expectation = expectation
-      @explicit = false
-      @method_name = method_name
-      @base_class = base_class
-    end
-
-    def explicit
-      @explicit = true
-      self
-    end
-
-    def explicit?
-      @explicit
-    end
-
-    def method_missing(sym, *args, &block)
-      if explicit?
-        @expectation.send(sym, *args, &block)
-      else
-        fail NoMethodError, "Cannot stub methods not defined by the base class\n" +
-          "   Method:     #{@method_name}\n" +
-          "   Base Class: #{@base_class}\n" +
-          "   (Use explicit to override)"
-      end
-    end
-  end
-
   def should_receive(*args)
     @last_expectation = ContainerHelper.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
