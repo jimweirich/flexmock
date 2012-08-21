@@ -99,7 +99,7 @@ class FlexMock
 
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
-    @calls << [sym, args, block]
+    @calls << [sym, block_given? ? args + [block] : args]
     flexmock_wrap do
       if handler = @expectations[sym]
         args << block  if block_given?
@@ -140,9 +140,7 @@ class FlexMock
   def flexmock_was_called_with?(sym, args, options={})
     count = 0
     @calls.each { |call_sym, call_args, call_block|
-      count += 1 if ((call_sym == sym) &&
-        ArgumentMatching.all_match?(args, call_args) &&
-        ArgumentMatching.block_match?(options[:with_block], call_block))
+      count += 1 if (call_sym == sym) && ArgumentMatching.all_match?(args, call_args)
     }
     if options[:times]
       result = count == options[:times]

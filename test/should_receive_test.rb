@@ -403,9 +403,23 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_with_optional_proc
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(optional_proc).once
+      m.hi { }
+    end
+  end
+
+  def test_with_optional_proc_and_missing_proc
+    FlexMock.use('greeter') do |m|
+      m.should_receive(:hi).with(optional_proc).once
+      m.hi
+    end
+  end
+
   def test_with_arbitrary_arg_matching
     FlexMock.use('greeter') do |m|
-      m.should_receive(:hi).with(FlexMock.on { |arg| arg % 2 == 0 }).twice
+      m.should_receive(:hi).with(FlexMock.on { |arg| arg % 2 == 0 rescue nil }).twice
       m.should_receive(:hi).never
       m.should_receive(:hi).with(1).once
       m.should_receive(:hi).with(2).never

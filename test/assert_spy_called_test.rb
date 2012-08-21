@@ -57,8 +57,8 @@ class AssertSpyCalledTest < Test::Unit::TestCase
   def test_assert_detects_blocks
     spy.foo { }
     spy.bar
-    assert_spy_called spy, {with_block: true}, :foo
-    assert_spy_called spy, {with_block: true, times: 0}, :bar
+    assert_spy_called spy, :foo, Proc
+    assert_spy_called spy, :bar
   end
 
   def test_assert_detects_any_args

@@ -67,7 +67,7 @@ class TestSpys < Test::Unit::TestCase
 
   def test_spy_detects_a_block
     @spy.foo { }
-    assert_spy_called @spy, {with_block: true}, :foo
+    assert_spy_called @spy, :foo, Proc
   end
 
   def test_spy_rejects_a_block
@@ -82,17 +82,12 @@ class TestSpys < Test::Unit::TestCase
 
   def test_spy_rejects_a_missing_block
     @spy.foo
-    assert_spy_called @spy, {times: 0, with_block: true}, :foo
-  end
-
-  def test_spy_ignores_missing_block
-    @spy.foo
-    assert_spy_called @spy, :foo
+    assert_spy_not_called @spy, :foo, Proc
   end
 
   def test_spy_ignores_block
     @spy.foo { }
-    assert_spy_called @spy, :foo
+    assert_spy_called @spy, :foo, Proc
   end
 
   def test_spy_methods_can_be_stubbed
