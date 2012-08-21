@@ -21,10 +21,11 @@ You can install FlexMock with the following command.
 
 == Simple Example
 
-We have a data acquisition class (+TemperatureSampler+) that reads a
-temperature sensor and returns an average of 3 readings.  We don't
-have a _real_ temperature to use for testing, so we mock one up with a
-mock object that responds to the +read_temperature+ message.
+We have a data acquisition class (<code>TemperatureSampler</code>)
+that reads a temperature sensor and returns an average of 3 readings.
+We don't have a _real_ temperature to use for testing, so we mock one
+up with a mock object that responds to the
+<code>read_temperature</code> message.
 
 Here's the complete example:
 
@@ -61,9 +62,10 @@ Example}[http://flexmock.rubyforge.org/files/doc/GoogleExample_rdoc.html].
 == Test::Unit Integration
 
 FlexMock integrates nicely with Test::Unit. Just require the
-'flexmock/test_unit' file at the top of your test file. The +flexmock+ method
-will be available for mock creation, and any created mocks will be
-automatically validated and closed at the end of the individual test.
+'flexmock/test_unit' file at the top of your test file. The
+<code>flexmock</code> method will be available for mock creation, and
+any created mocks will be automatically validated and closed at the
+end of the individual test.
 
 Your test case will look something like this:
 
@@ -112,9 +114,9 @@ the following:</em>
 
 === Creating Mock Objects
 
-The +flexmock+ method is used to create mocks in various
-configurations.  Here's a quick rundown of the most common options.
-See FlexMock::MockContainer#flexmock for more details.
+The <code>flexmock</code> method is used to create mocks in various
+configurations. Here's a quick rundown of the most common options. See
+FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock("joe")</b>
 
@@ -131,12 +133,24 @@ See FlexMock::MockContainer#flexmock for more details.
   You can combine the mock name and an expectation hash in the same call to
   flexmock.
 
+* <b>mock = flexmock("joe", :on, User)</b>
+
+  This defines a mock that is based on the User class (the class is
+  called the mock's "base class"). Mocks with base classes prevent you
+  from mocking or stubbing methods that are not instance methods of
+  teh base class. This helps prevent tests from becoming stale with
+  incorrectly mocked objects when the method names change.
+
+  Use the <code>explicit</code> modifier to
+  <code>should_receive</code> to override base class restrictions.
+
 * <b>partial_mock = flexmock(real_object)</b>
 
-  If you you give +flexmock+ a real object in the argument list, it will treat
-  that real object as a base for a partial mock object. The return value +m+
-  may be used to set expectations. The real_object should be used in the
-  reference portion of the test.
+  If you you give <code>flexmock</code> a real object in the argument
+  list, it will treat that real object as a base for a partial mock
+  object. The return value <code>m</code> may be used to set
+  expectations. The real_object should be used in the reference
+  portion of the test.
 
 * <b>partial_mock = flexmock(real_object, "name", :foo => :baz)</b>
 
@@ -160,7 +174,7 @@ See FlexMock::MockContainer#flexmock for more details.
   these methods.  Indicate safe mode by passing the symbol :safe as
   the first argument of flexmock.  A block <em>is required</em> when
   using safe mode (the partial_mock returned in safe mode does not
-  have a +should_receive+ method).
+  have a <code>should_receive</code> method).
 
   The methods added to partial mocks in non-safe mode are:
 
@@ -173,9 +187,9 @@ See FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock(...) { |mock| mock.should_receive(...) }</b>
 
-  If a block is given to any of the +flexmock+ forms, the mock object will be
-  passed to the block as an argument. Code in the block can set the desired
-  expectations for the mock object.
+  If a block is given to any of the <code>flexmock</code> forms, the
+  mock object will be passed to the block as an argument. Code in the
+  block can set the desired expectations for the mock object.
 
 * <b>mock_model = flexmock(:model, YourModel, ...) { |mock| mock.should_receive(...) }</b>
 
@@ -200,17 +214,18 @@ See FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock(... :spy_on, class_object, ...)</b>
 
-<b>NOTE:</b> Versions of FlexMock prior to 0.6.0 used +flexstub+ to
-create partial mocks.  The +flexmock+ method now assumes all the
-functionality that was spread out between two different methods.
-+flexstub+ is still available for backward compatibility.
+<b>NOTE:</b> Versions of FlexMock prior to 0.6.0 used
+<code>flexstub</code> to create partial mocks. The
+<code>flexmock</code> method now assumes all the functionality that
+was spread out between two different methods. <code>flexstub</code> is
+still available for backward compatibility.
 
 === Expectation Declarators
 
 Once a mock is created, you need to define what that mock should expect to
 see. Expectation declarators are used to specify these expectations placed
 upon received method calls. A basic expectation, created with the
-+should_receive+ method, just establishes the fact that a method may (or may
+<code>should_receive</code> method, just establishes the fact that a method may (or may
 not) be called on the mock object. Refinements to that expectation may be
 additionally declared. FlexMock always starts with the most general
 expectation and adds constraints to that.
@@ -219,11 +234,12 @@ For example, the following code:
 
     mock.should_receive(:average).and_return(12)
 
-Means that the mock will now accept method calls to an +average+ method. The
-expectation will accept any arguments and may be called any number of times
-(including zero times). Strictly speaking, the +and_return+ part of the
-declaration isn't exactly a constraint, but it does specify what value the
-mock will return when the expectation is matched.
+Means that the mock will now accept method calls to an
+<code>average</code> method. The expectation will accept any arguments
+and may be called any number of times (including zero times). Strictly
+speaking, the <code>and_return</code> part of the declaration isn't
+exactly a constraint, but it does specify what value the mock will
+return when the expectation is matched.
 
 If you want to be more specific, you need to add additional constraints to
 your expectation. Here are some examples:
@@ -241,7 +257,7 @@ object. See theFlexMock::Expectation for more details.
 
   Declares that a message named <em>method_name</em> will be sent to the mock
   object. Constraints on this expected message (called expectations) may be
-  chained to the +should_receive+ call.
+  chained to the <code>should_receive</code> call.
 
 * <b>should_receive(<em>method_name1</em>, <em>method_name2</em>, ...)</b>
 
@@ -252,20 +268,31 @@ object. See theFlexMock::Expectation for more details.
   Define a number of expected messages that have the same constrants, but
   return different values.
 
-* <b>should_expect { |recorder| ... }</b>
+* <b>should_receive(...).explicit</b>
+
+  If a mock has a base class, use the <code>explicit</code> modifier
+  to override the restriction on method names imposed by the base
+  class. The explicit modifier must come immediately after the
+  <code>should_receive</code> call and before any other expectation
+  declarators.
+
+  If a mock does not have a base class, this method has no effect.
+
+* <b>should_expect { |<em>recorder</em>| ... }</b>
 
   Creates a mock recording object that will translate received method calls
   into mock expectations. The recorder is passed to a block supplied with the
-  +should_expect+ method. See examples below.
+  <code>should_expect</code> method. See examples below.
 
 * <b>with(<em>arglist</em>)</b>
 
   Declares that this expectation matches messages that match the given
-  argument list. The <tt>===</tt> operator is used on a argument by argument
-  basis to determine matching. This means that most literal values match
-  literally, class values match any instance of a class and regular expression
-  match any matching string (after a +to_s+ conversion). See argument
-  validators (below) for details on argument validation options.
+  argument list. The <tt>===</tt> operator is used on a argument by
+  argument basis to determine matching. This means that most literal
+  values match literally, class values match any instance of a class
+  and regular expression match any matching string (after a
+  <code>to_s</code> conversion). See argument validators (below) for
+  details on argument validation options.
 
 * <b>with_any_args</b>
 
@@ -275,63 +302,6 @@ object. See theFlexMock::Expectation for more details.
 * <b>with_no_args</b>
 
   Declares that this expectation matches messages with no arguments
-
-* <b>and_return(<em>value</em>)</b>
-
-  Declares that the expected message will return the given value.
-
-* <b>and_return(<em>value1</em>, <em>value2</em>, ...)</b>
-
-  Declares that the expected message will return a series of values. Each
-  invocation of the message will return the next value in the series. The last
-  value will be repeatably returned if the number of matching calls exceeds
-  the number of values.
-
-* <b>and_return { |args, ...|  code ... } </b>
-
-  Declares that the expected message will return the yielded value of the
-  block. The block will receive all the arguments in the message. If the
-  message was provided a block, it will be passed as the last parameter of the
-  block's argument list.
-
-* <b>returns( ... )</b>
-
-  Alias for <tt>and_return</tt>.
-
-* <b>and_raise(exception, *args)</b>
-
-  Declares that the expected messsage will raise the specified
-  exception.  If +exception+ is an exception class, then the raised
-  exception will be constructed from the class with +new+ given the
-  supplied arguments.  If +exception+ is an instance of an exception
-  class, then it will be raised directly.
-
-* <b>raises( ... )</b>
-
-  Alias for <tt>and_raise</tt>.
-
-* <b>and_throw(symbol)</b>
-* <b>and_throw(symbol, value)</b>
-
-  Declares that the expected messsage will throw the specified symbol.
-  If an optional value is included, then it will be the value returned
-  from the corresponding catch statement.
-
-* <b>throws( ... )</b>
-
-  Alias for <tt>and_throw</tt>.
-
-* <b>and_yield(values, ...)</b>
-
-  Declares that the mocked method will receive a block, and the mock
-  will call that block with the values given.  Not providing a block
-  will be an error.  Providing more than one +and_yield+ clause one a
-  single expectation will mean that subsquent mock method calls will
-  yield the values provided by the additional +and_yield+ clause.
-
-* <b>yields( ... )</b>
-
-  Alias for <tt>and_yield( ... )</tt>.
 
 * <b>zero_or_more_times</b>
 
@@ -390,10 +360,11 @@ object. See theFlexMock::Expectation for more details.
   an order group may be received in any order. Ordered messages outside the
   group must be received either before or after all of the grouped messages.
 
-  For example, in the following, messages +flip+ and +flop+ may be received in
-  any order (because they are in the same group), but must occur strictly
-  after +start+ but before +end+. The message +any_time+ may be received at
-  any time because it is not ordered.
+  For example, in the following, messages <code>flip</code> and
+  <code>flop</code> may be received in any order (because they are in
+  the same group), but must occur strictly after <code>start</code>
+  but before <code>end</code>. The message <code>any_time</code> may
+  be received at any time because it is not ordered.
 
     m = flexmock()
     m.should_receive(:any_time)
@@ -426,12 +397,88 @@ object. See theFlexMock::Expectation for more details.
   for various methods in the setup of a test suite, and then override
   only the methods that need special handling in any given test.
 
+=== Expectation Actions
+
+Action expectations are used to specify what the mock should
+<em>do</em> when the expectation is matched. The actions themselves do
+not take part in determining whether a given expectation matches or
+not.
+
+* <b>and_return(<em>value</em>)</b>
+
+  Declares that the expected message will return the given value.
+
+* <b>and_return(<em>value1</em>, <em>value2</em>, ...)</b>
+
+  Declares that the expected message will return a series of values. Each
+  invocation of the message will return the next value in the series. The last
+  value will be repeatably returned if the number of matching calls exceeds
+  the number of values.
+
+* <b>and_return { |<em>args</em>, ...|  <em>code</em> ... } </b>
+
+  Declares that the expected message will return the yielded value of the
+  block. The block will receive all the arguments in the message. If the
+  message was provided a block, it will be passed as the last parameter of the
+  block's argument list.
+
+* <b>returns( ... )</b>
+
+  Alias for <tt>and_return</tt>.
+
+* <b>and_raise(<em>exception</em>, <em>*args</em>)</b>
+
+  Declares that the expected messsage will raise the specified
+  exception. If <code>exception</code> is an exception class, then the
+  raised exception will be constructed from the class with
+  <code>new</code> given the supplied arguments. If
+  <code>exception</code> is an instance of an exception class, then it
+  will be raised directly.
+
+* <b>raises( ... )</b>
+
+  Alias for <tt>and_raise</tt>.
+
+* <b>and_throw(<em>symbol</em>)</b>
+* <b>and_throw(<em>symbol</em>, <em>value</em>)</b>
+
+  Declares that the expected messsage will throw the specified symbol.
+  If an optional value is included, then it will be the value returned
+  from the corresponding catch statement.
+
+* <b>throws( ... )</b>
+
+  Alias for <tt>and_throw</tt>.
+
+* <b>and_yield(<em>values</em>, ...)</b>
+
+  Declares that the mocked method will receive a block, and the mock
+  will call that block with the values given. Not providing a block
+  will be an error. Providing more than one <code>and_yield</code>
+  clause one a single expectation will mean that subsquent mock method
+  calls will yield the values provided by the additional
+  <code>and_yield</code> clause.
+
+* <b>yields( ... )</b>
+
+  Alias for <tt>and_yield( ... )</tt>.
+
+* <b>pass_thru</b>
+
+  Declares that the expected message will allow the method to be
+  passed to the original method definition in the partial mock object.
+  <code>pass_thru</code> is also allowed on regular mocks, but since
+  there is no original method to be called, pass_thru will always
+  return the undefined object.
+
+=== Other Expectation Methods
+
 * <b>mock</b>
 
   Expectation constraints always return the expectation so that the
-  constraints can be chained. If you wish to do a one-liner and assign the
-  mock to a variable, the +mock+ method on an expectation will return the
-  original mock object.
+  constraints can be chained. If you wish to do a one-liner and assign
+  the mock to a variable, the <code>mock</code> method on an
+  expectation will return the original mock object.
 
     m = flexmock.should_receive(:hello).once.and_return("World").mock
 
@@ -441,22 +488,24 @@ object. See theFlexMock::Expectation for more details.
 
 === Argument Validation
 
-The values passed to the +with+ declarator determine the criteria for matching
-expectations. The first expectation found that matches the arguments in a mock
-method call will be used to validate that mock method call.
+The values passed to the <code>with</code> declarator determine the
+criteria for matching expectations. The first expectation found that
+matches the arguments in a mock method call will be used to validate
+that mock method call.
 
 The following rules are used for argument matching:
 
-* A +with+ parameter that is a class object will match any actual argument
-  that is an instance of that class.
+* A <code>with</code> parameter that is a class object will match any
+  actual argument that is an instance of that class.
 
   Examples:
 
      with(Integer)     will match    f(3)
 
-* A regular expression will match any actual argument that matches the regular
-  expression. Non-string actual arguments are converted to strings via +to_s+
-  before applying the regular expression.
+* A regular expression will match any actual argument that matches the
+  regular expression. Non-string actual arguments are converted to
+  strings via <code>to_s</code> before applying the regular
+  expression.
 
   Examples:
 
@@ -482,8 +531,9 @@ The following rules are used for argument matching:
 
   <b>Note:</b> If you do not use the FlexMock::TestCase Test Unit
   integration module, or the FlexMock::ArgumentTypes module, you will
-  have to fully qualify the +eq+ method.  This is true of all the
-  special argument matches (+eq+, +on+, +any+, +hsh+ and +ducktype+).
+  have to fully qualify the <code>eq</code> method. This is true of
+  all the special argument matches (<code>eq</code>, <code>on</code>,
+  <code>any</code>, <code>hsh</code> and <code>ducktype</code>).
 
       with(FlexMock.eq(Integer))
       with(FlexMock.on { code })
@@ -539,11 +589,11 @@ The following rules are used for argument matching:
 
 === Creating Partial Mocks
 
-Sometimes it is useful to mock the behavior of one or two methods in an
-existing object without changing the behavior of the rest of the object. If
-you pass a real object to the +flexmock+ method, it will allow you to use that
-real object in your test and will just mock out the one or two methods that
-you specify.
+Sometimes it is useful to mock the behavior of one or two methods in
+an existing object without changing the behavior of the rest of the
+object. If you pass a real object to the <code>flexmock</code> method,
+it will allow you to use that real object in your test and will just
+mock out the one or two methods that you specify.
 
 For example, suppose that a Dog object uses a Woofer object to bark. The code
 for Dog looks like this (we will leave the code for Woofer to your
@@ -565,8 +615,8 @@ Now we want to test Dog, but using a real Woofer object in the test is a real
 pain (why? ... well because Woofer plays a sound file of a dog barking, and
 that's really annoying during testing).
 
-So, how can we create a Dog object with mocked Woofer? All we need to do is
-allow FlexMock to replace the +bark+ method.
+So, how can we create a Dog object with mocked Woofer? All we need to
+do is allow FlexMock to replace the <code>bark</code> method.
 
 Here's the test code:
 
@@ -590,24 +640,119 @@ The nice thing about this technique is that after the test is over, the mocked
 out methods are returned to their normal state. Outside the test everything is
 back to normal.
 
-<b>NOTE:</b> In previous versions of FlexMock, partial mocking was called
-"stubs" and the +flexstub+ method was used to create the partial mocks.
-Although partial mocks were often used as stubs, the terminology was not quite
-correct. The current version of FlexMock uses the +flexmock+ method to create
-both regular stubs and partial stubs. A version of the +flexstub+ method is
-included for backwards compatibility. See Martin Fowler's article <em>Mocks
-Aren't Stubs</em> (http://www.martinfowler.com/articles/mocksArentStubs.html)
-for a better understanding of the difference between mocks and stubs.
+<b>NOTE:</b> In previous versions of FlexMock, partial mocking was
+called "stubs" and the <code>flexstub</code> method was used to create
+the partial mocks. Although partial mocks were often used as stubs,
+the terminology was not quite correct. The current version of FlexMock
+uses the <code>flexmock</code> method to create both regular stubs and
+partial stubs. A version of the <code>flexstub</code> method is
+included for backwards compatibility. See Martin Fowler's article
+<em>Mocks Aren't Stubs</em>
+(http://www.martinfowler.com/articles/mocksArentStubs.html) for a
+better understanding of the difference between mocks and stubs.
 
-This partial mocking technique was inspired by the +Stuba+ library in the
-+Mocha+ project.
+This partial mocking technique was inspired by the <code>Stuba</code>
+library in the <code>Mocha</code> project.
 
-=== Mocking Class Objects
+=== Spies
 
-In the previous example we mocked out the +bark+ method of a Dog object to
-avoid invoking the Woofer object. Perhaps a better technique would be to mock
-the Woofer object directly. But Dog uses Woofer explicitly so we cannot just
-pass in a mock object for Dog to use.
+FlexMock supports spy-like mocks as well as the traditional mocks.
+
+  class TestDogBarking < Test::Unit::TestCase
+    def test_dog
+      dog = flexmock(:on, Dog)
+      dog.bark("loud")
+      assert_spy_called dog, :bark, "loud"
+    end
+  end
+
+==== Asserting Spy Methods are Called (Test::Unit / MiniTest)
+
+FlexMock provied a custom assertion method for use with Test::Unit and
+MiniTest for asserting that mocked methods are actually called.
+
+* <b>assert_spy_called <em>mock</em>, <em>options_hash</em>, <em>method_name</em>, <em>args...</em></b>
+
+  This will assert that the method called <em>method_name</em> has
+  been called at least once on the given mock object. If arguments are
+  given, then the method must be called with actual argument that
+  match the given argument matchers.
+
+  All the argument matchers defined in the "Argument Validation"
+  section above are allowed in the <code>assert_spy_called</code>
+  method.
+
+  The options has is optional. If omitted, all options have their
+  default values.
+
+* <b>assert_spy_not_called <em>mock</em>, <em>options_hash</em>, <em>method_name</em>, <em>args...</em></b>
+
+  Same as <code>assert_spy_called</code>, except with the sense of the
+  test reversed.
+
+*Examples:*
+
+    dog = flexmock(:on, Dog)
+
+    dog.wag(:tail)
+    dog.wag(:head)
+
+    assert_spy_called dog, :wag, :tail
+    assert_spy_called dog, :wag, :head
+    assert_spy_called dog, {times: 2}, :wag
+
+    assert_spy_not_called dog, :bark
+    assert_spy_not_called dog, {times: 3}, :wag
+
+==== RSpec Matcher for Spying
+
+FlexMock also provides an RSpec matcher that can be used to specify
+spy behavior.
+
+* <b>mock.should have_received(<em>method_name</em>).with(<em>args...</em>).times(<em>n</em>)</b>
+
+  Specifies that the method named <em>method_name</em> should have
+  been received by the mock object with the given arguments.
+
+  The <code>with</code> and <code>times</code> clauses are optional.
+
+  If a <code>with</code> clause is given, only messages with matching
+  arguments are considered. <em>args</em> can be any of the argument
+  matches mentioned in the "Argument Validation" section above. If
+  <code>with</code> is not given, then the arguments are not
+  considered when finding matching calls.
+
+  If a <code>times</code> clause is given, then there must be exactly
+  <code>n</code> calls for that method name on the mock. If the
+  <code>times</code> clause is not given, then there must be at least
+  one call matching the method name (and arguments if they are
+  considered).
+
+  <code>never</code> is an alias for <code>times(0)</code>,
+  <code>once</code> is an alias for <code>times(1)</code>, and
+  <code>twice</code> is an alias for <code>times(2)</code>.</p>
+
+*Examples:*
+
+    dog = flexmock(:on, Dog)
+
+    dog.wag(:tail)
+    dog.wag(:head)
+
+    dog.should have_received(:wag).with(:tail)
+    dog.should have_received(:wag).with(:head)
+    dog.should have_received(:wag).twice
+
+    dog.should_not have_received(:bark)
+    dog.should_not have_received(:wag).times(3)
+
+=== Mocking Class Object
+
+In the previous example we mocked out the <code>bark</code> method of
+a Dog object to avoid invoking the Woofer object. Perhaps a better
+technique would be to mock the Woofer object directly. But Dog uses
+Woofer explicitly so we cannot just pass in a mock object for Dog to
+use.
 
 But wait, we can add mock behavior to any existing object, and classes are
 objects in Ruby. So why don't we just mock out the Woofer class object to
@@ -616,7 +761,7 @@ return mocks for us.
   class TestDogBarking < Test::Unit::TestCase
     include FlexMock::TestCase
 
-    # Setup the tests by mocking the +new+ method of
+    # Setup the tests by mocking the <code>new</code> method of
     # Woofer and return a mock woofer.
     def setup
       flexmock(Woofer).should_receive(:new).
@@ -651,12 +796,13 @@ very easy.
     end
   end
 
-Note that FlexMock adds the mock expectations after the original +new+ method
-has completed. If the original version of +new+ yields the newly created
-instance to a block, that block will get an non-mocked version of the object.
+Note that FlexMock adds the mock expectations after the original
+<code>new</code> method has completed. If the original version of
+<code>new</code> yields the newly created instance to a block, that
+block will get an non-mocked version of the object.
 
-Note that +new_instances+ will accept a block if you wish to mock several
-methods at the same time. E.g.
+Note that <code>new_instances</code> will accept a block if you wish
+to mock several methods at the same time. E.g.
 
       flexmock(Woofer).new_instances do |m|
         m.should_receive(:woof).twice.and_return(:grrr)
@@ -822,8 +968,8 @@ but the third query (which matches any query call with a four
 character parameter) may be called multiple times (but at least once).
 Startup and finish must also happen exactly once.
 
-Also note that we use the +with+ method to match different argument
-values to figure out what value to return.
+Also note that we use the <code>with</code> method to match different
+argument values to figure out what value to return.
 
    def test_ordered_queries
      db = flexmock('db')
@@ -841,8 +987,8 @@ values to figure out what value to return.
 === Same as above, but using the Record Mode interface
 
 The record mode interface offers much the same features as the
-+should_receive+ interface introduced so far, but it allows the
-messages to be sent directly to a recording object rather than be
+<code>should_receive</code> interface introduced so far, but it allows
+the messages to be sent directly to a recording object rather than be
 specified indirectly using a symbol.
 
    def test_ordered_queries_in_record_mode
@@ -896,8 +1042,8 @@ effect.
 
 Generally you need to mock only those methods that return an
 interesting value or wish to assert were sent in a particular manner.
-Use the +should_ignore_missing+ method to turn on missing method
-ignoring.
+Use the <code>should_ignore_missing</code> method to turn on missing
+method ignoring.
 
    def test_an_important_message
      m = flexmock('m')
@@ -906,9 +1052,9 @@ ignoring.
      # test code here
    end
 
-When +should_ignore_missing+ is enabled, ignored missing methods will
-return an undefined object.  Any operation on the undefined object
-will return the undefined object.
+When <code>should_ignore_missing</code> is enabled, ignored missing
+methods will return an undefined object. Any operation on the
+undefined object will return the undefined object.
 
 === Mock just one method on an existing object
 
@@ -925,15 +1071,9 @@ real web service in our unit tests, we will mock the quote service.
     assert_equal 100, value
   end
 
-== Other Mock Objects
-
-test-unit-mock :: http://www.deveiate.org/code/Test-Unit-Mock.shtml
-mocha/stubba   :: http://mocha.rubyforge.org/
-Schmock        :: http://rubyforge.org/projects/schmock/
-
 == License
 
-Copyright 2003, 2004, 2005, 2006, 2007 by Jim Weirich (jim@weirichhouse.org).
+Copyright 2003-2012 by Jim Weirich (jim.weirich@gmail.com).
 All rights reserved.
 
 Permission is granted for use, copying, modification, distribution,
@@ -942,8 +1082,8 @@ above copyright notice is included.
 
 = Other stuff
 
-Author::   Jim Weirich <jim@weirichhouse.org>
-Requires:: Ruby 1.8.7 or later (Use Flexmock-0.8.8 for Ruby version 1.8.6)
+Author::   Jim Weirich <jim.weirich@gmail.com>
+Requires:: Ruby 1.9.2 or later (Earlier versions of Flexmock may work with earlier versions of Ruby)
 
 == Warranty
 
