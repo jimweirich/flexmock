@@ -13,7 +13,7 @@ class FlexMock
 
       def describe(spy, sym, args, options, not_clause="")
         result = "expected "
-        result << call_description(sym, args, options[:any_args])
+        result << call_description(sym, args)
         result << " to#{not_clause} be called on "
         result << spy.inspect
         result << times_description(options[:times])
@@ -48,11 +48,11 @@ class FlexMock
         end
       end
 
-      def call_description(sym, args, any_args)
-        if any_args || args.nil?
-          "#{sym}(...)"
-        else
+      def call_description(sym, args)
+        if args
           "#{sym}(#{args.map { |o| o.inspect }.join(', ')})"
+        else
+          "#{sym}(...)"
         end
       end
     end

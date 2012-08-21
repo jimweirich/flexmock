@@ -141,7 +141,7 @@ class FlexMock
     count = 0
     @calls.each { |call_sym, call_args, call_block|
       count += 1 if ((call_sym == sym) &&
-        (options[:any_args]  || ArgumentMatching.all_match?(args, call_args)) &&
+        ArgumentMatching.all_match?(args, call_args) &&
         ArgumentMatching.block_match?(options[:with_block], call_block))
     }
     if options[:times]

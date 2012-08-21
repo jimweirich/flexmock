@@ -20,6 +20,7 @@ class FlexMock
         options = method_name
         method_name = args.shift
       end
+      args = nil if args == [:_]
       bool = spy.flexmock_was_called_with?(method_name, args, options)
       if negative
         bool = !bool

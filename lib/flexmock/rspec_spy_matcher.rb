@@ -19,7 +19,6 @@ class FlexMock
         @options = {}
         @options[:times] = @times if @times
         @options[:with_block] = @needs_block unless @needs_block.nil?
-        @options[:any_args] = @any_args unless @any_args.nil?
         @spy.flexmock_was_called_with?(@method_name, @args, @options)
       end
 
@@ -61,11 +60,6 @@ class FlexMock
 
       def twice
         times(2)
-      end
-
-      def with_any_args
-        @any_args = true
-        self
       end
     end
 

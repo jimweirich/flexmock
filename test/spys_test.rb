@@ -25,7 +25,7 @@ class TestSpys < Test::Unit::TestCase
 
   def test_spy_detects_simple_call_ignoring_args
     @spy.foo(1)
-    assert_spy_called @spy, {any_args: true}, :foo
+    assert_spy_called @spy, :foo, :_
   end
 
   def test_spy_rejects_a_never_made_call

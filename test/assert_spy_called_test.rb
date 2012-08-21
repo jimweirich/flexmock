@@ -66,13 +66,13 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     spy.foo(1)
     spy.foo("HI")
     spy.foo("Hello", "World", 10, options: true)
-    assert_spy_called spy, {times: 4, any_args: true}, :foo
+    assert_spy_called spy, {times: 4}, :foo, :_
   end
 
   def test_assert_rejects_bad_count_on_any_args
     spy.foo
     assert_fails(/^expected foo\(\.\.\.\) to be called on <FlexMock:AssertSpyCalledTest::FooBar Mock> twice/i) do
-      assert_spy_called spy, {times: 2, any_args: true}, :foo
+      assert_spy_called spy, {times: 2}, :foo, :_
     end
   end
 
