@@ -9,9 +9,8 @@ Version :: 1.0.0.beta.1
 
 <b>Documents</b>   :: http://flexmock.rubyforge.org
 <b>RubyGems</b>    :: Install with: <b>gem install flexmock</b>
-<b>Download</b>    :: Download from RubyForge at http://rubyforge.org/frs/?group_id=3433 (pre 0.6.0 versions may be found at http://rubyforge.org/frs/?group_id=170)
-<b>Issue Tracking</b> :: http://www.pivotaltracker.com/projects/28401
-<b>Bug Reports</b>    :: http://onestepback.org/cgi-bin/bugs.cgi?project=flexmock
+<b>Source</b>      :: https://github.com/jimweirich/flexmock
+<b>Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
 
 == Installation
 
@@ -78,11 +77,11 @@ Your test case will look something like this:
     end
   end
 
-<b>NOTE:</b> If you don't want to automatically extend every TestCase with the
-flexmock methods and overhead, then require the 'flexmock' file and explicitly
-include the FlexMock::TestCase module in each test case class where you wish
-to use mock objects. FlexMock versions prior to 0.6.0 required the explicit
-include.
+<b>NOTE:</b> If you don't want to automatically extend every TestCase
+with the flexmock methods and overhead, then require the 'flexmock'
+file and explicitly include the FlexMock::TestCase module in each test
+case class where you wish to use mock objects. FlexMock versions prior
+to 0.6.0 required the explicit include.
 
 == RSpec Integration
 
@@ -124,14 +123,15 @@ FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock(:foo => :bar, :baz => :froz)</b>
 
-  Create a mock object and define two mocked methods (:foo and :baz) that
-  return the values :bar and :froz respectively. This is useful when creating
-  mock objects with just a few methods and simple return values.
+  Create a mock object and define two mocked methods (:foo and :baz)
+  that return the values :bar and :froz respectively. This is useful
+  when creating mock objects with just a few methods and simple return
+  values.
 
 * <b>mock = flexmock("joe", :foo => :bar, :bar => :froz)</b>
 
-  You can combine the mock name and an expectation hash in the same call to
-  flexmock.
+  You can combine the mock name and an expectation hash in the same
+  call to flexmock.
 
 * <b>mock = flexmock("joe", :on, User)</b>
 
@@ -159,22 +159,23 @@ FlexMock::MockContainer#flexmock for more details.
 * <b>partial_mock = flexmock(:base, real_string_object)</b>
 
   Since Strings (and Symbols for that matter) are used for mock names,
-  FlexMock will not recognize them as the base for a partial mock. To force a
-  string to be used as a partial mock base, proceed the string object in the
-  calling sequence with :base.
+  FlexMock will not recognize them as the base for a partial mock. To
+  force a string to be used as a partial mock base, proceed the string
+  object in the calling sequence with :base.
 
 * <b>partial_mock = flexmock(:safe, real_object) { |mock| mock.should_receive(...) }</b>
 
   When mocking real objects (i.e. "partial mocks"), FlexMock will add
   a handful of mock related methods to the actual object (see below
-  for list of method names).  If one or more of these added methods
-  collide with an existing method on the partial mock, then there are problems.
+  for list of method names). If one or more of these added methods
+  collide with an existing method on the partial mock, then there are
+  problems.
 
   FlexMock offers a "safe" mode for partial mocks that does not add
-  these methods.  Indicate safe mode by passing the symbol :safe as
-  the first argument of flexmock.  A block <em>is required</em> when
-  using safe mode (the partial_mock returned in safe mode does not
-  have a <code>should_receive</code> method).
+  these methods. Indicate safe mode by passing the symbol :safe as the
+  first argument of flexmock. A block <em>is required</em> when using
+  safe mode (the partial_mock returned in safe mode does not have a
+  <code>should_receive</code> method).
 
   The methods added to partial mocks in non-safe mode are:
 
@@ -222,13 +223,14 @@ still available for backward compatibility.
 
 === Expectation Declarators
 
-Once a mock is created, you need to define what that mock should expect to
-see. Expectation declarators are used to specify these expectations placed
-upon received method calls. A basic expectation, created with the
-<code>should_receive</code> method, just establishes the fact that a method may (or may
-not) be called on the mock object. Refinements to that expectation may be
-additionally declared. FlexMock always starts with the most general
-expectation and adds constraints to that.
+Once a mock is created, you need to define what that mock should
+expect to see. Expectation declarators are used to specify these
+expectations placed upon received method calls. A basic expectation,
+created with the <code>should_receive</code> method, just establishes
+the fact that a method may (or may not) be called on the mock object.
+Refinements to that expectation may be additionally declared. FlexMock
+always starts with the most general expectation and adds constraints
+to that.
 
 For example, the following code:
 
@@ -241,8 +243,8 @@ speaking, the <code>and_return</code> part of the declaration isn't
 exactly a constraint, but it does specify what value the mock will
 return when the expectation is matched.
 
-If you want to be more specific, you need to add additional constraints to
-your expectation. Here are some examples:
+If you want to be more specific, you need to add additional
+constraints to your expectation. Here are some examples:
 
     mock.should_receive(:average).with(12).once
 
@@ -250,14 +252,15 @@ your expectation. Here are some examples:
         at_least.twice.at_most.times(10).
         and_return { rand }
 
-The following methods may be used to create and refine expectations on a mock
-object. See theFlexMock::Expectation for more details.
+The following methods may be used to create and refine expectations on
+a mock object. See theFlexMock::Expectation for more details.
 
 * <b>should_receive(<em>method_name</em>)</b>
 
-  Declares that a message named <em>method_name</em> will be sent to the mock
-  object. Constraints on this expected message (called expectations) may be
-  chained to the <code>should_receive</code> call.
+  Declares that a message named <em>method_name</em> will be sent to
+  the mock object. Constraints on this expected message (called
+  expectations) may be chained to the <code>should_receive</code>
+  call.
 
 * <b>should_receive(<em>method_name1</em>, <em>method_name2</em>, ...)</b>
 
@@ -280,9 +283,10 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>should_expect { |<em>recorder</em>| ... }</b>
 
-  Creates a mock recording object that will translate received method calls
-  into mock expectations. The recorder is passed to a block supplied with the
-  <code>should_expect</code> method. See examples below.
+  Creates a mock recording object that will translate received method
+  calls into mock expectations. The recorder is passed to a block
+  supplied with the <code>should_expect</code> method. See examples
+  below.
 
 * <b>with(<em>arglist</em>)</b>
 
@@ -310,8 +314,8 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>once</b>
 
-  Declares that the expected message is only sent once. <tt>at_least</tt> /
-  <tt>at_most</tt> modifiers are allowed.
+  Declares that the expected message is only sent once.
+  <tt>at_least</tt> / <tt>at_most</tt> modifiers are allowed.
 
 * <b>twice</b>
 
@@ -330,25 +334,25 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>at_least</b>
 
-  Modifies the immediately following message count constraint so that it means
-  the message is sent at least that number of times. E.g.
-  <tt>at_least.once</tt> means the message is sent at least once during the
-  test, but may be sent more often. Both <tt>at_least</tt> and
-  <tt>at_most</tt> may be specified on the same expectation.
+  Modifies the immediately following message count constraint so that
+  it means the message is sent at least that number of times. E.g.
+  <tt>at_least.once</tt> means the message is sent at least once
+  during the test, but may be sent more often. Both <tt>at_least</tt>
+  and <tt>at_most</tt> may be specified on the same expectation.
 
 * <b>at_most</b>
 
-  Similar to <tt>at_least</tt>, but puts an upper limit on the number of
-  messages. Both <tt>at_least</tt> and <tt>at_most</tt> may be specified on
-  the same expectation.
+  Similar to <tt>at_least</tt>, but puts an upper limit on the number
+  of messages. Both <tt>at_least</tt> and <tt>at_most</tt> may be
+  specified on the same expectation.
 
 * <b>ordered</b>
 
-  Declares that the expected message is ordered and is expected to be received
-  in a certain position in a sequence of messages. The message should arrive
-  after and previously declared ordered messages and prior to any following
-  declared ordered messages. Unordered messages are ignored when considering
-  the message order.
+  Declares that the expected message is ordered and is expected to be
+  received in a certain position in a sequence of messages. The
+  message should arrive after and previously declared ordered messages
+  and prior to any following declared ordered messages. Unordered
+  messages are ignored when considering the message order.
 
   Normally ordering is performed only against calls in the same mock
   object.  If the "globally" adjective is used, then ordering is
@@ -356,9 +360,10 @@ object. See theFlexMock::Expectation for more details.
 
 * <b>ordered(<em>group</em>)</b>
 
-  Declare that the expected message belongs to an order group. Methods within
-  an order group may be received in any order. Ordered messages outside the
-  group must be received either before or after all of the grouped messages.
+  Declare that the expected message belongs to an order group. Methods
+  within an order group may be received in any order. Ordered messages
+  outside the group must be received either before or after all of the
+  grouped messages.
 
   For example, in the following, messages <code>flip</code> and
   <code>flop</code> may be received in any order (because they are in
@@ -410,17 +415,17 @@ not.
 
 * <b>and_return(<em>value1</em>, <em>value2</em>, ...)</b>
 
-  Declares that the expected message will return a series of values. Each
-  invocation of the message will return the next value in the series. The last
-  value will be repeatably returned if the number of matching calls exceeds
-  the number of values.
+  Declares that the expected message will return a series of values.
+  Each invocation of the message will return the next value in the
+  series. The last value will be repeatably returned if the number of
+  matching calls exceeds the number of values.
 
 * <b>and_return { |<em>args</em>, ...|  <em>code</em> ... } </b>
 
-  Declares that the expected message will return the yielded value of the
-  block. The block will receive all the arguments in the message. If the
-  message was provided a block, it will be passed as the last parameter of the
-  block's argument list.
+  Declares that the expected message will return the yielded value of
+  the block. The block will receive all the arguments in the message.
+  If the message was provided a block, it will be passed as the last
+  parameter of the block's argument list.
 
 * <b>returns( ... )</b>
 
@@ -519,10 +524,11 @@ The following rules are used for argument matching:
       with(3)         will match    f(3)
       with("hello")   will match    f("hello")
 
-* If you wish to override the default matching behavior and force matching by
-  equality, you can use the FlexMock.eq convenience method. This is mostly
-  used when you wish to match class objects, since the default matching
-  behavior for class objects is to match instances, not themselves.
+* If you wish to override the default matching behavior and force
+  matching by equality, you can use the FlexMock.eq convenience
+  method. This is mostly used when you wish to match class objects,
+  since the default matching behavior for class objects is to match
+  instances, not themselves.
 
   Examples:
 
@@ -595,9 +601,9 @@ object. If you pass a real object to the <code>flexmock</code> method,
 it will allow you to use that real object in your test and will just
 mock out the one or two methods that you specify.
 
-For example, suppose that a Dog object uses a Woofer object to bark. The code
-for Dog looks like this (we will leave the code for Woofer to your
-imagination):
+For example, suppose that a Dog object uses a Woofer object to bark.
+The code for Dog looks like this (we will leave the code for Woofer to
+your imagination):
 
   class Dog
     def initialize
@@ -611,9 +617,9 @@ imagination):
     end
   end
 
-Now we want to test Dog, but using a real Woofer object in the test is a real
-pain (why? ... well because Woofer plays a sound file of a dog barking, and
-that's really annoying during testing).
+Now we want to test Dog, but using a real Woofer object in the test is
+a real pain (why? ... well because Woofer plays a sound file of a dog
+barking, and that's really annoying during testing).
 
 So, how can we create a Dog object with mocked Woofer? All we need to
 do is allow FlexMock to replace the <code>bark</code> method.
@@ -636,9 +642,9 @@ Here's the test code:
     end
   end
 
-The nice thing about this technique is that after the test is over, the mocked
-out methods are returned to their normal state. Outside the test everything is
-back to normal.
+The nice thing about this technique is that after the test is over,
+the mocked out methods are returned to their normal state. Outside the
+test everything is back to normal.
 
 <b>NOTE:</b> In previous versions of FlexMock, partial mocking was
 called "stubs" and the <code>flexstub</code> method was used to create
@@ -682,8 +688,8 @@ MiniTest for asserting that mocked methods are actually called.
   section above are allowed in the <code>assert_spy_called</code>
   method.
 
-  The options has is optional. If omitted, all options have their
-  default values.
+  The <code>options</code> hash is optional. If omitted, all options
+  will have their default values.
 
 * <b>assert_spy_not_called <em>mock</em>, <em>options_hash</em>, <em>method_name</em>, <em>args...</em></b>
 
