@@ -3,7 +3,7 @@
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
 
-Version :: 0.9.0.beta.0
+Version :: 1.0.0.beta.1
 
 = Links
 

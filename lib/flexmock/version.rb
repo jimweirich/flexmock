@@ -1,9 +1,11 @@
 class FlexMock
   module Version
     NUMBERS = [
-      MAJOR = 0,
-      MINOR = 9,
+      MAJOR = 1,
+      MINOR = 0,
       BUILD = 0,
+      BETA = 'beta',
+      REV  = 1,
     ]
   end
 
