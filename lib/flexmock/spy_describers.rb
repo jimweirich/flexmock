@@ -20,8 +20,8 @@ class FlexMock
         result << block_description(options[:with_block])
         result << ".\n"
         result << "The following messages have been received:\n"
-        spy.flexmock_calls.each do |sym, args|
-          result << "    " << call_description(sym, args) << "\n"
+        spy.flexmock_calls.each do |call_sym, call_args|
+          result << "    " << call_description(call_sym, call_args) << "\n"
         end
         result
       end
