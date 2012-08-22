@@ -14,7 +14,7 @@ class FlexMock
       def describe(spy, sym, args, options, not_clause="")
         result = "expected "
         result << call_description(sym, args)
-        result << " to#{not_clause} be called on "
+        result << " to#{not_clause} be received by "
         result << spy.inspect
         result << times_description(options[:times])
         result << block_description(options[:with_block])
