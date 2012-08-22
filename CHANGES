@@ -4,6 +4,10 @@
 
 * Added spy support.
 * Added base class mocking restrictions.
+* Using singleton_methods to get list of singleton methods (rather
+  than methods(false))
+* Correctly handling mocking methods that were meta-programmed with
+  method_missing.
 
 == Version 0.9.0
 
