@@ -6,6 +6,8 @@ a few bug fixes.
 
 == Changes in 1.0.0
 
+=== Features
+
 * Mocks may now have a base class that limits what methods may be
   mocked. This allows early detection of outdated mock setups when the
   methods in the class are refactored.
@@ -20,6 +22,12 @@ a few bug fixes.
 
 * An RSpec matcher (have_received) has been added to make spy
   assertions easy when using RSpec.
+
+=== Bug Fixes
+
+* Now correctly handling the mocking of meta-programmed methods.
+
+* Using the documented +singleton_methods+ method.
 
 == What is FlexMock?
 
