@@ -665,6 +665,7 @@ library in the <code>Mocha</code> project.
 
 FlexMock supports spy-like mocks as well as the traditional mocks.
 
+  # In Test::Unit / MiniTest
   class TestDogBarking < Test::Unit::TestCase
     def test_dog
       dog = flexmock(:on, Dog)
@@ -672,6 +673,41 @@ FlexMock supports spy-like mocks as well as the traditional mocks.
       assert_spy_called dog, :bark, "loud"
     end
   end
+
+  # In RSpec
+  describe Dog do
+    let(:dog) { flexmock(:on, Dog) }
+    it "barks loudly" do
+      dog.bark("loud")
+      dog.should have_received(:bark).with("loud")
+    end
+  end
+
+Since spies are verified after the code under test is run, they fit
+very nicely with the Given/When/Then technique of specification. Here
+is the above RSpec example using the rspec-given gem:
+
+  require 'rspec/given'
+
+  describe Dog do
+    context "when barking loudly" do
+      Given(:dog) { flexmock(:on, Dog) }
+      When { dog.bark("loud") }
+      Then { dog.should have_received(:bark).with("loud") }
+    end
+  end
+
+*NOTE:* You can only spy on methods that are mocked or stubbed. That's
+not a problem with regular mocks, but normal methods on partial
+objects will not be recorded.
+
+You can get around this limitation by stubbing the method in question
+on the normal mock, and then specifying <code>pass_thru</code>.  For example:
+
+   dog = Dog.new
+   flexmock(dog).should_receive(:bark).pass_thru
+   # ...
+   dog.should have_received(:bark)
 
 ==== Asserting Spy Methods are Called (Test::Unit / MiniTest)
 
@@ -1091,6 +1127,12 @@ above copyright notice is included.
 
 Author::   Jim Weirich <jim.weirich@gmail.com>
 Requires:: Ruby 1.9.2 or later (Earlier versions of Flexmock may work with earlier versions of Ruby)
+
+== See Also
+
+If you like the spy capability of FlexMock, you should check out the
+rspec-given gem that allows you to use Given/When/Then statements in
+you specifications.
 
 == Warranty
 
