@@ -5,7 +5,7 @@ class FlexMock
       MINOR = 0,
       BUILD = 0,
       BETA = 'beta',
-      BETAREV = 2,
+      BETAREV = 3,
     ]
   end
 
