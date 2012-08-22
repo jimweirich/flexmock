@@ -21,7 +21,7 @@ class FlexMock
         method_name = args.shift
       end
       args = nil if args == [:_]
-      bool = spy.flexmock_was_called_with?(method_name, args, options)
+      bool = spy.flexmock_received?(method_name, args, options)
       if negative
         bool = !bool
         message = describe_spy_negative_expectation(spy, method_name, args, options)

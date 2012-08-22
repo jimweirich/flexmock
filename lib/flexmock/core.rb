@@ -139,7 +139,8 @@ class FlexMock
     should_receive(class: base_class)
   end
 
-  def flexmock_was_called_with?(sym, args, options={})
+  # True if the mock received the given method and arguments.
+  def flexmock_received?(sym, args, options={})
     count = 0
     @calls.each { |call_sym, call_args, call_block|
       count += 1 if (call_sym == sym) && ArgumentMatching.all_match?(args, call_args)

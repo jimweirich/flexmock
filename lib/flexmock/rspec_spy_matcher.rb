@@ -19,7 +19,7 @@ class FlexMock
         @options = {}
         @options[:times] = @times if @times
         @options[:with_block] = @needs_block unless @needs_block.nil?
-        @spy.flexmock_was_called_with?(@method_name, @args, @options)
+        @spy.flexmock_received?(@method_name, @args, @options)
       end
 
       def failure_message_for_should
