@@ -35,6 +35,12 @@ class TestStubbing < Test::Unit::TestCase
     end
   end
 
+  def test_attempting_to_partially_mock_existing_mock_is_noop
+    m = flexmock("A")
+    flexmock(m)
+    assert ! m.instance_variables.include?(:@flexmock_proxy)
+  end
+
   def test_stub_command_add_behavior_to_arbitrary_objects
     obj = Object.new
     flexmock(obj).should_receive(:hi).once.and_return(:stub_hi)
@@ -269,7 +275,7 @@ class TestStubbing < Test::Unit::TestCase
       assert ! dog.respond_to?(sym), "should not have :#{sym} defined"
     end
   end
-  
+
   # This test ensures that singleton? does not use the old methods(false)
   # call that has fallen out of favor in Ruby 1.9. In multiple 1.9 releases
   # Delegator#methods will not even accept the optional argument, making flexmock
@@ -280,13 +286,13 @@ class TestStubbing < Test::Unit::TestCase
       raise "Should not be called in the test lifecycle"
     end
   end
-  
+
   def test_object_methods_method_is_not_used_in_singleton_checks
     obj = NoMethods.new
     def obj.mock() :original end
     assert_nothing_raised {  flexmock(obj) }
   end
-  
+
   def test_partial_mocks_with_mock_method_singleton_colision_have_original_defs_restored
     dog = Dog.new
     def dog.mock() :original end

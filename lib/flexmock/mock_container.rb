@@ -123,6 +123,7 @@ class FlexMock
       safe_mode = false
       model_class = nil
       base_class = nil
+      mock = nil
       while ! args.empty?
         case args.first
         when :base, :safe
@@ -139,6 +140,8 @@ class FlexMock
           name = args.shift.to_s
         when Hash
           quick_defs = args.shift
+        when FlexMock
+          mock = args.shift
         else
           domain_obj = args.shift
         end
@@ -150,9 +153,11 @@ class FlexMock
         result = domain_obj
       elsif model_class
         id = ContainerHelper.next_id
-        result = mock = FlexMock.new("#{model_class}_#{id}", self)
+        mock ||= FlexMock.new("#{model_class}_#{id}", self)
+        result = mock
       else
-        result = mock = FlexMock.new(name || "unknown", self)
+        mock ||= FlexMock.new(name || "unknown", self)
+        result = mock
       end
       mock.should_receive(quick_defs)
       yield(mock) if block_given?
