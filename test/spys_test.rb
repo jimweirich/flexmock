@@ -118,7 +118,7 @@ class TestSpys < Test::Unit::TestCase
   end
 
   def test_ok_to_use_explicit_even_when_its_not_needed
-    exp = @spy.should_receive(:foo).explicit.and_return(:bar)
+    exp = @spy.should_receive(:foo).explicitly.and_return(:bar)
     @spy.foo
     assert_spy_called @spy, :foo
   end
