@@ -1,6 +1,6 @@
 Short term things to do:
 
-* Update readme
+* Explicit => Explicitly
 
 DONE
 
@@ -8,6 +8,8 @@ DONE
 * Consolidate mock block detection and spy block detection.
 * Consolidate the :on option with mocks
 * Pass through mode for partial mocks
+* Update readme
+* auto-mock class when using base_class
 
 IDEAS
 

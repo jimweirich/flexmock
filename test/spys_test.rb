@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'test/test_setup'
-require 'flexmock/spy_describers'
 
 class TestSpys < Test::Unit::TestCase
   include FlexMock::TestCase

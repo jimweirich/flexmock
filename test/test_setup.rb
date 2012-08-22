@@ -25,6 +25,5 @@ class FlexMock
       end
       ex
     end
-
   end
 end
