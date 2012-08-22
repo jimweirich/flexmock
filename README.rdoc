@@ -7,10 +7,10 @@ Version :: 1.0.0.beta.4
 
 = Links
 
-<b>Documents</b>                      :: http://flexmock.rubyforge.org
-<b>RubyGems</b>                       :: Install with: <b>gem install flexmock</b>
-<b>Source</b>                         :: https://github.com/jimweirich/flexmock
-<b>Bug Reports and Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
+<b>Documents</b>                    :: http://flexmock.rubyforge.org
+<b>RubyGems</b>                     :: Install with: <b>gem install flexmock</b>
+<b>Source</b>                       :: https://github.com/jimweirich/flexmock
+<b>Bug Reports / Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
 
 == Installation
 
@@ -181,10 +181,11 @@ FlexMock::MockContainer#flexmock for more details.
 
   * should_receive
   * new_instances
-  * any_instance  (note: deprecated)
-  * mock
-  * mock_teardown
-  * mock_setup
+  * flexmock_get
+  * flexmock_teardown
+  * flexmock_verify
+  * flexmock_received?
+  * flexmock_calls
 
 * <b>mock = flexmock(...) { |mock| mock.should_receive(...) }</b>
 
