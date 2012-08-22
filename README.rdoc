@@ -1134,8 +1134,8 @@ Requires:: Ruby 1.9.2 or later (Earlier versions of Flexmock may work with earli
 == See Also
 
 If you like the spy capability of FlexMock, you should check out the
-rspec-given gem that allows you to use Given/When/Then statements in
-you specifications.
+rspec-given gem (http://rubygems.org/gems/rspec-given) that allows you
+to use Given/When/Then statements in you specifications.
 
 == Warranty
 
