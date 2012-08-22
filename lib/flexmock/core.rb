@@ -134,7 +134,7 @@ class FlexMock
     @expectations[method_name]
   end
 
-  def flexmock_spies_on(base_class)
+  def flexmock_based_on(base_class)
     @base_class = base_class
     should_receive(class: base_class)
   end

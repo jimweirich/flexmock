@@ -158,7 +158,7 @@ class FlexMock
       yield(mock) if block_given?
       flexmock_remember(mock)
       ContainerHelper.add_model_methods(mock, model_class, id) if model_class
-      mock.flexmock_spies_on(base_class) if base_class
+      mock.flexmock_based_on(base_class) if base_class
       result
     end
     alias flexstub flexmock
