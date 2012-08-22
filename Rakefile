@@ -88,6 +88,7 @@ file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do
   ruby %{-i.bak -pe '$_.sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
 end
 
+desc "Fix the Darkfish CSS so that paragraphs in lists have a bit of spacing"
 task :fixcss do
   open("html/rdoc.css") do |ins|
     open("html/rdoc.new", "w") do |outs|
