@@ -1,4 +1,4 @@
-= Flex Mock -- Making Mock Easy
+= Flex Mock -- Making Mocking Easy
 
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
