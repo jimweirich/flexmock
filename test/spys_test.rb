@@ -93,7 +93,7 @@ class TestSpys < Test::Unit::TestCase
     @spy.should_receive(:foo).and_return(:hi)
     result = @spy.foo
     assert_equal result, :hi
-    assert @spy.flexmock_was_called_with?(:foo, nil)
+    assert_spy_called @spy, :foo
   end
 
   def test_calling_non_spy_base_methods_is_an_error

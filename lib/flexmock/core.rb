@@ -153,6 +153,14 @@ class FlexMock
     result
   end
 
+  # Return the list of calls made on this mock. Used in formatting
+  # error messages.
+  def flexmock_calls
+    @calls
+  end
+
+  # Invocke the original non-mocked functionality for the given
+  # symbol.
   def flexmock_invoke_original(sym, args)
     return FlexMock.undefined
   end
