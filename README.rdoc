@@ -141,7 +141,7 @@ FlexMock::MockContainer#flexmock for more details.
   teh base class. This helps prevent tests from becoming stale with
   incorrectly mocked objects when the method names change.
 
-  Use the <code>explicit</code> modifier to
+  Use the <code>explicitly</code> modifier to
   <code>should_receive</code> to override base class restrictions.
 
 * <b>partial_mock = flexmock(real_object)</b>
@@ -271,13 +271,13 @@ a mock object. See theFlexMock::Expectation for more details.
   Define a number of expected messages that have the same constrants, but
   return different values.
 
-* <b>should_receive(...).explicit</b>
+* <b>should_receive(...).explicitly</b>
 
-  If a mock has a base class, use the <code>explicit</code> modifier
+  If a mock has a base class, use the <code>explicitly</code> modifier
   to override the restriction on method names imposed by the base
-  class. The explicit modifier must come immediately after the
-  <code>should_receive</code> call and before any other expectation
-  declarators.
+  class. The <code>explicitly</code> modifier must come immediately
+  after the <code>should_receive</code> call and before any other
+  expectation declarators.
 
   If a mock does not have a base class, this method has no effect.
 

@@ -16,7 +16,7 @@ class FlexMock
       @base_class = base_class
     end
 
-    def explicit
+    def explicitly
       @explicit = true
       self
     end
@@ -32,7 +32,7 @@ class FlexMock
         fail NoMethodError, "Cannot stub methods not defined by the base class\n" +
           "   Method:     #{@method_name}\n" +
           "   Base Class: #{@base_class}\n" +
-          "   (Use explicit to override)"
+          "   (Use 'explicitly' to override)"
       end
     end
   end

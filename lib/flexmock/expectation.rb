@@ -383,7 +383,7 @@ class FlexMock
 
     # No-op for allowing explicit calls when explicit not explicitly
     # needed.
-    def explicit
+    def explicitly
       self
     end
 

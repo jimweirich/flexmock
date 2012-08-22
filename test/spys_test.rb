@@ -112,7 +112,7 @@ class TestSpys < Test::Unit::TestCase
   end
 
   def test_cant_put_expectations_on_non_base_class_methods_unless_explicit
-    exp = @spy.should_receive(:baz).explicit.and_return(:bar)
+    exp = @spy.should_receive(:baz).explicitly.and_return(:bar)
     @spy.baz
     assert_spy_called @spy, :baz
   end

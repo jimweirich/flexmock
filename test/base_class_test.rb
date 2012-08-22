@@ -40,12 +40,12 @@ class BaseClassTest < Test::Unit::TestCase
   end
 
   def test_can_explicitly_stub_non_class_methods
-    mock.should_receive(:baz).explicit.and_return(:bar)
+    mock.should_receive(:baz).explicitly.and_return(:bar)
     assert_equal :bar, mock.baz
   end
 
-  def test_can_explicitly.stub_meta_programmed_methods
-    mock.should_receive(:barq).explicit.and_return(:bar)
+  def test_can_explicitly_stub_meta_programmed_methods
+    mock.should_receive(:barq).explicitly.and_return(:bar)
     assert_equal :bar, mock.barq
   end
 
