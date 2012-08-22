@@ -283,12 +283,17 @@ class FlexMock
     # Restore the original singleton defintion for method_name that
     # was saved earlier.
     def restore_original_definition(method_name)
-      method_def = @method_definitions[method_name]
-      if method_def
-        the_alias = new_name(method_name)
-        sclass.class_eval do
-          alias_method(method_name, the_alias)
+      begin
+        method_def = @method_definitions[method_name]
+        if method_def
+          the_alias = new_name(method_name)
+          sclass.class_eval do
+            alias_method(method_name, the_alias)
+          end
         end
+      rescue NameError => _
+        # Alias attempt failed
+        nil
       end
     end
 
