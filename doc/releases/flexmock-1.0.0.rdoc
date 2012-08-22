@@ -29,6 +29,8 @@ a few bug fixes.
 
 * Using the documented +singleton_methods+ method.
 
+* Accidently trying to partial mock a regular mock is now a no-op.
+
 == What is FlexMock?
 
 FlexMock is a flexible framework for creating mock object for testing. When
