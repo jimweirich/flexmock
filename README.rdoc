@@ -690,8 +690,9 @@ is the above RSpec example using the rspec-given gem:
   require 'rspec/given'
 
   describe Dog do
+    Given(:dog) { flexmock(:on, Dog) }
+
     context "when barking loudly" do
-      Given(:dog) { flexmock(:on, Dog) }
       When { dog.bark("loud") }
       Then { dog.should have_received(:bark).with("loud") }
     end
@@ -702,7 +703,9 @@ not a problem with regular mocks, but normal methods on partial
 objects will not be recorded.
 
 You can get around this limitation by stubbing the method in question
-on the normal mock, and then specifying <code>pass_thru</code>.  For example:
+on the normal mock, and then specifying <code>pass_thru</code>.
+Assuming <code.:bark</code> is a normal method on a Dog object, then
+the following allows for spying on <code>:bark</code>.
 
    dog = Dog.new
    flexmock(dog).should_receive(:bark).pass_thru
