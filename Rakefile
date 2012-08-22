@@ -78,14 +78,14 @@ end
 
 # RDoc Target --------------------------------------------------------
 
-task :rdoc => ["html/index.html", :fixcss]
+task :rdoc => ["README.rdoc", "html/index.html", :fixcss]
 
 file "html/index.html" => ["Rakefile"] + RDOC_FILES do
   sh "rdoc -o html --title FlexMock --line-numbers -m README.rdoc #{RDOC_FILES}"
 end
 
 file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do
-  ruby %{-i.bak -pe '$_.sub!(/^Version *:: *(\\d+\\.)+\\d+ *$/, "Version :: #{PKG_VERSION}")' README.rdoc} # "
+  ruby %{-i.bak -pe '$_.sub!(/^Version *:: *((\\d+|beta|rc)\\.)+\\d+ *$/i, "Version :: #{PKG_VERSION}")' README.rdoc} # "
 end
 
 desc "Fix the Darkfish CSS so that paragraphs in lists have a bit of spacing"
