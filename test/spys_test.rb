@@ -7,6 +7,7 @@ class TestSpys < Test::Unit::TestCase
 
   class FooBar
     def foo
+      :foofoo
     end
     def bar
     end
@@ -94,6 +95,20 @@ class TestSpys < Test::Unit::TestCase
     result = @spy.foo
     assert_equal result, :hi
     assert_spy_called @spy, :foo
+  end
+
+  def test_spy_cannot_see_normal_methods
+    foo = FooBar.new
+    flexmock(foo)
+    assert_equal :foofoo, foo.foo
+    assert_spy_not_called foo, :foo
+  end
+
+  def test_spy_cannot_see_normal_methods2
+    foo = FooBar.new
+    flexmock(foo).should_receive(:foo).pass_thru
+    assert_equal :foofoo, foo.foo
+    assert_spy_called foo, :foo
   end
 
   def test_calling_non_spy_base_methods_is_an_error
