@@ -136,6 +136,7 @@ class FlexMock
 
   def flexmock_spies_on(base_class)
     @base_class = base_class
+    should_receive(class: base_class)
   end
 
   def flexmock_was_called_with?(sym, args, options={})
