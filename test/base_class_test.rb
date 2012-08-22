@@ -30,7 +30,7 @@ class BaseClassTest < Test::Unit::TestCase
     assert_equal :bar, mock.foo
   end
 
-  def test_can_not_stub_non_class_methods
+  def test_can_not_stub_non_class_defined_methods
     ex = assert_raises(NoMethodError) do
       mock.should_receive(:baz => :bar)
     end
@@ -39,7 +39,7 @@ class BaseClassTest < Test::Unit::TestCase
     assert_match(/method:.+baz/i, ex.message)
   end
 
-  def test_can_explicitly_stub_non_class_methods
+  def test_can_explicitly_stub_non_class_defined_methods
     mock.should_receive(:baz).explicitly.and_return(:bar)
     assert_equal :bar, mock.baz
   end

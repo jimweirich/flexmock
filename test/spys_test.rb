@@ -132,7 +132,7 @@ class TestSpys < Test::Unit::TestCase
     assert_spy_called @foo, :foo
   end
 
-  def test_can_spy_on_class_methods
+  def test_can_spy_on_class_defined_methods
     flexmock(FooBar).should_receive(:new).and_return(:dummy)
     FooBar.new
     assert_spy_called FooBar, :new,

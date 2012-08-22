@@ -181,6 +181,11 @@ class FlexMock
       @mock.flexmock_received?(*args)
     end
 
+    # Forward to the mock
+    def flexmock_calls
+      @mock.flexmock_calls
+    end
+
     # Set the proxy's mock container.  This set value is ignored
     # because the proxy always uses the container of its mock.
     def flexmock_container=(container)
