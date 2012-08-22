@@ -244,17 +244,24 @@ class FlexMock
     # alias name.  If the aliasing process fails (because the method
     # doesn't really exist, then return nil.
     def create_alias_for_existing_method(method_name)
-      begin
-        new_alias = new_name(method_name)
-        unless @obj.respond_to?(new_alias)
-          sclass.class_eval do
-            alias_method(new_alias, method_name)
-          end
+      new_alias = new_name(method_name)
+      unless @obj.respond_to?(new_alias)
+        safe_alias_method(new_alias, method_name)
+      end
+      new_alias
+    end
+
+    # Create an alias for the existing method named +method_name+. It
+    # is possible that +method_name+ is implemented via a
+    # meta-programming, so we provide for the case that the
+    # method_name does not exist.
+    def safe_alias_method(new_alias, method_name)
+      sclass.class_eval do
+        begin
+          alias_method(new_alias, method_name)
+        rescue NameError => ex
+          nil
         end
-        new_alias
-      rescue NameError => _
-        # Alias attempt failed
-        nil
       end
     end
 

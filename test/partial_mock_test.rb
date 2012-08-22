@@ -35,19 +35,6 @@ class TestStubbing < Test::Unit::TestCase
     end
   end
 
-  class MetaDog < Dog
-    def method_missing(method, *args, &block)
-      if method.to_s =~ /meow/
-        :meow
-      else
-        super
-      end
-    end
-    def respond_to_missing?(method, *)
-      method =~ /meow/ || super
-    end
-  end
-
   def test_stub_command_add_behavior_to_arbitrary_objects
     obj = Object.new
     flexmock(obj).should_receive(:hi).once.and_return(:stub_hi)
@@ -373,10 +360,21 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :xyzzy, liar.not_defined
   end
 
+  class MetaDog < Dog
+    def method_missing(method, *args, &block)
+      if method.to_s =~ /meow/
+        :meow
+      else
+        super
+      end
+    end
+    def respond_to_missing?(method, *)
+      method =~ /meow/ || super
+    end
+  end
+
   def test_partial_mock_where_method_created_by_method_missing_and_respond_to_missing
     dog = MetaDog.new
-    assert dog.respond_to?(:meow)
-    assert_equal :meow, dog.meow
     flexmock(dog, :meow => :hiss)
     assert_equal :hiss, dog.meow
   end
