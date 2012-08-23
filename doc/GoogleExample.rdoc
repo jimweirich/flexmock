@@ -1,6 +1,8 @@
 = Extended FlexMock Example Using Google4R
 
-Google4R is a simple Ruby wrapper around the Google APIs.  In this extended example, we will use FlexMock to test software that uses the Google APIs, without every communicating with Google itself.
+Google4R is a simple Ruby wrapper around the Google APIs. In this
+extended example, we will use FlexMock to test software that uses the
+Google APIs, without every communicating with Google itself.
 
 == Purchase.rb
 
@@ -38,9 +40,11 @@ talking to the Google APIs. The config object given to the Purchase
 initializer is simply a hash of values defining the merchant_id, merchant_key
 and sandbox flag. To use the real Google checkout APIs, you will need to
 obtains a merchant id and key from Google. Since we will be mocking the Google
-interaction, we can use dummy values in our test.  
+interaction, we can use dummy values in our test.
 
-The tax table factory is required by the Google4R software.  We provide the following simplified one.  Read the Google API documents for more information.
+The tax table factory is required by the Google4R software. We provide
+the following simplified one. Read the Google API documents for more
+information.
 
   class TestTaxTableFactory
     def effective_tax_tables_at(time)
@@ -49,12 +53,14 @@ The tax table factory is required by the Google4R software.  We provide the foll
       tax_free_table.create_rule do |rule|
         rule.area = UsCountryArea.new(UsCountryArea::ALL)
         rule.rate = 0.0
-      end  
+      end
       return [tax_free_table]
     end
   end
 
-+Item+ is simply an ActiveRecord class that we are using to hold our purchase item information.  It should respond to the +name+, +description+ and +unit_price+ messages.
++Item+ is simply an ActiveRecord class that we are using to hold our
+purchase item information. It should respond to the +name+,
++description+ and +unit_price+ messages.
 
 == Testing Without Using External Resources
 
@@ -108,15 +114,15 @@ Here is the complete unit test:
         :name => "Deschutes",
         :description => "Deschutes model Guitar",
         :unit_price => Money.new(2400.00)))
-        
+
     flexmock(Google4R::Checkout::CheckoutCommand).new_instances do |instance|
       instance.should_receive(:send_to_google_checkout).once.
         and_return(flexmock(:redirect_url => "http://google.response.url"))
     end
 
     # Execute
-    p = Purchase.new({ 
-      :merchant_id => 'dummy_id', 
+    p = Purchase.new({
+      :merchant_id => 'dummy_id',
       :merchant_key => 'dummy_key',
       :use_sandbox => true })
     url = p.purchase(1)
@@ -124,27 +130,37 @@ Here is the complete unit test:
     # Assert
     assert_equal "http://google.response.url", url
   end
-  
+
 == Testing the Details
 
-The above test is fine as far as it goes. It demonstrates how to use mocks to
-avoid talking to external resources such as databases and web services.  But as a unit test, it is sorely lacking in several areas. 
+The above test is fine as far as it goes. It demonstrates how to use
+mocks to avoid talking to external resources such as databases and web
+services. But as a unit test, it is sorely lacking in several areas.
 
-All the test really demonstrates is that the +send_to_google_checkout+ method is called.  There are no tests to ensure that the right item descriptions and prices are correctly stored in the cart.  In fact, if we rewrote the purchase method as follows:
+All the test really demonstrates is that the +send_to_google_checkout+
+method is called. There are no tests to ensure that the right item
+descriptions and prices are correctly stored in the cart. In fact, if
+we rewrote the purchase method as follows:
 
   def purchase(item_id, quantity=1)
     @frontend.create_checkout_command.send_to_google_checkout.redirect_url
-  end  
+  end
 
-it would still pass the unit test we designed, even though the rewrite is obviously an incorrect implementation.
+it would still pass the unit test we designed, even though the rewrite
+is obviously an incorrect implementation.
 
 A more complete test is a bit more complicated.  Here are the details.
 
 === Mocking Active Record
 
-Our incorrect version of purchase never calls the +find+ method of Item.  We can easily test for that by adding a +once+ constraint one that mock specification.  Since find is a read-only method, we don't really care if it is called multiple times, as long as it is called at least one time, so we will add an +at_least+ modifier as well.
+Our incorrect version of purchase never calls the +find+ method of
+Item. We can easily test for that by adding a +once+ constraint one
+that mock specification. Since find is a read-only method, we don't
+really care if it is called multiple times, as long as it is called at
+least one time, so we will add an +at_least+ modifier as well.
 
-Finally, we are going to break the guitar mock out into its own declaration.  The reason will become obvious in a bit.
+Finally, we are going to break the guitar mock out into its own
+declaration. The reason will become obvious in a bit.
 
   mock_guitar = flexmock("guitar",
     :name => "Deschutes",
@@ -156,11 +172,19 @@ Finally, we are going to break the guitar mock out into its own declaration.  Th
 
 === Mocking a Cart Item
 
-The next bit is a wee bit complicated, but we will handle it a little bit at a time so that it doesn't become overwhelming.
+The next bit is a wee bit complicated, but we will handle it a little
+bit at a time so that it doesn't become overwhelming.
 
-There are three main objects in the Google checkout API that we deal with in the next section.:  (1) the checkout command object returned by the front end, (2) the cart object returned by the checkout command, and (3) the item passed to the block in the +create_item+ call.
+There are three main objects in the Google checkout API that we deal
+with in the next section.: (1) the checkout command object returned by
+the front end, (2) the cart object returned by the checkout command,
+and (3) the item passed to the block in the +create_item+ call.
 
-We will tackle them in reverse order, starting with the item objects given to the +create_item+ block.  The item must respond to four attribute assignments.  This is straightforward to mock, just make sure you include the +once+ constraint so that the assignments are required. 
+We will tackle them in reverse order, starting with the item objects
+given to the +create_item+ block. The item must respond to four
+attribute assignments. This is straightforward to mock, just make sure
+you include the +once+ constraint so that the assignments are
+required.
 
   mock_item = flexmock("item")
   mock_item.should_receive(:name=).with(mock_guitar.name).once
@@ -168,18 +192,24 @@ We will tackle them in reverse order, starting with the item objects given to th
   mock_item.should_receive(:unit_price=).with(mock_guitar.unit_price).once
   mock_item.should_receive(:quantity=).with(1).once
 
-Notice how we used the mock_guitar object defined earlier to provide values in the +with+ constraint.  This way we don't have to repeat the explicit strings and values we are checking.  (Keep it DRY!).
+Notice how we used the mock_guitar object defined earlier to provide
+values in the +with+ constraint. This way we don't have to repeat the
+explicit strings and values we are checking. (Keep it DRY!).
 
 === Mocking the Cart
 
-The mock cart object will pass the mock_item to a block when the +create_item+ method is called.  We specify that with the following:
+The mock cart object will pass the mock_item to a block when the
++create_item+ method is called. We specify that with the following:
 
   mock_cart = flexmock("cart")
   mock_cart.should_receive(:create_item).with(Proc).once.and_return { |block|
     block.call(mock_item)
   }
 
-FlexMock objects can handle blocks passed to them by treating them as the final object in the calling list.  Use +Proc+ in the +with+ constraint to match the block and then invoke the block explicitly via <tt>block.call(...)</tt> in the +and_return+ specification.
+FlexMock objects can handle blocks passed to them by treating them as
+the final object in the calling list. Use +Proc+ in the +with+
+constraint to match the block and then invoke the block explicitly via
+<tt>block.call(...)</tt> in the +and_return+ specification.
 
 === Mocking the Checkout Command
 
@@ -223,8 +253,8 @@ Here is the complete detailed version of the test method.
     end
 
     # Execute
-    p = Purchase.new({ 
-      :merchant_id => 'dummy_id', 
+    p = Purchase.new({
+      :merchant_id => 'dummy_id',
       :merchant_key => 'dummy_key',
       :use_sandbox => true })
     url = p.purchase(1)
@@ -253,9 +283,9 @@ Perhaps, but using mock objects have several definite advantages:
   your code correctly handle the case where you get an exception when
   connecting to google? Mocks can easily create those error conditions that
   are difficult to achieve with real objects.
-  
+
   E.g.
-  
+
      instance.should_receive(:send_to_google_checkout).once.
        and_return { raise Google4R::Checkout::GoogleCheckoutError }
 
@@ -272,4 +302,4 @@ expect it to. We don't actually care about the Google4R software itself in
 this test case (presumably we do have tests that cover Google4R, but those are
 different tests).
 
-In the end, mock objects are a power tool to have in your testing toolbox.
+In the end, mock objects are a powerful tool to have in your testing toolbox.

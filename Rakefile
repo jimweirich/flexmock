@@ -23,6 +23,11 @@ load './lib/flexmock/version.rb'
 
 PKG_VERSION = FlexMock::VERSION
 
+EXAMPLE_RB = FileList['doc/examples/*.rb']
+EXAMPLE_DOC = EXAMPLE_RB.ext('rdoc')
+
+CLOBBER.include(EXAMPLE_DOC)
+
 PKG_FILES = FileList[
   '[A-Z]*',
   'lib/**/*.rb',
@@ -36,7 +41,7 @@ RDOC_FILES = FileList[
   'CHANGES',
   'lib/**/*.rb',
   'doc/**/*.rdoc',
-]
+] + EXAMPLE_DOC
 
 task :default => [:test_all, :rspec]
 task :test_all => [:test]
@@ -82,6 +87,19 @@ task :rdoc => ["README.rdoc", "html/index.html", :fixcss]
 
 file "html/index.html" => ["Rakefile"] + RDOC_FILES do
   sh "rdoc -o html --title FlexMock --line-numbers -m README.rdoc #{RDOC_FILES}"
+end
+
+EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
+  file target => source do
+    open(source, "r") do |ins|
+      open(target, "w") do |outs|
+        outs.puts "= FlexMock Examples"
+        ins.each do |line|
+          outs.puts "    #{line}"
+        end
+      end
+    end
+  end
 end
 
 file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do

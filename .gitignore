@@ -5,3 +5,4 @@ pkg
 coverage
 html
 TAGS
+doc/examples/*.rdoc
