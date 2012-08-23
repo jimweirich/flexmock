@@ -34,7 +34,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
 
   def test_assert_rejects_incorrect_args
     spy.foo(1,2)
-    messages = assert_fails(/^expected foo\(1, 3\) to be called on <FlexMock:AssertSpyCalledTest::FooBar Mock>/i) do
+    messages = assert_fails(/^expected foo\(1, 3\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock>/i) do
       assert_spy_called spy, :foo, 1, 3
     end
   end
@@ -49,7 +49,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
   def test_assert_rejects_incorrect_type
     spy.foo
     spy.foo
-    assert_fails(/^expected foo\(\) to be called on <FlexMock:AssertSpyCalledTest::FooBar Mock> 3 times/i) do
+    assert_fails(/^expected foo\(\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock> 3 times/i) do
       assert_spy_called spy, {times: 3}, :foo
     end
   end
@@ -71,7 +71,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
 
   def test_assert_rejects_bad_count_on_any_args
     spy.foo
-    assert_fails(/^expected foo\(\.\.\.\) to be called on <FlexMock:AssertSpyCalledTest::FooBar Mock> twice/i) do
+    assert_fails(/^expected foo\(\.\.\.\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock> twice/i) do
       assert_spy_called spy, {times: 2}, :foo, :_
     end
   end
