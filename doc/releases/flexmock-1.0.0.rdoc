@@ -33,12 +33,12 @@ a few bug fixes.
 
 == What is FlexMock?
 
-FlexMock is a flexible framework for creating mock object for testing. When
-running unit tests, it is often desirable to use isolate the objects being
-tested from the "real world" by having them interact with simplified test
-objects. Sometimes these test objects simply return values when called, other
-times they verify that certain methods were called with particular arguments
-in a particular order.
+FlexMock is a flexible framework for creating mock object for testing.
+When running unit tests, it is often desirable to use isolate the
+objects being tested from the "real world" by having them interact
+with simplified test objects. Sometimes these test objects simply
+return values when called, other times they verify that certain
+methods were called with particular arguments in a particular order.
 
 FlexMock makes creating these test objects easy.
 
