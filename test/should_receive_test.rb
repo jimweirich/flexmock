@@ -149,6 +149,19 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     end
   end
 
+  def test_multiple_yields_and_multiple_returns_are_synced
+    FlexMock.use do |m|
+      m.should_receive(:msg).and_yield(:one).and_return(1).and_yield(:two).and_return(2)
+      yielded_values = []
+      returned_values = []
+      returned_values << m.msg { |a| yielded_values << a }
+      returned_values << m.msg { |a| yielded_values << a }
+      returned_values << m.msg { |a| yielded_values << a }
+      assert_equal [:one, :two, :two], yielded_values
+      assert_equal [1, 2, 2], returned_values
+    end
+  end
+
   def test_failure_if_no_block_given
     FlexMock.use do |m|
       m.should_receive(:hi).and_yield(:one, :two).once
