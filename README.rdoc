@@ -704,7 +704,7 @@ objects will not be recorded.
 
 You can get around this limitation by stubbing the method in question
 on the normal mock, and then specifying <code>pass_thru</code>.
-Assuming <code.:bark</code> is a normal method on a Dog object, then
+Assuming <code>:bark</code> is a normal method on a Dog object, then
 the following allows for spying on <code>:bark</code>.
 
    dog = Dog.new
