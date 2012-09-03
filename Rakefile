@@ -27,6 +27,7 @@ EXAMPLE_RB = FileList['doc/examples/*.rb']
 EXAMPLE_DOC = EXAMPLE_RB.ext('rdoc')
 
 CLOBBER.include(EXAMPLE_DOC)
+CLEAN.include('pkg/flexmock-*').exclude("pkg/*.gem")
 
 PKG_FILES = FileList[
   '[A-Z]*',
