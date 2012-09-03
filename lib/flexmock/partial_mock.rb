@@ -264,7 +264,7 @@ class FlexMock
       sclass.class_eval do
         begin
           alias_method(new_alias, method_name)
-        rescue NameError => ex
+        rescue NameError
           nil
         end
       end

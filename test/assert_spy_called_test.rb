@@ -34,7 +34,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
 
   def test_assert_rejects_incorrect_args
     spy.foo(1,2)
-    messages = assert_fails(/^expected foo\(1, 3\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock>/i) do
+    assert_fails(/^expected foo\(1, 3\) to be received by <FlexMock:AssertSpyCalledTest::FooBar Mock>/i) do
       assert_spy_called spy, :foo, 1, 3
     end
   end
