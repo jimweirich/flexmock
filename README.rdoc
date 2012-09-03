@@ -11,6 +11,7 @@ Version :: 1.0.0
 <b>RubyGems</b>                     :: Install with: <b>gem install flexmock</b>
 <b>Source</b>                       :: https://github.com/jimweirich/flexmock
 <b>Bug Reports / Issue Tracking</b> :: https://github.com/jimweirich/flexmock/issues
+<b>Continuous Integration</b>       :: http://travis-ci.org/#!/jimweirich/flexmock
 
 == Installation
 
