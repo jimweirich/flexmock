@@ -209,10 +209,8 @@ class FlexMock
       class << @obj; self; end
     end
 
-    # Is the given method name a singleton method in the object we are
-    # mocking?
     def singleton?(method_name)
-      @obj.singleton_methods.include?(method_name.to_s)
+      @obj.flexmock_singleton_defined?(method_name)
     end
 
     # Hide the existing method definition with a singleton defintion

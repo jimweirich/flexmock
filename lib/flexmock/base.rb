@@ -9,6 +9,10 @@
 # above copyright notice is included.
 #+++
 
+require 'flexmock/symbol_extensions'
+require 'flexmock/object_extensions'
+require 'flexmock/class_extensions'
+
 require 'flexmock/core'
 
 require 'flexmock/default_framework_adapter'

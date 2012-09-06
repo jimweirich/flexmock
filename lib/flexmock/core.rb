@@ -14,7 +14,7 @@ require 'flexmock/composite'
 require 'flexmock/ordering'
 require 'flexmock/argument_matching'
 require 'flexmock/explicit_needed'
-require 'flexmock/class_extension'
+require 'flexmock/class_extensions'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -106,7 +106,7 @@ class FlexMock
       if handler = @expectations[sym]
         args << block  if block_given?
         handler.call(*args)
-      elsif @base_class && @base_class.flexmock_defines?(sym)
+      elsif @base_class && @base_class.flexmock_defined?(sym)
         FlexMock.undefined
       elsif @ignore_missing
         FlexMock.undefined
@@ -203,7 +203,7 @@ class FlexMock
       @expectations[sym] << result
       override_existing_method(sym) if flexmock_respond_to?(sym)
       result = ExplicitNeeded.new(result, sym, @base_class) if
-        @base_class && ! @base_class.flexmock_defines?(sym)
+        @base_class && ! @base_class.flexmock_defined?(sym)
       result
     end
   end
