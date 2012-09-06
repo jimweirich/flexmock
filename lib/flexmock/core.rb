@@ -136,7 +136,7 @@ class FlexMock
 
   def flexmock_based_on(base_class)
     @base_class = base_class
-    should_receive(class: base_class)
+    should_receive(:class => base_class)
   end
 
   # True if the mock received the given method and arguments.
