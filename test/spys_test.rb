@@ -56,7 +56,7 @@ class TestSpys < Test::Unit::TestCase
   def test_spy_detects_multiple_calls_with_different_arguments
     @spy.foo(1)
     @spy.foo(1)
-    assert_spy_called @spy, {times: 2}, :foo, 1
+    assert_spy_called @spy, {:times => 2}, :foo, 1
   end
 
   def test_spy_rejects_if_times_options_not_matching
@@ -72,12 +72,12 @@ class TestSpys < Test::Unit::TestCase
 
   def test_spy_rejects_a_block
     @spy.foo { }
-    assert_spy_not_called @spy, {with_block: false}, :foo
+    assert_spy_not_called @spy, {:with_block => false}, :foo
   end
 
   def test_spy_detects_a_missing_block
     @spy.foo
-    assert_spy_called @spy, {with_block: false}, :foo
+    assert_spy_called @spy, {:with_block => false}, :foo
   end
 
   def test_spy_rejects_a_missing_block
