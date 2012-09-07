@@ -139,7 +139,7 @@ FlexMock::MockContainer#flexmock for more details.
   This defines a mock that is based on the User class (the class is
   called the mock's "base class"). Mocks with base classes prevent you
   from mocking or stubbing methods that are not instance methods of
-  teh base class. This helps prevent tests from becoming stale with
+  the base class. This helps prevent tests from becoming stale with
   incorrectly mocked objects when the method names change.
 
   Use the <code>explicitly</code> modifier to
