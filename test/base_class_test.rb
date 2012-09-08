@@ -41,7 +41,7 @@ class BaseClassTest < Test::Unit::TestCase
 
   def test_can_not_stub_non_class_methods_in_single_line
     ex = assert_raises(NoMethodError) do
-      m = flexmock(:on, FooBar, bark: :value)
+      m = flexmock(:on, FooBar, :bark => :value)
     end
     assert_match(/can *not stub methods.*base.*class/i, ex.message)
     assert_match(/class:.+FooBar/i, ex.message)
