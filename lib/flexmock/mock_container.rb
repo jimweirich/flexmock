@@ -159,11 +159,11 @@ class FlexMock
         mock ||= FlexMock.new(name || "unknown", self)
         result = mock
       end
+      mock.flexmock_based_on(base_class) if base_class
       mock.should_receive(quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
       ContainerHelper.add_model_methods(mock, model_class, id) if model_class
-      mock.flexmock_based_on(base_class) if base_class
       result
     end
     alias flexstub flexmock
