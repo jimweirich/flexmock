@@ -21,8 +21,18 @@ class BaseClassTest < Test::Unit::TestCase
     @mock ||= flexmock(:on, FooBar)
   end
 
-  def test_auto_mocks_class
+  def test_base_class_auto_mocks_class
     assert_equal FooBar, mock.class
+  end
+
+  def test_base_class_auto_mocks_base_class_methods
+    assert_equal FlexMock.undefined, mock.foo
+  end
+
+  def test_base_class_does_not_mock_non_base_class_methods
+    assert_raise(NoMethodError) do
+      mock.fuzz
+    end
   end
 
   def test_can_stub_existing_methods
