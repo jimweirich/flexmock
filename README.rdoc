@@ -431,11 +431,20 @@ not.
 
 * <b>returns( ... )</b>
 
-  Alias for <tt>and_return</tt>.
+  Alias for <code>and_return</code>.
+
+* <b>and_return_undefined</b>
+
+  Declares that the expected message will return a self-preserving
+  undefined object (see FlexMock::Undefined for details).
+
+* <b>returns_undefined</b>
+
+  Alias for <code>and_returns_undefined</code>
 
 * <b>and_raise(<em>exception</em>, <em>*args</em>)</b>
 
-  Declares that the expected messsage will raise the specified
+  Declares that the expected message will raise the specified
   exception. If <code>exception</code> is an exception class, then the
   raised exception will be constructed from the class with
   <code>new</code> given the supplied arguments. If
