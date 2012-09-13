@@ -786,7 +786,7 @@ spy behavior.
 
   <code>never</code> is an alias for <code>times(0)</code>,
   <code>once</code> is an alias for <code>times(1)</code>, and
-  <code>twice</code> is an alias for <code>times(2)</code>.</p>
+  <code>twice</code> is an alias for <code>times(2)</code>.
 
 *Examples:*
 
@@ -980,7 +980,7 @@ above copyright notice is included.
 = Other stuff
 
 Author::   Jim Weirich <jim.weirich@gmail.com>
-Requires:: Ruby 1.9.2 or later (Earlier versions of Flexmock may work with earlier versions of Ruby)
+Requires:: Ruby 1.9.2 or later (also works with Ruby 1.8.7)
 
 == See Also
 
