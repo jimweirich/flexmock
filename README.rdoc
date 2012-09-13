@@ -293,7 +293,7 @@ a mock object. See theFlexMock::Expectation for more details.
 * <b>with(<em>arglist</em>)</b>
 
   Declares that this expectation matches messages that match the given
-  argument list. The <tt>===</tt> operator is used on a argument by
+  argument list. The <code>===</code> operator is used on a argument by
   argument basis to determine matching. This means that most literal
   values match literally, class values match any instance of a class
   and regular expression match any matching string (after a
@@ -312,40 +312,40 @@ a mock object. See theFlexMock::Expectation for more details.
 * <b>zero_or_more_times</b>
 
   Declares that the expected message is may be sent zero or more times
-  (default, equivalent to <tt>at_least.never</tt>).
+  (default, equivalent to <code>at_least.never</code>).
 
 * <b>once</b>
 
   Declares that the expected message is only sent once.
-  <tt>at_least</tt> / <tt>at_most</tt> modifiers are allowed.
+  <code>at_least</code> / <code>at_most</code> modifiers are allowed.
 
 * <b>twice</b>
 
-  Declares that the expected message is only sent twice. <tt>at_least</tt> /
-  <tt>at_most</tt> modifiers are allowed.
+  Declares that the expected message is only sent twice. <code>at_least</code> /
+  <code>at_most</code> modifiers are allowed.
 
 * <b>never</b>
 
-  Declares that the expected message is never sent. <tt>at_least</tt> /
-  <tt>at_most</tt> modifiers are allowed.
+  Declares that the expected message is never sent. <code>at_least</code> /
+  <code>at_most</code> modifiers are allowed.
 
 * <b>times(<em>n</em>)</b>
 
   Declares that the expected message is sent <em>n</em> times.
-  <tt>at_least</tt> / <tt>at_most</tt> modifiers are allowed.
+  <code>at_least</code> / <code>at_most</code> modifiers are allowed.
 
 * <b>at_least</b>
 
   Modifies the immediately following message count constraint so that
   it means the message is sent at least that number of times. E.g.
-  <tt>at_least.once</tt> means the message is sent at least once
-  during the test, but may be sent more often. Both <tt>at_least</tt>
-  and <tt>at_most</tt> may be specified on the same expectation.
+  <code>at_least.once</code> means the message is sent at least once
+  during the test, but may be sent more often. Both <code>at_least</code>
+  and <code>at_most</code> may be specified on the same expectation.
 
 * <b>at_most</b>
 
-  Similar to <tt>at_least</tt>, but puts an upper limit on the number
-  of messages. Both <tt>at_least</tt> and <tt>at_most</tt> may be
+  Similar to <code>at_least</code>, but puts an upper limit on the number
+  of messages. Both <code>at_least</code> and <code>at_most</code> may be
   specified on the same expectation.
 
 * <b>ordered</b>
@@ -453,7 +453,7 @@ not.
 
 * <b>raises( ... )</b>
 
-  Alias for <tt>and_raise</tt>.
+  Alias for <code>and_raise</code>.
 
 * <b>and_throw(<em>symbol</em>)</b>
 * <b>and_throw(<em>symbol</em>, <em>value</em>)</b>
@@ -464,7 +464,7 @@ not.
 
 * <b>throws( ... )</b>
 
-  Alias for <tt>and_throw</tt>.
+  Alias for <code>and_throw</code>.
 
 * <b>and_yield(<em>values</em>, ...)</b>
 
@@ -477,7 +477,7 @@ not.
 
 * <b>yields( ... )</b>
 
-  Alias for <tt>and_yield( ... )</tt>.
+  Alias for <code>and_yield( ... )</code>.
 
 * <b>pass_thru</b>
 
@@ -571,7 +571,7 @@ The following rules are used for argument matching:
       with(ducktype(:wag, :bark)) will match   f(dog)
                                   (assuming dog implements wag and bark)
 
-* If you wish to match _anything_, then use the <tt>FlexMock.any</tt>
+* If you wish to match _anything_, then use the <code>FlexMock.any</code>
   method in the with argument list.
 
   Examples (assumes either the FlexMock::TestCase or FlexMock::ArgumentTypes
@@ -583,7 +583,7 @@ The following rules are used for argument matching:
       with(any)             will match       f(nil)
 
 * If you wish to specify a complex matching criteria, use the
-  <tt>FlexMock.on(&block)</tt> with the logic contained in the block.
+  <code>FlexMock.on(&block)</code> with the logic contained in the block.
 
   Examples (assumes FlexMock::ArgumentTypes has been included):
 
@@ -592,7 +592,7 @@ The following rules are used for argument matching:
   will match any even integer.
 
 * If you wish to match a method call where a block is given, add
-  <tt>Proc</tt> as the last argument to <tt>with</tt>.
+  <code>Proc</code> as the last argument to <code>with</code>.
 
   Example:
 
@@ -871,7 +871,7 @@ Sometimes you want to setup a bunch of default expectations that are
 pretty much for a number of different tests.  Then in the individual
 tests, you would like to override the default behavior on just that
 one method you are testing at the moment.  You can do that by using
-the <tt>by_default</tt> modifier.
+the <code>by_default</code> modifier.
 
 In your test setup you might have:
 
