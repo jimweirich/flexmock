@@ -197,9 +197,14 @@ class FlexMock
   # See Expectation for a list of declarators that can be used.
   #
   def should_receive(*args)
+    location = caller.first
+    flexmock_define_expectation(location, *args)
+  end
+
+  def flexmock_define_expectation(location, *args)
     @last_expectation = ContainerHelper.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
-      result = Expectation.new(self, sym)
+      result = Expectation.new(self, sym, location)
       @expectations[sym] << result
       override_existing_method(sym) if flexmock_respond_to?(sym)
       result = ExplicitNeeded.new(result, sym, @base_class) if

@@ -117,6 +117,7 @@ class FlexMock
     #   the mock object.
     #
     def flexmock(*args)
+      location = caller.first
       name = nil
       quick_defs = {}
       domain_obj = nil
@@ -160,10 +161,10 @@ class FlexMock
         result = mock
       end
       mock.flexmock_based_on(base_class) if base_class
-      mock.should_receive(quick_defs)
+      mock.flexmock_define_expectation(location, quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
-      ContainerHelper.add_model_methods(mock, model_class, id) if model_class
+      ContainerHelper.add_model_methods(mock, model_class, id, location) if model_class
       result
     end
     alias flexstub flexmock
@@ -230,29 +231,29 @@ class FlexMock
 
     # Automatically add mocks for some common methods in ActiveRecord
     # models.
-    def add_model_methods(mock, model_class, id)
+    def add_model_methods(mock, model_class, id, location)
       container = mock.flexmock_container
 
       mock_errors = container.flexmock("errors")
-      mock_errors.should_receive(:count).and_return(0).by_default
-      mock_errors.should_receive(:full_messages).and_return([]).by_default
+      mock_errors.flexmock_define_expectation(location, :count).and_return(0).by_default
+      mock_errors.flexmock_define_expectation(location, :full_messages).and_return([]).by_default
 
-      mock.should_receive(:id).and_return(id).by_default
-      mock.should_receive(:to_params).and_return(id.to_s).by_default
-      mock.should_receive(:new_record?).and_return(false).by_default
-      mock.should_receive(:class).and_return(model_class).by_default
-      mock.should_receive(:errors).and_return(mock_errors).by_default
+      mock.flexmock_define_expectation(location, :id).and_return(id).by_default
+      mock.flexmock_define_expectation(location, :to_params).and_return(id.to_s).by_default
+      mock.flexmock_define_expectation(location, :new_record?).and_return(false).by_default
+      mock.flexmock_define_expectation(location, :class).and_return(model_class).by_default
+      mock.flexmock_define_expectation(location, :errors).and_return(mock_errors).by_default
 
       # HACK: Ruby 1.9 needs the following lambda so that model_class
       # is correctly bound below.
       lambda { }
-      mock.should_receive(:is_a?).with(any).and_return { |other|
+      mock.flexmock_define_expectation(location, :is_a?).with(any).and_return { |other|
         other == model_class
       }.by_default
-      mock.should_receive(:instance_of?).with(any).and_return { |other|
+      mock.flexmock_define_expectation(location, :instance_of?).with(any).and_return { |other|
         other == model_class
       }.by_default
-      mock.should_receive(:kind_of?).with(any).and_return { |other|
+      mock.flexmock_define_expectation(location, :kind_of?).with(any).and_return { |other|
         model_class.ancestors.include?(other)
       }.by_default
     end

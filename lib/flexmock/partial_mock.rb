@@ -33,6 +33,7 @@ class FlexMock
 
     MOCK_METHODS = [
       :should_receive, :new_instances,
+      :should_receive_with_location,
       :flexmock_get,   :flexmock_teardown, :flexmock_verify,
       :flexmock_received?, :flexmock_calls,
     ]
@@ -79,11 +80,16 @@ class FlexMock
     #
     # See Expectation for a list of declarators that can be used.
     def should_receive(*args)
+      location = caller.first
+      flexmock_define_expectation(location, *args)
+    end
+
+    def flexmock_define_expectation(location, *args)
       ContainerHelper.parse_should_args(@mock, args) do |sym|
         unless @methods_proxied.include?(sym)
           hide_existing_method(sym)
         end
-        ex = @mock.should_receive(sym)
+        ex = @mock.flexmock_define_expectation(location, sym)
         ex.mock = self
         ex
       end
@@ -123,6 +129,7 @@ class FlexMock
     #
     def new_instances(*allocators, &block)
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
+      location = caller.first
       allocators = [:new] if allocators.empty?
       result = ExpectationRecorder.new
       allocators.each do |allocate_method|
@@ -130,7 +137,7 @@ class FlexMock
         # HACK: Without the following lambda, Ruby 1.9 will not bind
         # the allocate_method parameter correctly.
         lambda { }
-        self.should_receive(allocate_method).and_return { |*args|
+        self.flexmock_define_expectation(location, allocate_method).and_return { |*args|
           new_obj = invoke_original(allocate_method, args)
           mock = flexmock_container.flexmock(new_obj)
           block.call(mock) if block_given?

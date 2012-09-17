@@ -32,9 +32,10 @@ class FlexMock
     attr_accessor :mock
 
     # Create an expectation for a method named +sym+.
-    def initialize(mock, sym)
+    def initialize(mock, sym, location)
       @mock = mock
       @sym = sym
+      @location = location
       @expected_args = nil
       @count_validators = []
       @count_validator_class = ExactCountValidator
@@ -434,7 +435,7 @@ class FlexMock
     # Start a new method expectation.  The following constraints will be
     # applied to the new expectation.
     def should_receive(*args, &block)
-      @expectations.first.mock.should_receive(*args, &block)
+      @expectations.first.mock.flexmock_define_expectation(caller.first, *args, &block)
     end
 
     # Return a string representations
