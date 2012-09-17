@@ -71,7 +71,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_validate_args_with_equals
-    assert_failure do
+    assert_mock_failure(:deep => true, :line => __LINE__+5) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f(1)
@@ -82,7 +82,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_allow_arg_contraint_validation
-    assert_failure do
+    assert_mock_failure(:deep => true, :line => __LINE__+5) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f(1)
@@ -93,7 +93,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_recording_mode_should_handle_multiplicity_contraints
-    assert_failure do
+    assert_mock_failure(:line => __LINE__+3) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |r|
           r.f { :result }.once
@@ -105,7 +105,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_exact_argument_matches
-    assert_failure do
+    assert_mock_failure(:deep => true, :line => __LINE__+6) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict
@@ -117,7 +117,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_exact_ordering
-    assert_failure do
+    assert_mock_failure(:deep => true, :line => __LINE__+8) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict
@@ -131,7 +131,7 @@ class TestRecordMode < Test::Unit::TestCase
   end
 
   def test_strict_record_mode_requires_once
-    assert_failure do
+    assert_mock_failure(:deep => true, :line => __LINE__+4) do
       FlexMock.use("mock") do |mock|
         mock.should_expect do |rec|
           rec.should_be_strict

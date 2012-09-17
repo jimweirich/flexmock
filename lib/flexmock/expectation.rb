@@ -393,6 +393,13 @@ class FlexMock
       expectations.defaultify_expectation(self) if expectations
     end
 
+    def flexmock_location_filter
+      yield
+    rescue Exception => ex
+      ex.backtrace.insert(0, @location)
+      raise ex
+    end
+
   end
 
   ##########################################################################

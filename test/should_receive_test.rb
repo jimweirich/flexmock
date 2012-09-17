@@ -339,7 +339,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_with_no_args_but_with_args
-    assert_failure(NO_MATCH_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>NO_MATCH_ERROR_MESSAGE, :deep => true) do
       FlexMock.use do |m|
         m.should_receive(:hi).with_no_args
         m.hi(1)
@@ -392,7 +392,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_with_ducktype_arg_matching_no_match
     FlexMock.use('greeter') do |m|
       m.should_receive(:hi).with(FlexMock.ducktype(:purr, :meow, :growl))
-      assert_failure {
+      assert_mock_failure(:deep => true, :line => __LINE__+1) {
         m.hi(Cat.new)
       }
     end
@@ -408,7 +408,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_with_hash_non_matching
     FlexMock.use('greeter') do |m|
       m.should_receive(:hi).with(FlexMock.hsh(:a => 1, :b => 2))
-      assert_failure {
+      assert_mock_failure(:deep => true, :line => __LINE__+1) {
         m.hi(:a => 1, :b => 4, :c => 3)
       }
     end
@@ -493,8 +493,8 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_arg_matching_with_no_match
     FlexMock.use do |m|
       m.should_receive(:hi).with(1).returns(10)
-      assert_failure(NO_MATCH_ERROR_MESSAGE) {
-        assert_equal 20, m.hi(2)
+      assert_mock_failure(:message =>NO_MATCH_ERROR_MESSAGE, :deep => true, :line => __LINE__+1) {
+        m.hi(2)
       }
     end
   end
@@ -502,7 +502,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_arg_matching_with_string_doesnt_over_match
     FlexMock.use do |m|
       m.should_receive(:hi).with(String).returns(20)
-      assert_failure(NO_MATCH_ERROR_MESSAGE) {
+      assert_mock_failure(:message =>NO_MATCH_ERROR_MESSAGE, :deep => true, :line => __LINE__+1) {
         m.hi(1.0)
       }
     end
@@ -511,7 +511,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   def test_block_arg_given_to_no_args
     FlexMock.use do |m|
       m.should_receive(:hi).with_no_args.returns(20)
-      assert_failure(NO_MATCH_ERROR_MESSAGE) {
+      assert_mock_failure(:message =>NO_MATCH_ERROR_MESSAGE, :deep => true, :line => __LINE__+1) {
         m.hi { 1 }
       }
     end
@@ -551,7 +551,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_never_and_called_once
-    assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>COUNT_ERROR_MESSAGE, :deep => true, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).never
         m.hi(1)
@@ -567,7 +567,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_once_but_never_called
-    assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>COUNT_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).once
       end
@@ -575,7 +575,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_once_but_called_twice
-    assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>COUNT_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).once
         m.hi(1)
@@ -627,7 +627,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_least_but_never_called
-    assert_failure(AT_LEAST_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>AT_LEAST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once
       end
@@ -643,7 +643,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_least_and_exact
-    assert_failure(COUNT_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>COUNT_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.once
         m.hi(1)
@@ -666,7 +666,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_called_twice
-    assert_failure(AT_MOST_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>AT_MOST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_most.once
         m.hi(1)
@@ -676,7 +676,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_and_at_least_called_never
-    assert_failure(AT_LEAST_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>AT_LEAST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.at_most.twice
       end
@@ -699,7 +699,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_and_at_least_called_three_times
-    assert_failure(AT_MOST_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>AT_MOST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.at_most.twice
         m.hi(1)
@@ -722,7 +722,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_call_counts_only_apply_to_matching_args_with_mismatch
-    ex = assert_failure(COUNT_ERROR_MESSAGE) do
+    ex = assert_mock_failure(:message =>COUNT_ERROR_MESSAGE, :line => __LINE__+3) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).once
         m.should_receive(:hi).with(2).twice
@@ -748,7 +748,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_ordered_calls_out_of_order_will_fail
-    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered
         m.should_receive(:lo).ordered
@@ -770,7 +770,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_order_calls_with_different_arg_lists_and_out_of_order_will_fail
-    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).with("one").ordered
         m.should_receive(:hi).with("two").ordered
@@ -848,7 +848,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_explicit_ordering_with_explicit_misorders
-    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
       FlexMock.use 'm' do |m|
         m.should_receive(:hi).ordered(:first_group)
         m.should_receive(:lo).ordered(:second_group)
@@ -899,7 +899,7 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_ordering_between_mocks_is_honored_for_global_ordering
-    assert_failure(OUT_OF_ORDER_ERROR_MESSAGE) do
+    assert_mock_failure(:message =>OUT_OF_ORDER_ERROR_MESSAGE, :deep => true, :line => __LINE__+6) do
       FlexMock.use("x", "y") do |x, y|
         x.should_receive(:one).globally.ordered
         y.should_receive(:two).globally.ordered
@@ -1076,6 +1076,20 @@ class TestFlexMockShoulds < Test::Unit::TestCase
     assert ! mock.respond_to?(:phoo)
     assert ! mock.respond_to?(:phoo, false)
     assert ! mock.respond_to?(:phoo, true)
+  end
+
+  def test_backtraces_point_to_should_receive_line
+    mock = flexmock("a mock")
+    file_name_re = Regexp.quote(__FILE__)
+    line_no = __LINE__ + 1
+    mock.should_receive(:foo).and_return(:bar).once
+    begin
+      flexmock_verify
+    rescue Exception => ex
+      exception = ex
+    end
+    assert_not_nil exception
+    assert_match(/#{file_name_re}:#{line_no}/, exception.backtrace.first)
   end
 
   def test_can_mock_operators

@@ -37,8 +37,10 @@ class FlexMock
     # Validate that the method expectation was called exactly +n+
     # times.
     def validate(n)
-      FlexMock.framework_adapter.assert_equal @limit, n,
-        "method '#{@exp}' called incorrect number of times"
+      @exp.flexmock_location_filter do
+        FlexMock.framework_adapter.assert_equal(@limit, n,
+          "method '#{@exp}' called incorrect number of times")
+      end
     end
   end
 
@@ -49,9 +51,11 @@ class FlexMock
     # Validate the method expectation was called no more than +n+
     # times.
     def validate(n)
-      FlexMock.framework_adapter.assert_block(
-        "Method '#{@exp}' should be called at least #{@limit} times,\n" +
-        "only called #{n} times") { n >= @limit }
+      @exp.flexmock_location_filter do
+        FlexMock.framework_adapter.assert_block(
+          "Method '#{@exp}' should be called at least #{@limit} times,\n" +
+          "only called #{n} times") { n >= @limit }
+      end
     end
 
     # If the expectation has been called +n+ times, is it still
@@ -69,9 +73,11 @@ class FlexMock
   class AtMostCountValidator < CountValidator
     # Validate the method expectation was called at least +n+ times.
     def validate(n)
-      FlexMock.framework_adapter.assert_block(
-        "Method '#{@exp}' should be called at most #{@limit} times,\n" +
-        "only called #{n} times") { n <= @limit }
+      @exp.flexmock_location_filter do
+        FlexMock.framework_adapter.assert_block(
+          "Method '#{@exp}' should be called at most #{@limit} times,\n" +
+          "only called #{n} times") { n <= @limit }
+      end
     end
   end
 end
