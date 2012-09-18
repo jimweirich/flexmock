@@ -76,6 +76,23 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     end
   end
 
+  def test_assert_error_lists_calls_actually_made
+    spy.foo
+    spy.bar
+    ex = assert_fails(/The following messages have been received/) do
+      assert_spy_called spy, :baz
+    end
+    assert_match(/  foo\(\)/, ex.message)
+    assert_match(/  bar\(\)/, ex.message)
+    assert_no_match(/  baz\(\)/, ex.message)
+  end
+
+  def test_assert_errors_say_no_calls_made
+    ex = assert_fails(/No messages have been received/) do
+      assert_spy_called spy, :baz
+    end
+  end
+
   private
 
   def assert_fails(message_pattern)
