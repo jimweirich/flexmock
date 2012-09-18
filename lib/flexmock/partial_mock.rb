@@ -134,8 +134,10 @@ class FlexMock
       result = ExpectationRecorder.new
       allocators.each do |allocate_method|
         check_allocate_method(allocate_method)
-        # HACK: Without the following lambda, Ruby 1.9 will not bind
-        # the allocate_method parameter correctly.
+        # HACK: Without the following lambda, Some versions of Ruby 1.9
+        #       would not bind the allocate_method parameter
+        #       correctly. I don't think it is necessary for recent
+        #       versions.
         lambda { }
         self.flexmock_define_expectation(location, allocate_method).and_return { |*args|
           new_obj = invoke_original(allocate_method, args)
