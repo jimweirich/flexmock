@@ -29,7 +29,7 @@ describe "FlexMock in a RSpec example" do
     m.should_receive(:hi).with().once
     lambda {
       flexmock_verify
-    }.should raise_error(RSpec::Expectations::ExpectationNotMetError, /method 'hi\(\)' called incorrect number of times/)
+    }.should raise_error(RSpec::Expectations::ExpectationNotMetError, /\bhi\b.*incorrect.*times/i)
   end
 
   specify "should be able to create a stub" do

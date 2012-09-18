@@ -35,8 +35,8 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   # Expected error messages on failures
   COUNT_ERROR_MESSAGE = /\bcalled\s+incorrect\s+number\s+of\s+times\b/
   NO_MATCH_ERROR_MESSAGE = /\bno\s+matching\s+handler\b/
-  AT_LEAST_ERROR_MESSAGE = /\bshould\s+be\s+called\s+at\s+least\b/
-  AT_MOST_ERROR_MESSAGE = /\bshould\s+be\s+called\s+at\s+most\b/
+  AT_LEAST_ERROR_MESSAGE = COUNT_ERROR_MESSAGE
+  AT_MOST_ERROR_MESSAGE = COUNT_ERROR_MESSAGE
   OUT_OF_ORDER_ERROR_MESSAGE = /\bcalled\s+out\s+of\s+order\b/
   NON_CONTAINER_MESSAGE = /\bis\s+not\s+in\s+a\s+container\b/
 
@@ -666,21 +666,23 @@ class TestFlexMockShoulds < Test::Unit::TestCase
   end
 
   def test_at_most_called_twice
-    assert_mock_failure(:message =>AT_MOST_ERROR_MESSAGE, :line => __LINE__+2) do
+    ex = assert_mock_failure(:message =>AT_MOST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_most.once
         m.hi(1)
         m.hi(1)
       end
     end
+    assert_match(/at most 1/i, ex.message)
   end
 
   def test_at_most_and_at_least_called_never
-    assert_mock_failure(:message =>AT_LEAST_ERROR_MESSAGE, :line => __LINE__+2) do
+    ex = assert_mock_failure(:message =>AT_LEAST_ERROR_MESSAGE, :line => __LINE__+2) do
       FlexMock.use do |m|
         m.should_receive(:hi).with(1).returns(10).at_least.once.at_most.twice
       end
     end
+    assert_match(/at least 1/i, ex.message)
   end
 
   def test_at_most_and_at_least_called_once

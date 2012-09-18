@@ -46,6 +46,17 @@ class FlexMock
   #
   class TestUnitFrameworkAdapter
     include Test::Unit::Assertions
+
+    def assert_block(msg, &block)
+      unless yield
+        msg = msg.call if msg.is_a?(Proc)
+        super(msg) { false }
+      end
+    rescue assertion_failed_error => ex
+      ex.message.sub!(/Expected block to return true value./,'')
+      raise ex
+    end
+
     def assertion_failed_error
       defined?(Test::Unit::AssertionFailedError) ? Test::Unit::AssertionFailedError : MiniTest::Assertion
     end

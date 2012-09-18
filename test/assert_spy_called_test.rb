@@ -78,12 +78,12 @@ class AssertSpyCalledTest < Test::Unit::TestCase
 
   def test_assert_error_lists_calls_actually_made
     spy.foo
-    spy.bar
+    spy.bar(1)
     ex = assert_fails(/The following messages have been received/) do
       assert_spy_called spy, :baz
     end
     assert_match(/  foo\(\)/, ex.message)
-    assert_match(/  bar\(\)/, ex.message)
+    assert_match(/  bar\(1\)/, ex.message)
     assert_no_match(/  baz\(\)/, ex.message)
   end
 

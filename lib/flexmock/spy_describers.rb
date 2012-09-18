@@ -19,6 +19,12 @@ class FlexMock
         result << times_description(options[:times])
         result << block_description(options[:with_block])
         result << ".\n"
+        result << describe_calls(spy)
+        result
+      end
+
+      def describe_calls(spy)
+        result = ''
         if spy.flexmock_calls.empty?
           result << "No messages have been received\n"
         else

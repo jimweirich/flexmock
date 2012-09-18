@@ -22,6 +22,7 @@ class FlexMock
 
   class RSpecFrameworkAdapter
     def assert_block(msg, &block)
+      msg = msg.call if msg.is_a?(Proc)
       SpecModule::Expectations.fail_with(msg) unless yield
     end
 

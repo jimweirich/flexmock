@@ -10,6 +10,7 @@
 #+++
 
 require 'flexmock/noop'
+require 'flexmock/spy_describers'
 
 class FlexMock
 
@@ -17,6 +18,8 @@ class FlexMock
   # Base class for all the count validators.
   #
   class CountValidator
+    include FlexMock::SpyDescribers
+
     def initialize(expectation, limit)
       @exp = expectation
       @limit = limit
@@ -28,6 +31,10 @@ class FlexMock
     def eligible?(n)
       n < @limit
     end
+
+    def calls(n)
+      n == 1 ? "call" : "calls"
+    end
   end
 
   ####################################################################
@@ -38,8 +45,14 @@ class FlexMock
     # times.
     def validate(n)
       @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.assert_equal(@limit, n,
-          "method '#{@exp}' called incorrect number of times")
+        FlexMock.framework_adapter.assert_block(
+          lambda {
+            "Method '#{@exp}' called incorrect number of times\n" +
+            "#{@limit} #{calls(@limit)} expected\n" +
+            "#{n} matching #{calls(n)} found\n" +
+            describe_calls(@exp.mock)
+          }
+          ) { @limit == n }
       end
     end
   end
@@ -53,8 +66,12 @@ class FlexMock
     def validate(n)
       @exp.flexmock_location_filter do
         FlexMock.framework_adapter.assert_block(
-          "Method '#{@exp}' should be called at least #{@limit} times,\n" +
-          "only called #{n} times") { n >= @limit }
+          lambda {
+            "Method '#{@exp}' called incorrect number of times\n" +
+            "At least #{@limit} #{calls(@limit)} expected\n" +
+            "#{n} matching #{calls(n)} found\n" +
+            describe_calls(@exp.mock)
+          }) { n >= @limit }
       end
     end
 
@@ -75,8 +92,12 @@ class FlexMock
     def validate(n)
       @exp.flexmock_location_filter do
         FlexMock.framework_adapter.assert_block(
-          "Method '#{@exp}' should be called at most #{@limit} times,\n" +
-          "only called #{n} times") { n <= @limit }
+          lambda {
+            "Method '#{@exp}' called incorrect number of times\n" +
+            "At most #{@limit} #{calls(@limit)} expected\n" +
+            "#{n} matching #{calls(n)} found\n" +
+            describe_calls(@exp.mock)
+          }) { n <= @limit }
       end
     end
   end

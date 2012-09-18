@@ -15,6 +15,7 @@ class FlexMock
   class DefaultFrameworkAdapter
     def assert_block(msg, &block)
       unless yield
+        msg = msg.call if msg.is_a?(Proc)
         fail assertion_failed_error, msg
       end
     end
