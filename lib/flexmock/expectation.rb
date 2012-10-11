@@ -49,7 +49,7 @@ class FlexMock
     end
 
     def to_s
-      FlexMock.format_args(@sym, @expected_args)
+      FlexMock.format_call(@sym, @expected_args)
     end
 
     # Verify the current call with the given arguments matches the

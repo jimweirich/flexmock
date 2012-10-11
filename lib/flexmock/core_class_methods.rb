@@ -50,7 +50,7 @@ class FlexMock
 
     # Class method to format a method name and argument list as a nice
     # looking string.
-    def format_args(sym, args)  # :nodoc:
+    def format_call(sym, args)  # :nodoc:
       if args
         "#{sym}(#{args.collect { |a| a.inspect }.join(', ')})"
       else
