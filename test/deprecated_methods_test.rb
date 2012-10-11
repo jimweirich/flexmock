@@ -174,7 +174,7 @@ class TestFlexMock < Test::Unit::TestCase
     s { @mock.mock_handle(:xyzzy) { got_it = true } }
     method_proc = @mock.method(:xyzzy)
     assert_not_nil method_proc
-    method_proc.call
+    method_proc.call([])
     assert(got_it, "method proc should run")
   end
 

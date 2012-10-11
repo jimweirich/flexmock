@@ -107,7 +107,7 @@ class FlexMock
     @calls << CallRecord.new(sym, enhanced_args)
     flexmock_wrap do
       if handler = @expectations[sym]
-        handler.call(*enhanced_args)
+        handler.call(enhanced_args)
       elsif @base_class && @base_class.flexmock_defined?(sym)
         FlexMock.undefined
       elsif @ignore_missing

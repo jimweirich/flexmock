@@ -63,7 +63,7 @@ class TestShouldIgnoreMissing < Test::Unit::TestCase
     @mock.should_receive(:known_foo).once
     method_proc = @mock.method(:known_foo)
     assert_not_nil method_proc
-    method_proc.call
+    method_proc.call([])
   end
 
   def test_not_calling_method_proc_will_fail_count_constraints
