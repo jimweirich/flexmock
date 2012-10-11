@@ -99,10 +99,12 @@ class FlexMock
     self
   end
 
+  CallRecord = Struct.new(:method_name, :args, :expectation)
+
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
     enhanced_args = block_given? ? args + [block] : args
-    @calls << [sym, enhanced_args]
+    @calls << CallRecord.new(sym, enhanced_args)
     flexmock_wrap do
       if handler = @expectations[sym]
         handler.call(*enhanced_args)
@@ -143,8 +145,8 @@ class FlexMock
   # True if the mock received the given method and arguments.
   def flexmock_received?(sym, args, options={})
     count = 0
-    @calls.each { |call_sym, call_args|
-      count += 1 if (call_sym == sym) && ArgumentMatching.all_match?(args, call_args)
+    @calls.each { |call_record|
+      count += 1 if (call_record.method_name == sym) && ArgumentMatching.all_match?(args, call_record.args)
     }
     if options[:times]
       result = count == options[:times]

@@ -29,8 +29,8 @@ class FlexMock
           result << "No messages have been received\n"
         else
           result << "The following messages have been received:\n"
-          spy.flexmock_calls.each do |call_sym, call_args|
-            result << "    " << call_description(call_sym, call_args) << "\n"
+          spy.flexmock_calls.each do |call_record|
+            result << "    " << call_description(call_record.method_name, call_record.args) << "\n"
           end
         end
         result
