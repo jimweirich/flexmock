@@ -104,10 +104,11 @@ class FlexMock
   # Handle missing methods by attempting to look up a handler.
   def method_missing(sym, *args, &block)
     enhanced_args = block_given? ? args + [block] : args
-    @calls << CallRecord.new(sym, enhanced_args)
+    call_record = CallRecord.new(sym, enhanced_args)
+    @calls << call_record
     flexmock_wrap do
       if handler = @expectations[sym]
-        handler.call(enhanced_args)
+        handler.call(enhanced_args, call_record)
       elsif @base_class && @base_class.flexmock_defined?(sym)
         FlexMock.undefined
       elsif @ignore_missing

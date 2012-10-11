@@ -76,13 +76,26 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     end
   end
 
-  def test_assert_error_lists_calls_actually_made
+  def test_assert_error_lists_calls_actually_made_without_handled_by
     spy.foo
     spy.bar(1)
     ex = assert_fails(/The following messages have been received/) do
       assert_spy_called spy, :baz
     end
     assert_match(/  foo\(\)/, ex.message)
+    assert_match(/  bar\(1\)/, ex.message)
+    assert_no_match(/  baz\(\)/, ex.message)
+    assert_no_match(/handled by/, ex.message)
+  end
+
+  def test_assert_error_lists_calls_actually_made_with_handled_by
+    spy.should_receive(:foo).once
+    spy.foo
+    spy.bar(1)
+    ex = assert_fails(/The following messages have been received/) do
+      assert_spy_called spy, :baz
+    end
+    assert_match(/  foo\(\) handled by foo\(\*args\)/, ex.message)
     assert_match(/  bar\(1\)/, ex.message)
     assert_no_match(/  baz\(\)/, ex.message)
   end
