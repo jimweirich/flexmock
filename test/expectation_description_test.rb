@@ -68,6 +68,11 @@ class ExpectationDescriptionTest < Test::Unit::TestCase
     assert_equal "should_receive(:foo).at_most.once", @exp.description
   end
 
+  def test_with_zero_or_more_times
+    @exp.at_most.zero_or_more_times
+    assert_equal "should_receive(:foo).zero_or_more_times", @exp.description
+  end
+
   def test_with_at_least_1_at_most_10
     @exp.at_least.once.at_most.times(10)
     assert_equal "should_receive(:foo).at_least.once.at_most.times(10)", @exp.description

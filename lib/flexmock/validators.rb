@@ -92,7 +92,11 @@ class FlexMock
 
     # Human readable description of the validator.
     def describe
-      ".at_least#{super}"
+      if @limit == 0
+        ".zero_or_more_times"
+      else
+        ".at_least#{super}"
+      end
     end
 
     # If the expectation has been called +n+ times, is it still
