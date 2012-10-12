@@ -1,4 +1,4 @@
-= Flex Mock -- Making Mocking Easy
+        = Flex Mock -- Making Mocking Easy
 
 FlexMock is a simple, but flexible, mock object library for Ruby unit
 testing.
@@ -253,6 +253,48 @@ constraints to your expectation. Here are some examples:
     mock.should_receive(:average).with(Integer).
         at_least.twice.at_most.times(10).
         and_return { rand }
+
+Expectation are always matched in order of declaration. That means if
+you have a general expectation before a more specific expectation, the
+general expectation will have an opportunity to match first,
+effectively hiding the second expectation.
+
+For example:
+
+    mock.should_receive(:average)              # Matches any call to average
+    mock.should_receive(:average).with(1).once # Fails because it never matches
+
+In the example, the second expectation will never be triggered because
+all calls to average will be handled by the first expectation. Since
+the second expectation is require to match one time, this test will
+fail.
+
+Reversing the order of the expections so that the more specific
+expectation comes first will fix that problem.
+
+If an expectation has a count requirement (e.g. <code>once</code> or
+<code>times</code>), then once it has matched its expected number of
+times, it will let other expectations have a chance to match.
+
+For example:
+
+    mock.should_receive(:average).once.and_return(1)
+    mock.should_receive(:average).once.and_return(2)
+    mock.should_receive(:average).and_return(3)
+
+In the example, the first time average is called, the first
+expectation is matched an average will return 1. The second time
+average is called, the second expectation matches and 2 is returned.
+For all calls to average after that, the third expectation returning 3
+will be used.
+
+Occasionally it is useful define a set of expecations in a setup
+method of a test and override those expectations in specific tests. If
+you mark an expectation with the <code>by_default</code> marker, that
+expectation will be used only if there are no non-default expectations
+on that method name. See "by_default" below.
+
+=== Expectation Criteria
 
 The following methods may be used to create and refine expectations on
 a mock object. See theFlexMock::Expectation for more details.
