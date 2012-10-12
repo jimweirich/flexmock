@@ -95,7 +95,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
     ex = assert_fails(/The following messages have been received/) do
       assert_spy_called spy, :baz
     end
-    assert_match(/  foo\(\) handled by foo\(\*args\)/, ex.message)
+    assert_match(/  foo\(\) matched by foo\(\*args\)/, ex.message)
     assert_match(/  bar\(1\)/, ex.message)
     assert_no_match(/  baz\(\)/, ex.message)
   end

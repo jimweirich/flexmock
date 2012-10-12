@@ -52,6 +52,22 @@ class FlexMock
       FlexMock.format_call(@sym, @expected_args)
     end
 
+    # Return a description of the matching features of the
+    # expectation. Matching features include:
+    #
+    # * name of the method
+    # * argument matchers
+    # * call count validators
+    #
+    def description
+      result = "should_receive(#{@sym.inspect})"
+      result << ".with(#{FlexMock.format_args(@expected_args)})" if @expected_args
+      @count_validators.each do |validator|
+        result << validator.describe
+      end
+      result
+    end
+
     # Verify the current call with the given arguments matches the
     # expectations recorded in this object.
     def verify_call(*args)

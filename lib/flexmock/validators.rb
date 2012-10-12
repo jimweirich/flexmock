@@ -35,6 +35,20 @@ class FlexMock
     def calls(n)
       n == 1 ? "call" : "calls"
     end
+
+    # Human readable description of the validator
+    def describe
+      case @limit
+      when 0
+        ".never"
+      when 1
+        ".once"
+      when 2
+        ".twice"
+      else
+        ".times(#{@limit})"
+      end
+    end
   end
 
   ####################################################################
@@ -75,6 +89,11 @@ class FlexMock
       end
     end
 
+    # Human readable description of the validator.
+    def describe
+      ".at_least#{super}"
+    end
+
     # If the expectation has been called +n+ times, is it still
     # eligible to be called again?  Since this validator only
     # establishes a lower limit, not an upper limit, then the answer
@@ -100,5 +119,11 @@ class FlexMock
           }) { n <= @limit }
       end
     end
+
+    # Human readable description of the validator
+    def describe
+      ".at_most#{super}"
+    end
+
   end
 end

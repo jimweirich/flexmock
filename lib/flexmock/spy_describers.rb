@@ -2,16 +2,16 @@ class FlexMock
 
     module SpyDescribers
       def describe_spy_expectation(spy, sym, args, options={})
-        describe(spy, sym, args, options)
+        describe_spy(spy, sym, args, options)
       end
 
       def describe_spy_negative_expectation(spy, sym, args, options={})
-        describe(spy, sym, args, options, " NOT")
+        describe_spy(spy, sym, args, options, " NOT")
       end
 
       private
 
-      def describe(spy, sym, args, options, not_clause="")
+      def describe_spy(spy, sym, args, options, not_clause="")
         result = "expected "
         result << call_description(sym, args)
         result << " to#{not_clause} be received by "
@@ -31,7 +31,7 @@ class FlexMock
           result << "The following messages have been received:\n"
           spy.flexmock_calls.each do |call_record|
             result << "    " << call_description(call_record.method_name, call_record.args)
-            result << " handled by " << call_record.expectation.inspect if call_record.expectation
+            result << " matched by " << call_record.expectation.description if call_record.expectation
             result << "\n"
           end
         end
