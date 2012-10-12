@@ -3,7 +3,7 @@ class FlexMock
     NUMBERS = [
       MAJOR = 1,
       MINOR = 0,
-      BUILD = 3,
+      BUILD = 4,
     ]
   end
 
