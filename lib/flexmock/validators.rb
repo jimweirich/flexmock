@@ -32,6 +32,7 @@ class FlexMock
       n < @limit
     end
 
+    # Pluralize "call"
     def calls(n)
       n == 1 ? "call" : "calls"
     end
@@ -62,7 +63,7 @@ class FlexMock
         FlexMock.framework_adapter.assert_block(
           lambda {
             "Method '#{@exp}' called incorrect number of times\n" +
-            "#{@limit} #{calls(@limit)} expected\n" +
+            "#{@limit} matching #{calls(@limit)} expected\n" +
             "#{n} matching #{calls(n)} found\n" +
             describe_calls(@exp.mock)
           }
@@ -82,7 +83,7 @@ class FlexMock
         FlexMock.framework_adapter.assert_block(
           lambda {
             "Method '#{@exp}' called incorrect number of times\n" +
-            "At least #{@limit} #{calls(@limit)} expected\n" +
+            "At least #{@limit} matching #{calls(@limit)} expected\n" +
             "#{n} matching #{calls(n)} found\n" +
             describe_calls(@exp.mock)
           }) { n >= @limit }
@@ -113,7 +114,7 @@ class FlexMock
         FlexMock.framework_adapter.assert_block(
           lambda {
             "Method '#{@exp}' called incorrect number of times\n" +
-            "At most #{@limit} #{calls(@limit)} expected\n" +
+            "At most #{@limit} matching #{calls(@limit)} expected\n" +
             "#{n} matching #{calls(n)} found\n" +
             describe_calls(@exp.mock)
           }) { n <= @limit }
