@@ -275,9 +275,10 @@ class FlexMock
     end
     alias :throws :and_throw
 
-    def pass_thru
+    def pass_thru(&block)
+      block ||= lambda { |value| value }
       and_return { |*args|
-        @mock.flexmock_invoke_original(@sym, args)
+        block.call(@mock.flexmock_invoke_original(@sym, args))
       }
     end
 

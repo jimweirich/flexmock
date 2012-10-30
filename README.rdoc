@@ -522,12 +522,22 @@ not.
   Alias for <code>and_yield( ... )</code>.
 
 * <b>pass_thru</b>
+* <b>pass_thru { |value| .... }</b>
 
   Declares that the expected message will allow the method to be
   passed to the original method definition in the partial mock object.
   <code>pass_thru</code> is also allowed on regular mocks, but since
   there is no original method to be called, pass_thru will always
   return the undefined object.
+
+  If a block is supplied to pass_thru, the value returned from the
+  original method will be passed to the block and the value of the
+  block will be returned. This allows you to mock methods on the
+  returned value.
+
+    Dog.should_receive(:new).pass_thru { |dog|
+      flexmock(dog, :wag => true)
+    }
 
 === Other Expectation Methods
 
