@@ -101,7 +101,7 @@ class AssertSpyCalledTest < Test::Unit::TestCase
   end
 
   def test_assert_errors_say_no_calls_made
-    ex = assert_fails(/No messages have been received/) do
+    assert_fails(/No messages have been received/) do
       assert_spy_called spy, :baz
     end
   end
