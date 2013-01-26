@@ -102,6 +102,65 @@ describe "Dog" do
     end
   end
 
+  context "with additional validations" do
+    it "accepts when correct" do
+      dog.wags(:tail)
+      dog.should have_received(:wags).and { |arg| arg.should == :tail }
+    end
+
+    it "rejects when incorrect" do
+      dog.wags(:tail)
+      should_fail(/expected: :foot.*got: :tail/im) do
+        dog.should have_received(:wags).and { |arg| arg.should == :foot }
+      end
+    end
+
+    it "rejects on all calls" do
+      dog.wags(:foot)
+      dog.wags(:foot)
+      dog.wags(:tail)
+      should_fail(/expected: :foot.*got: :tail/im) do
+        dog.should have_received(:wags).and { |arg| arg.should == :foot }
+      end
+    end
+
+    it "runs the first additional block" do
+      dog.wags(:tail)
+      should_fail(/expected: :foot.*got: :tail/im) do
+        dog.should have_received(:wags).and { |args|
+          args.should == :foot
+        }.and { |args|
+          args.should == :tail
+        }
+      end
+    end
+
+    it "runs the second additional block" do
+      dog.wags(:tail)
+      should_fail(/expected: :foot.*got: :tail/im) do
+        dog.should have_received(:wags).and { |args|
+          args.should == :tail
+        }.and { |args|
+          args.should == :foot
+        }
+      end
+    end
+  end
+
+  context "with ordinal constraints" do
+    it "detects the first call" do
+      dog.wags(:tail)
+      dog.wags(:foot)
+      dog.should have_received(:wags).and { |arg| arg.should == :tail }.on(1)
+    end
+
+    it "detects the second call" do
+      dog.wags(:tail)
+      dog.wags(:foot)
+      dog.should have_received(:wags).and { |arg| arg.should == :foot }.on(2)
+    end
+  end
+
   context "with blocks" do
     before do
       dog.wags { }

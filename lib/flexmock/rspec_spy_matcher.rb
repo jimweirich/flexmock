@@ -12,13 +12,12 @@ class FlexMock
         @block = nil
         @times = nil
         @needs_block = nil
+        @additional_validations = []
       end
 
       def matches?(spy)
         @spy = spy
-        @options = {}
-        @options[:times] = @times if @times
-        @options[:with_block] = @needs_block unless @needs_block.nil?
+        @options = construct_options
         @spy.flexmock_received?(@method_name, @args, @options)
       end
 
@@ -60,6 +59,25 @@ class FlexMock
 
       def twice
         times(2)
+      end
+
+      def on(on_count)
+        @on_count = on_count
+        self
+      end
+
+      def and(&block)
+        @additional_validations << block
+        self
+      end
+
+      def construct_options
+        {
+          :times => @times,
+          :with_block => @needs_block,
+          :on_count => @on_count,
+          :additional_validations => @additional_validations,
+        }
       end
     end
 

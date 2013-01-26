@@ -106,6 +106,8 @@ class FlexMock
         matches_block?(options[:with_block])
     end
 
+    private
+
     def matches_block?(block_option)
       block_option.nil? ||
         (block_option && block_given) ||
@@ -158,9 +160,13 @@ class FlexMock
   # True if the mock received the given method and arguments.
   def flexmock_received?(sym, args, options={})
     count = 0
+    additional = options[:additional_validations] || []
     @calls.each { |call_record|
       if call_record.matches?(sym, args, options)
         count += 1
+        if options[:on_count].nil? || count == options[:on_count]
+          additional.each do |add| add.call(*call_record.args) end
+        end
       end
     }
     if options[:times]
