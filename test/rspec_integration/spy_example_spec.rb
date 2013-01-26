@@ -22,21 +22,25 @@ describe "Dog" do
       dog.wags(:tail)
     end
 
-    it "wags the tail" do
+    it "accepts no with" do
+      dog.should have_received(:wags)
+    end
+
+    it "accepts with restriction" do
       dog.should have_received(:wags).with(:tail)
     end
 
-    it "does not bark the tail" do
+    it "accepts not methods called" do
       dog.should_not have_received(:bark)
     end
 
-    it "rejects wag(:foot)" do
+    it "rejects incorrect with restriction" do
       should_fail(/^expected wag\(:foot\) to be received by <FlexMock:Dog Mock>/i) do
         dog.should have_received(:wag).with(:foot)
       end
     end
 
-    it "rejects not wag(:tail)" do
+    it "rejects not on correct matcher" do
       should_fail(/^expected wags\(:tail\) to NOT be received by <FlexMock:Dog Mock>/i) do
         dog.should_not have_received(:wags).with(:tail)
       end
