@@ -5,4 +5,6 @@ gem 'rake', ">= 0.9.2.2"
 
 group 'dev' do
   gem 'rdoc'
+  gem 'flog'
+  gem 'flay'
 end
