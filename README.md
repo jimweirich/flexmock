@@ -818,7 +818,7 @@ on the normal mock, and then specifying `pass_thru`. Assuming `:bark`
 is a normal method on a Dog object, then the following allows for
 spying on `:bark`.
 
-``ruby
+```ruby
    dog = Dog.new
    flexmock(dog).should_receive(:bark).pass_thru
    # ...
