@@ -90,6 +90,59 @@ class TestSpys < Test::Unit::TestCase
     assert_spy_called @spy, :foo, Proc
   end
 
+  def test_spy_accepts_correct_additional_validations
+    @spy.foo(2)
+    is_even = proc { |n| assert_equal 0, n%2 }
+    assert_spy_called @spy, { and: is_even }, :foo, Integer
+  end
+
+  def test_spy_accepts_multiple_additional_validations_first_failing
+    @spy.foo(4)
+    is_two  = proc { |n| assert_equal 2, n }
+    is_even = proc { |n| assert_equal 0, n%2 }
+    assert_failed(/2.*expected but was.*4/mi) do
+      assert_spy_called @spy, { and: [is_two, is_even] }, :foo, Integer
+    end
+  end
+
+  def test_spy_accepts_multiple_additional_validations_second_failing
+    @spy.foo(4)
+    is_even = proc { |n| assert_equal 0, n%2 }
+    is_two  = proc { |n| assert_equal 2, n }
+    assert_failed(/2.*expected but was.*4/mi) do
+      assert_spy_called @spy, { and: [is_even, is_two] }, :foo, Integer
+    end
+  end
+
+  def test_spy_rejects_incorrect_additional_validations
+    @spy.foo(3)
+    is_even = proc { |n| assert_equal 0, n%2 }
+    assert_failed(/0.*expected but was.*1/mi) do
+      assert_spy_called @spy, { and: is_even }, :foo, Integer
+    end
+  end
+
+  def test_spy_selectively_applies_additional_validations
+    @spy.foo(2)
+    @spy.foo(3)
+    @spy.foo(4)
+    is_even = proc { |n| assert_equal 0, n%2 }
+    assert_failed(/0.*expected but was.*1/mi) do
+      assert_spy_called @spy, { and: is_even, on: 2 }, :foo, Integer
+    end
+  end
+
+  def assert_failed(message_pattern)
+    failed = false
+    begin
+      yield
+    rescue MiniTest::Assertion => ex
+      failed = true
+      assert_match message_pattern, ex.message
+    end
+    refute(!failed, "Expected block to fail")
+  end
+
   def test_spy_methods_can_be_stubbed
     @spy.should_receive(:foo).and_return(:hi)
     result = @spy.foo

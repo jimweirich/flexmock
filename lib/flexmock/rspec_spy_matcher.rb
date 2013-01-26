@@ -73,10 +73,10 @@ class FlexMock
 
       def construct_options
         {
-          :times => @times,
+          :times      => @times,
           :with_block => @needs_block,
-          :on_count => @on_count,
-          :additional_validations => @additional_validations,
+          :on_count   => @on_count,
+          :and        => @additional_validations,
         }
       end
     end

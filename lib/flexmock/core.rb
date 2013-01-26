@@ -160,7 +160,8 @@ class FlexMock
   # True if the mock received the given method and arguments.
   def flexmock_received?(sym, args, options={})
     count = 0
-    additional = options[:additional_validations] || []
+    additional = options[:and] || []
+    additional = [additional] if additional.is_a?(Proc)
     @calls.each { |call_record|
       if call_record.matches?(sym, args, options)
         count += 1
