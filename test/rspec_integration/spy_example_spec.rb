@@ -37,8 +37,8 @@ describe "Dog" do
     end
 
     it "rejects not wag(:tail)" do
-      should_fail(/^expected wag\(:foot\) to be received by <FlexMock:Dog Mock>/i) do
-        dog.should_not have_received(:wag).with(:tail)
+      should_fail(/^expected wags\(:tail\) to NOT be received by <FlexMock:Dog Mock>/i) do
+        dog.should_not have_received(:wags).with(:tail)
       end
     end
   end
@@ -126,16 +126,19 @@ describe "Dog" do
 
     it "rejects barks with a block" do
       should_fail(/with a block/) do
-        dog.should have_received(:wags).with_a_block
+        dog.should have_received(:barks).with_a_block
       end
     end
   end
 
   def should_fail(message_pattern)
+    failed = false
     begin
       yield
     rescue RSpec::Expectations::ExpectationNotMetError => ex
+      failed = true
       ex.message.should match(message_pattern)
     end
+    RSpec::Expectations.fail_with "Expected block to fail with message #{message_pattern.inspect}, no failure detected" unless failed
   end
 end
