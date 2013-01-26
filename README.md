@@ -841,13 +841,40 @@ MiniTest for asserting that mocked methods are actually called.
   section above are allowed in the `assert_spy_called`
   method.
 
-  The `options` hash is optional. If omitted, all options
-  will have their default values.
+  The `options` hash is optional. If omitted, all options will have
+  their default values. See below for spy option definitions.
 
 * <b>assert_spy_not_called <em>mock</em>, <em>options_hash</em>, <em>method_name</em>, <em>args...</em></b>
 
   Same as `assert_spy_called`, except with the sense of the
   test reversed.
+
+*Spy Options*
+
+* <b>times: <em>n</em></b>
+
+  Specify the number of times a matching method should have been
+  invoked. `nil` (or omitted) means any number of times.
+
+* <b>with_block: <em>true/false/nil</em>
+
+  Is a block required on the invocation? `true` means the method must
+  be invoked with a block. `false` means the method must have been
+  invoked without a block. `nil` means that the presence of a block
+  does not matter. Default is `nil`.
+
+* <b>and: [<em>proc1</em>, <em>proc2...</em>]</b>
+
+  Additional validations to be run on each matching method call. The
+  list of arguments for each call is passed to the procs. This allows
+  additional validations on supplied arguments. Default is no
+  additional validations.
+
+* <b>on: <em>n</em>
+
+  Only apply the additional validations on the <em>n</em>'th
+  invocation of the matching method. Default is apply additional
+  validations to all invocations.
 
 *Examples:*
 
@@ -856,6 +883,8 @@ MiniTest for asserting that mocked methods are actually called.
 
     dog.wag(:tail)
     dog.wag(:head)
+    dog.bark(5)
+    dog.bark(6)
 
     assert_spy_called dog, :wag, :tail
     assert_spy_called dog, :wag, :head
@@ -863,6 +892,9 @@ MiniTest for asserting that mocked methods are actually called.
 
     assert_spy_not_called dog, :bark
     assert_spy_not_called dog, {times: 3}, :wag
+
+    is_even = proc { |n| assert_equal 0, n%2 }
+    assert_spy_called dog, { and: is_even, on: 2 }, :bark, Integer
 ```
 
 #### RSpec Matcher for Spying
@@ -870,28 +902,48 @@ MiniTest for asserting that mocked methods are actually called.
 FlexMock also provides an RSpec matcher that can be used to specify
 spy behavior.
 
-* <b>mock.should have_received(<em>method_name</em>).with(<em>args...</em>).times(<em>n</em>)</b>
+* <b>mock.should have_received(<em>method_name</em>).<em>modifier1</em>.<em>modifier2</em>...</b>
 
   Specifies that the method named _method_name_ should have
   been received by the mock object with the given arguments.
 
-  The `with` and `times` clauses are optional.
+  Just like `should_receive`, `have_received` will accept a number of
+  modifiers that modify its behavior.
 
-  If a `with` clause is given, only messages with matching arguments
+*Modifiers for `have_received`*
+
+* <b>with(<em>args</em>)
+
+  If a `with` modifier is given, only messages with matching arguments
   are considered. _args_ can be any of the argument matches mentioned
   in the "Argument Validation" section above. If `with` is not given,
   then the arguments are not considered when finding matching calls.
 
-  If a `times` clause is given, then there must be exactly `n` calls
+* <b>times(<em>n</em>)</b>
+
+  If a `times` modifier is given, then there must be exactly `n` calls
   for that method name on the mock. If the `times` clause is not
   given, then there must be at least one call matching the method name
   (and arguments if they are considered).
 
-```
-  `never` is an alias for `times(0)`,
-  `once` is an alias for `times(1)`, and
-  `twice` is an alias for `times(2)`.
-```
+  * `never` is an alias for `times(0)`,
+  * `once` is an alias for `times(1)`, and
+  * `twice` is an alias for `times(2)`.
+
+* <b>and { |args| <em>code</em> }</b>
+
+  If an `and` modifier is given, then the supplied block will be run as
+  additional validations on any matching call.  Arguments to the
+  matching call will be supplied to the block. If multiple `and`
+  modifiers are given, all the blocks will be run.  The additional
+  validations are run on all the matching calls unless an `on`
+  modifier is supplied.
+
+* <b>on(<em>n</em>)</b>
+
+  If an `on` modifier is given, then the additional validations
+  supplied by `and` will only be run on the <em>n</em>'th invocation
+  of the matching method.
 
 *Examples:*
 
@@ -907,6 +959,16 @@ spy behavior.
 
     dog.should_not have_received(:bark)
     dog.should_not have_received(:wag).times(3)
+
+    dog.bark(3)
+    dog.bark(6)
+    dog.should have_received(:bark).with(Integer).and { |arg|
+      (arg % 3).should == 0
+    }
+    dog.should have_received(:bark).with(Integer).and { |arg|
+      arg.should == 6
+    }.on(2)
+
 ```
 
 ### Mocking Class Object
