@@ -544,7 +544,7 @@ determining whether a given expectation matches or not.
   original method to be called, pass_thru will always return the
   undefined object.
 
-  If a block is supplied to pass_thru, the value returned from the
+  If a block is supplied to `pass_thru`, the value returned from the
   original method will be passed to the block and the value of the
   block will be returned. This allows you to mock methods on the
   returned value.
