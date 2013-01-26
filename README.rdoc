@@ -215,7 +215,7 @@ FlexMock::MockContainer#flexmock for more details.
   * kind_of?(class) -- returns true if class is YourModel or one of its ancestors
   * class -- returns YourModel.
 
-* <b>mock = flexmock(... :spy_on, class_object, ...)</b>
+* <b>mock = flexmock(... :on, class_object, ...)</b>
 
 <b>NOTE:</b> Versions of FlexMock prior to 0.6.0 used
 <code>flexstub</code> to create partial mocks. The
