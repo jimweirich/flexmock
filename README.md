@@ -1085,12 +1085,8 @@ beforehand.
 
 Refer to the following documents for examples of using FlexMock:
 
-* [RSpec Examples](link:doc/examples/rspec_examples_spec_rdoc.html)
-* [Test::Unit / MiniTest Examples](link:doc/examples/test_unit_examples_test_rdoc.html)
-
-**NOTE:** <em>If the above links are not working, you probably need to
-read the documents from the
-[documentation site](http://flexmock.rubyforge.org).</em>
+* [RSpec Examples](https://github.com/jimweirich/flexmock/blob/master/doc/examples/rspec_examples_spec.rb)
+* [Test::Unit / MiniTest Examples](https://github.com/jimweirich/flexmock/blob/master/doc/examples/test_unit_examples_test.rb)
 
 ## License
 
