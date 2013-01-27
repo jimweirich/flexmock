@@ -1,8 +1,14 @@
-= FlexMock 1.0.0 Released
+= FlexMock 1.1.0 Released
 
 FlexMock is a flexible mocking library for use in unit testing and
-behavior specification in Ruby.  Release 1.0.0 is a major release with
-some nice features and bug fixes.
+behavior specification in Ruby.  Release 1.1.0 is a minor release with
+a few bug fixes and some small features.
+
+== Changes in 1.1.0
+
+=== Features
+
+* Add block support to pass_thru.
 
 == Changes in 1.0.0
 

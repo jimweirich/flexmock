@@ -38,7 +38,7 @@ PKG_FILES = FileList[
 ]
 
 RDOC_FILES = FileList[
-  'README.rdoc',
+  'doc/index.rdoc',
   'CHANGES',
   'lib/**/*.rb',
   'doc/**/*.rdoc',
@@ -84,10 +84,10 @@ end
 
 # RDoc Target --------------------------------------------------------
 
-task :rdoc => ["README.rdoc", "html/index.html", :fixcss]
+task :rdoc => ["html/index.html", :fixcss]
 
 file "html/index.html" => ["Rakefile"] + RDOC_FILES do
-  sh "rdoc -o html --title FlexMock --line-numbers -m README.rdoc #{RDOC_FILES}"
+  sh "rdoc -o html --title FlexMock --line-numbers -m doc/index.rdoc #{RDOC_FILES}"
 end
 
 EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
@@ -103,8 +103,8 @@ EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
   end
 end
 
-file "README.rdoc" => ["Rakefile", "lib/flexmock/version.rb"] do
-  ruby %{-i.bak -pe '$_.sub!(/^Version *:: *((\\d+|beta|rc)\\.)+\\d+ *$/i, "Version :: #{PKG_VERSION}")' README.rdoc} # "
+file "README.md" => ["Rakefile", "lib/flexmock/version.rb"] do
+  ruby %{-i.bak -pe '$_.sub!(/^Version: *((\\d+|beta|rc)\\.)+\\d+ *$/i, "Version :: #{PKG_VERSION}")' README.md} # "
 end
 
 desc "Fix the Darkfish CSS so that paragraphs in lists have a bit of spacing"
