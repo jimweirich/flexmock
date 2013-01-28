@@ -50,6 +50,22 @@ class FlexMock
         ".times(#{@limit})"
       end
     end
+
+    def describe_limit
+      @limit.to_s
+    end
+
+    def validate_count(n, &block)
+      @exp.flexmock_location_filter do
+        FlexMock.framework_adapter.assert_block(
+          lambda {
+            "Method '#{@exp}' called incorrect number of times\n" +
+            "#{describe_limit} matching #{calls(@limit)} expected\n" +
+            "#{n} matching #{calls(n)} found\n" +
+            describe_calls(@exp.mock)
+          }, &block)
+      end
+    end
   end
 
   ####################################################################
@@ -59,16 +75,7 @@ class FlexMock
     # Validate that the method expectation was called exactly +n+
     # times.
     def validate(n)
-      @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.assert_block(
-          lambda {
-            "Method '#{@exp}' called incorrect number of times\n" +
-            "#{@limit} matching #{calls(@limit)} expected\n" +
-            "#{n} matching #{calls(n)} found\n" +
-            describe_calls(@exp.mock)
-          }
-          ) { @limit == n }
-      end
+      validate_count(n) { @limit == n }
     end
   end
 
@@ -79,15 +86,7 @@ class FlexMock
     # Validate the method expectation was called no more than +n+
     # times.
     def validate(n)
-      @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.assert_block(
-          lambda {
-            "Method '#{@exp}' called incorrect number of times\n" +
-            "At least #{@limit} matching #{calls(@limit)} expected\n" +
-            "#{n} matching #{calls(n)} found\n" +
-            describe_calls(@exp.mock)
-          }) { n >= @limit }
-      end
+      validate_count(n) { n >= @limit }
     end
 
     # Human readable description of the validator.
@@ -106,6 +105,10 @@ class FlexMock
     def eligible?(n)
       true
     end
+
+    def describe_limit
+      "At least #{@limit}"
+    end
   end
 
   ####################################################################
@@ -114,15 +117,7 @@ class FlexMock
   class AtMostCountValidator < CountValidator
     # Validate the method expectation was called at least +n+ times.
     def validate(n)
-      @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.assert_block(
-          lambda {
-            "Method '#{@exp}' called incorrect number of times\n" +
-            "At most #{@limit} matching #{calls(@limit)} expected\n" +
-            "#{n} matching #{calls(n)} found\n" +
-            describe_calls(@exp.mock)
-          }) { n <= @limit }
-      end
+      validate_count(n) { n <= @limit }
     end
 
     # Human readable description of the validator
@@ -130,5 +125,8 @@ class FlexMock
       ".at_most#{super}"
     end
 
+    def describe_limit
+      "At most #{@limit}"
+    end
   end
 end
