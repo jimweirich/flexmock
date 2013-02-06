@@ -9,7 +9,7 @@
 # above copyright notice is included.
 #+++
 
-require 'test/unit'
+require 'test/unit/assertions'
 require 'flexmock/base'
 require 'flexmock/test_unit_assert_spy_called'
 
