@@ -5,7 +5,7 @@ class FlexMock
   # methods supported by the base class. Attempting to add an stub to
   # a method not defined on the base class will cause the expectation
   # to be wrapped in an ExplicitNeeded wrapper. The wrapper will throw
-  # an exception unless the explicit method is immediately called on
+  # an exception unless the explicitly method is immediately called on
   # the expectation.
   #
   class ExplicitNeeded
@@ -23,6 +23,10 @@ class FlexMock
 
     def explicit?
       @explicit
+    end
+
+    def mock=(m)
+      @expectation.mock = m
     end
 
     def method_missing(sym, *args, &block)

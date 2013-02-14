@@ -43,4 +43,9 @@ class BasedPartialsTest < Test::Unit::TestCase
     end
   end
 
+  def test_based_partials_allow_explicitly_stubbing_undefined_methods
+    dog = Dog.new
+    flexmock(dog).should_receive(:wag).explicitly.and_return(:mock_value)
+  end
+
 end
