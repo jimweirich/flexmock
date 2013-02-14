@@ -205,6 +205,11 @@ class FlexMock
       @mock.flexmock_expectations_for(method_name)
     end
 
+    # Forward the based on request.
+    def flexmock_based_on(*args)
+      @mock.flexmock_based_on(*args)
+    end
+
     private
 
     def check_allocate_method(allocate_method)

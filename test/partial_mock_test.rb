@@ -400,6 +400,21 @@ class TestStubbing < Test::Unit::TestCase
     assert_equal :hiss, dog.meow
   end
 
+  def test_partial_mocks_allow_stubbing_defined_methods_when_using_on
+    dog = Dog.new
+    flexmock(dog, :on, Dog)
+    dog.should_receive(:bark).and_return(:grrr)
+    assert_equal :grrr, dog.bark
+  end
+
+  def test_partial_mocks_disallow_stubbing_undefined_methods_when_using_on
+    dog = Dog.new
+    flexmock(dog, :on, Dog)
+    assert_raise(NoMethodError, /meow.*explicitly/) do
+      dog.should_receive(:meow).and_return(:something)
+    end
+  end
+
   # The following test was suggested by Pat Maddox for the RSpec
   # mocks.  Evidently the (poorly implemented) == method caused issues
   # with RSpec Mock's internals.  I'm just double checking for any
