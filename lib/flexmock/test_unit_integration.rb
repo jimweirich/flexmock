@@ -50,7 +50,7 @@ class FlexMock
     def assert_block(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
-        super(msg) { false }
+        assert(false, msg)
       end
     rescue assertion_failed_error => ex
       ex.message.sub!(/Expected block to return true value./,'')
