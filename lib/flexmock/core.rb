@@ -52,6 +52,11 @@ class FlexMock
   attr_reader :flexmock_name
   attr_accessor :flexmock_container
 
+  class << self
+    attr_accessor :partials_are_based
+  end
+  self.partials_are_based = false
+
   # Create a FlexMock object with the given name.  The name is used in
   # error messages.  If no container is given, create a new, one-off
   # container for this mock.

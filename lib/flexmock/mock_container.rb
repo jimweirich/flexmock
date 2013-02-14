@@ -160,7 +160,11 @@ class FlexMock
         mock ||= FlexMock.new(name || "unknown", self)
         result = mock
       end
-      mock.flexmock_based_on(base_class) if base_class
+      if base_class
+        mock.flexmock_based_on(base_class)
+      elsif domain_obj && FlexMock.partials_are_based
+        mock.flexmock_based_on(domain_obj.class)
+      end
       mock.flexmock_define_expectation(location, quick_defs)
       yield(mock) if block_given?
       flexmock_remember(mock)
