@@ -15,7 +15,6 @@ class FlexMock
     # expected error message.
     def assert_failure(options={}, &block)
       message = options[:message]
-      no_location = options[:no_location]
       ex = assert_raises(assertion_failed_error) { yield }
       if message
         case message
