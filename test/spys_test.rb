@@ -136,7 +136,7 @@ class TestSpys < Test::Unit::TestCase
     failed = false
     begin
       yield
-    rescue MiniTest::Assertion => ex
+    rescue assertion_failed_error => ex
       failed = true
       assert_match message_pattern, ex.message
     end

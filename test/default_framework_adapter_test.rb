@@ -18,12 +18,12 @@ class TestFlexmockDefaultFrameworkAdapter < Test::Unit::TestCase
 
   def test_assert_block_raises_exception
     assert_raise(FlexMock::DefaultFrameworkAdapter::AssertionFailedError) {
-      @adapter.assert_block("failure message") { false }
+      @adapter.make_assertion("failure message") { false }
     }
   end
 
   def test_assert_block_doesnt_raise_exception
-    @adapter.assert_block("failure message") { true }
+    @adapter.make_assertion("failure message") { true }
   end
 
   def test_assert_equal_doesnt_raise_exception

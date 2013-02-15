@@ -21,14 +21,14 @@ class FlexMock
   end
 
   class RSpecFrameworkAdapter
-    def assert_block(msg, &block)
+    def make_assertion(msg, &block)
       msg = msg.call if msg.is_a?(Proc)
       SpecModule::Expectations.fail_with(msg) unless yield
     end
 
     def assert_equal(a, b, msg=nil)
       message = msg || "Expected equal"
-      assert_block(message + "\n<#{a}> expected, but was\n<#{b}>") { a == b }
+      make_assertion(message + "\n<#{a}> expected, but was\n<#{b}>") { a == b }
     end
 
     class AssertionFailedError < StandardError; end

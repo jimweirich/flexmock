@@ -53,9 +53,10 @@ class FlexMock
         loc_re = Regexp.compile(Regexp.quote(file))
       end
 
+
       if search_all
         bts = ex.backtrace.join("\n")
-        assert_block("expected a backtrace line to match #{loc_re}\nBACKTRACE:\n#{bts}") {
+        assert_with_block("expected a backtrace line to match #{loc_re}\nBACKTRACE:\n#{bts}") {
           ex.backtrace.any? { |bt| loc_re =~ bt }
         }
       else
@@ -63,6 +64,12 @@ class FlexMock
       end
 
       ex
+    end
+
+    def assert_with_block(msg=nil)
+      unless yield
+        assert(false, msg || "Expected block to yield true")
+      end
     end
   end
 end

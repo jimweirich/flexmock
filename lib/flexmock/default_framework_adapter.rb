@@ -13,7 +13,7 @@ require 'flexmock/noop'
 
 class FlexMock
   class DefaultFrameworkAdapter
-    def assert_block(msg, &block)
+    def make_assertion(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
         fail assertion_failed_error, msg
@@ -21,7 +21,7 @@ class FlexMock
     end
 
     def assert_equal(a, b, msg=nil)
-      assert_block(msg || "Expected equal") { a == b }
+      make_assertion(msg || "Expected equal") { a == b }
     end
 
     class AssertionFailedError < StandardError; end

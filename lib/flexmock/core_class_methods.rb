@@ -67,7 +67,7 @@ class FlexMock
     # Check will assert the block returns true.  If it doesn't, an
     # assertion failure is triggered with the given message.
     def check(msg, &block)  # :nodoc:
-      FlexMock.framework_adapter.assert_block(msg, &block)
+      FlexMock.framework_adapter.make_assertion(msg, &block)
     end
 
   end

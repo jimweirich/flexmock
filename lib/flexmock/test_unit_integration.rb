@@ -47,7 +47,7 @@ class FlexMock
   class TestUnitFrameworkAdapter
     include Test::Unit::Assertions
 
-    def assert_block(msg, &block)
+    def make_assertion(msg, &block)
       unless yield
         msg = msg.call if msg.is_a?(Proc)
         assert(false, msg)

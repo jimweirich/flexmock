@@ -57,7 +57,7 @@ class FlexMock
 
     def validate_count(n, &block)
       @exp.flexmock_location_filter do
-        FlexMock.framework_adapter.assert_block(
+        FlexMock.framework_adapter.make_assertion(
           lambda {
             "Method '#{@exp}' called incorrect number of times\n" +
             "#{describe_limit} matching #{calls(@limit)} expected\n" +
