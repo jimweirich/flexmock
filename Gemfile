@@ -7,5 +7,4 @@ group 'dev' do
   gem 'rdoc'
   gem 'flog'
   gem 'flay'
-  gem 'ghpreview'
 end
