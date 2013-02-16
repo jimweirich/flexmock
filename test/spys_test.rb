@@ -140,7 +140,7 @@ class TestSpys < Test::Unit::TestCase
       failed = true
       assert_match message_pattern, ex.message
     end
-    refute(!failed, "Expected block to fail")
+    assert(failed, "Expected block to fail")
   end
 
   def test_spy_methods_can_be_stubbed
