@@ -22,11 +22,11 @@ class TestFlexmockDefaultFrameworkAdapter < Test::Unit::TestCase
     }
   end
 
-  def test_assert_block_doesnt_raise_exception
+  def test_make_assertion_doesnt_raise_exception
     @adapter.make_assertion("failure message") { true }
   end
 
-  def test_assert_equal_doesnt_raise_exception
+  def test_make_assertion_doesnt_raise_exception
     @adapter.assert_equal("a", "a", "no message")
   end
 
