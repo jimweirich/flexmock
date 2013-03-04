@@ -110,6 +110,11 @@ will be able to say:
   end
 ```
 
+**NOTE:** _I often can't remember the proper RSpec configuration for
+flexmock without looking it up. If you are the same, you can put
+<code>require 'flexmock/rspec/configure'</code> in your spec helper to
+auto-configure RSpec to use flexmock._
+
 **NOTE:** _Older versions of RSpec used the Spec::Runner for
 configuration. If you are running with a very old RSpec, you may need
 the following:_
