@@ -152,14 +152,14 @@ FlexMock::MockContainer#flexmock for more details.
 
 * <b>mock = flexmock("joe", :on, <em>User</em>)</b>
 
-  This defines a mock that is based on the User class (the class is
-  called the mock's "base class"). Mocks with base classes prevent you
-  from mocking or stubbing methods that are not instance methods of
-  the base class. This helps prevent tests from becoming stale with
+  This defines a strict mock that is based on the User class. Strict
+  mocks prevent you from mocking or stubbing methods that are not
+  instance methods of the restricting class (i.e. User in our
+  example). This helps prevent tests from becoming stale with
   incorrectly mocked objects when the method names change.
 
-  Use the `explicitly` modifier to `should_receive` to override base
-  class restrictions.
+  Use the `explicitly` modifier to `should_receive` to override the
+  strict mock restrictions.
 
 * <b>partial_mock = flexmock(<em>real_object</em>)</b>
 
@@ -167,6 +167,16 @@ FlexMock::MockContainer#flexmock for more details.
   will treat that real object as a base for a partial mock object. The
   return value `partial_mock` may be used to set expectations. The
   real_object should be used in the reference portion of the test.
+
+* <b>partial_mock = flexmock(<em>real_object</em>, :on, <em>class_object</em>)</b>
+
+* <b>partial_mock = flexmock(<em>real_object</em>, :strict)</b>
+
+  Partial mocks can also take a restricting base, so that you cannot
+  mock methods not in the class (without the <code>explicitly</code>
+  modifier). Since partials already have a class, you can use the
+  <code>:strict</code> keyword to mean the same thing as <code>:on,
+  <em>real_object</em>.class</code>.
 
 * <b>partial_mock = flexmock(<em>real_object</em>, "name", :foo => :baz)</b>
 
