@@ -1,0 +1,7 @@
+(add-to-list
+ 'toggle-mapping-styles
+ '(flexmock
+   ("test/\\1_test.rb" . "lib/flexmock/\\1.rb")
+   ("\\1_test.rb"      . "\\1.rb")))
+
+(buffer-toggle-style 'flexmock)
