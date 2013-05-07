@@ -116,59 +116,58 @@ class FlexMock
     #   for a partial mock, flexmock will return the domain object rather than
     #   the mock object.
     #
-    def flexmock(*args)
-      location = caller.first
-      name = nil
-      quick_defs = {}
-      domain_obj = nil
-      safe_mode = false
-      model_class = nil
-      base_class = nil
-      mock = nil
+    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock)
+    def flexmock_handle_options(args)
+      opts = FlexOpts.new
       while ! args.empty?
         case args.first
         when :base, :safe
-          safe_mode = (args.shift == :safe)
-          domain_obj = args.shift
+          opts.safe_mode = (args.shift == :safe)
+          opts.domain_obj = args.shift
         when :model
           args.shift
-          model_class = args.shift
+          opts.model_class = args.shift
         when :on
           args.shift
-          base_class = args.shift
-          name ||= "#{base_class} Mock"
+          opts.base_class = args.shift
+          opts.name ||= "#{opts.base_class} Mock"
         when String, Symbol
-          name = args.shift.to_s
+          opts.name = args.shift.to_s
         when Hash
-          quick_defs = args.shift
+          opts.defs = args.shift
         when FlexMock
-          mock = args.shift
+          opts.mock = args.shift
         else
-          domain_obj = args.shift
+          opts.domain_obj = args.shift
         end
       end
-      raise UsageError, "a block is required in safe mode" if safe_mode && ! block_given?
+      opts
+    end
+    def flexmock(*args)
+      location = caller.first
+      opts = flexmock_handle_options(args)
+      raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
-      if domain_obj
-        mock = ContainerHelper.make_partial_proxy(self, domain_obj, name, safe_mode)
-        result = domain_obj
-      elsif model_class
+      if opts.domain_obj
+        opts.mock = ContainerHelper.make_partial_proxy(self, opts.domain_obj, opts.name, opts.safe_mode)
+        result = opts.domain_obj
+      elsif opts.model_class
         id = ContainerHelper.next_id
-        mock ||= FlexMock.new("#{model_class}_#{id}", self)
-        result = mock
+        opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", self)
+        result = opts.mock
       else
-        mock ||= FlexMock.new(name || "unknown", self)
-        result = mock
+        opts.mock ||= FlexMock.new(opts.name || "unknown", self)
+        result = opts.mock
       end
-      if base_class
-        mock.flexmock_based_on(base_class)
-      elsif domain_obj && FlexMock.partials_are_based
-        mock.flexmock_based_on(domain_obj.class)
+      if opts.base_class
+        opts.mock.flexmock_based_on(opts.base_class)
+      elsif opts.domain_obj && FlexMock.partials_are_based
+        opts.mock.flexmock_based_on(opts.domain_obj.class)
       end
-      mock.flexmock_define_expectation(location, quick_defs)
-      yield(mock) if block_given?
-      flexmock_remember(mock)
-      ContainerHelper.add_model_methods(mock, model_class, id, location) if model_class
+      opts.mock.flexmock_define_expectation(location, opts.defs)
+      yield(opts.mock) if block_given?
+      flexmock_remember(opts.mock)
+      ContainerHelper.add_model_methods(opts.mock, opts.model_class, id, location) if opts.model_class
       result
     end
     alias flexstub flexmock
