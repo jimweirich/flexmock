@@ -15,18 +15,29 @@ class FlexMock
 
   # #########################################################################
   # PartialMockProxy is used to mate the mock framework to an existing
-  # object.  The object is "enhanced" with a reference to a mock
-  # object (stored in <tt>@flexmock_proxy</tt>).  When the
-  # +should_receive+ method is sent to the proxy, it overrides the
-  # existing object's method by creating singleton method that
-  # forwards to the mock.  When testing is complete, PartialMockProxy
-  # will erase the mocking infrastructure from the object being mocked
-  # (e.g.  remove instance variables and mock singleton methods).
+  # object. The object is "enhanced" with a reference to a mock object
+  # (stored in <tt>@flexmock_proxy</tt>). When the +should_receive+
+  # method is sent to the proxy, it overrides the existing object's
+  # method by creating singleton method that forwards to the mock.
+  # When testing is complete, PartialMockProxy will erase the mocking
+  # infrastructure from the object being mocked (e.g. remove instance
+  # variables and mock singleton methods).
   #
   class PartialMockProxy
     include Ordering
 
     attr_reader :mock
+
+    # Make a partial mock proxy and install it on the +obj+.
+    def self.make_proxy_for(obj, container, name, safe_mode)
+      name ||= "flexmock(#{obj.class.to_s})"
+      if !obj.instance_variable_defined?("@flexmock_proxy") || obj.instance_variable_get("@flexmock_proxy").nil?
+        mock = FlexMock.new(name, container)
+        proxy = PartialMockProxy.new(obj, mock, safe_mode)
+        obj.instance_variable_set("@flexmock_proxy", proxy)
+      end
+      obj.instance_variable_get("@flexmock_proxy")
+    end
 
     # The following methods are added to partial mocks so that they
     # can act like a mock.

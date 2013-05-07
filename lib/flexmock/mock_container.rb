@@ -169,16 +169,6 @@ class FlexMock
       extensions << extension
     end
 
-    # Return the next id for mocked models.
-    def next_id
-      @id_counter ||= 10000
-      @id_counter += 1
-    end
-
-    def current_id
-      @id_counter
-    end
-
     FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock, :extended)
 
     def parse_creation_args(args)
@@ -228,20 +218,10 @@ class FlexMock
       if opts.extended
         result = opts.extended.create(container, opts)
       elsif opts.domain_obj
-        result = ContainerHelper.create_partial(container, opts)
+        result = create_partial(container, opts)
       else
-        result = ContainerHelper.create_mock(container, opts)
+        result = create_mock(container, opts)
       end
-    end
-
-    def create_partial(container, opts)
-      opts.mock = ContainerHelper.make_partial_proxy(container, opts.domain_obj, opts.name, opts.safe_mode)
-      opts.domain_obj
-    end
-
-    def create_mock(container, opts)
-      opts.mock ||= FlexMock.new(opts.name || "unknown", container)
-      opts.mock
     end
 
     def run_post_creation_hooks(opts, location)
@@ -274,19 +254,19 @@ class FlexMock
       result
     end
 
-    # Create a PartialMockProxy for the given object.  Use +name+ as
-    # the name of the mock object.
-    def make_partial_proxy(container, obj, name, safe_mode)
-      name ||= "flexmock(#{obj.class.to_s})"
-      if !obj.instance_variable_defined?("@flexmock_proxy") || obj.instance_variable_get("@flexmock_proxy").nil?
-        mock = FlexMock.new(name, container)
-        proxy = PartialMockProxy.new(obj, mock, safe_mode)
-        obj.instance_variable_set("@flexmock_proxy", proxy)
-      end
-      obj.instance_variable_get("@flexmock_proxy")
+    private
+
+    # Create a mock object in the options.
+    def create_mock(container, opts)
+      opts.mock ||= FlexMock.new(opts.name || "unknown", container)
+      opts.mock
     end
 
-    private
+    # Create a partial mock object in options.
+    def create_partial(container, opts)
+      opts.mock = PartialMockProxy.make_proxy_for(opts.domain_obj, container, opts.name, opts.safe_mode)
+      opts.domain_obj
+    end
 
     # Build the chain of mocks for demeter style mocking.
     #
@@ -375,7 +355,7 @@ class FlexMock
     end
 
     def create(container, opts)
-      id = ContainerHelper.next_id
+      id = next_id
       opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", container)
       opts.mock
     end
@@ -386,11 +366,21 @@ class FlexMock
 
     private
 
+    # Return the next id for mocked models.
+    def next_id
+      @id_counter ||= 10000
+      @id_counter += 1
+    end
+
+    def current_id
+      @id_counter
+    end
+
     # Automatically add mocks for some common methods in ActiveRecord
     # models.
     def add_model_methods(mock, model_class, location)
-      [ [:id,          ContainerHelper.current_id                 ],
-        [:to_params,   ContainerHelper.current_id.to_s            ],
+      [ [:id,          current_id                                 ],
+        [:to_params,   current_id.to_s                            ],
         [:new_record?, false                                      ],
         [:class,       model_class                                ],
         [:errors,      make_mock_model_errors_for(mock, location) ]
