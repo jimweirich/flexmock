@@ -126,7 +126,7 @@ class FlexMock
       opts.mock.flexmock_define_expectation(location, opts.defs)
       yield(opts.mock) if block_given?
       flexmock_remember(opts.mock)
-      ContainerHelper.add_model_methods(opts.mock, opts.model_class, location) if opts.model_class
+      ContainerHelper.run_post_creation_hooks(opts, location)
       result
     end
     alias flexstub flexmock
@@ -161,6 +161,14 @@ class FlexMock
   class MockContainerHelper
     include FlexMock::ArgumentTypes
 
+    def extensions
+      @extensions ||= []
+    end
+
+    def add_extension(extension)
+      extensions << extension
+    end
+
     # Return the next id for mocked models.
     def next_id
       @id_counter ||= 10000
@@ -171,7 +179,7 @@ class FlexMock
       @id_counter
     end
 
-    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock)
+    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock, :extended)
 
     def parse_creation_args(args)
       opts = FlexOpts.new
@@ -202,24 +210,25 @@ class FlexMock
       when :base, :safe
         opts.safe_mode = (args.shift == :safe)
         opts.domain_obj = args.shift
-      when :model
-        args.shift
-        opts.model_class = args.shift
       when :on
         args.shift
         opts.base_class = args.shift
         opts.name ||= "#{opts.base_class} Mock"
       else
+        extensions.each do |ext|
+          handled = ext.handle(args, opts)
+          return true if handled
+        end
         return false
       end
       true
     end
 
     def create_double(container, opts)
-      if opts.domain_obj
+      if opts.extended
+        result = opts.extended.create(container, opts)
+      elsif opts.domain_obj
         result = ContainerHelper.create_partial(container, opts)
-      elsif opts.model_class
-        result = ContainerHelper.create_model(container, opts)
       else
         result = ContainerHelper.create_mock(container, opts)
       end
@@ -230,15 +239,15 @@ class FlexMock
       opts.domain_obj
     end
 
-    def create_model(container, opts)
-      id = ContainerHelper.next_id
-      opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", container)
-      opts.mock
-    end
-
     def create_mock(container, opts)
       opts.mock ||= FlexMock.new(opts.name || "unknown", container)
       opts.mock
+    end
+
+    def run_post_creation_hooks(opts, location)
+      if opts.extended
+        opts.extended.post_create(opts, location)
+      end
     end
 
     # :call-seq:
@@ -265,26 +274,6 @@ class FlexMock
       result
     end
 
-    # Automatically add mocks for some common methods in ActiveRecord
-    # models.
-    def add_model_methods(mock, model_class, location)
-      [ [:id,          ContainerHelper.current_id                 ],
-        [:to_params,   ContainerHelper.current_id.to_s            ],
-        [:new_record?, false                                      ],
-        [:class,       model_class                                ],
-        [:errors,      make_mock_model_errors_for(mock, location) ]
-      ].each do |method, retval|
-        make_default_behavior(mock, location, method, retval)
-      end
-
-      [ [:is_a?,        lambda { |other| other == model_class }                  ],
-        [:instance_of?, lambda { |other| other == model_class }                  ],
-        [:kind_of?,     lambda { |other| model_class.ancestors.include?(other) } ],
-      ].each do |method, block|
-        make_default_behavior(mock, location, method, &block)
-      end
-    end
-
     # Create a PartialMockProxy for the given object.  Use +name+ as
     # the name of the mock object.
     def make_partial_proxy(container, obj, name, safe_mode)
@@ -298,26 +287,6 @@ class FlexMock
     end
 
     private
-
-    # Create a mock model errors object (with default behavior).
-    def make_mock_model_errors_for(mock, location)
-      result = mock.flexmock_container.flexmock("errors")
-      make_default_behavior(result, location, :count, 0)
-      make_default_behavior(result, location, :full_messages, [])
-      result
-    end
-
-    # Define default behavior on a mock object.
-    #
-    # If a block is given, use that to define the behavior. Otherwise
-    # return the +retval+ value.
-    def make_default_behavior(mock, location, method, retval=nil, &block)
-      if block_given?
-        mock.flexmock_define_expectation(location, method).with(any).and_return(&block).by_default
-      else
-        mock.flexmock_define_expectation(location, method).and_return(retval).by_default
-      end
-    end
 
     # Build the chain of mocks for demeter style mocking.
     #
@@ -396,5 +365,68 @@ class FlexMock
     end
   end
 
+  class ARModelExtension
+    def handle(args, opts)
+      if args.first == :model
+        args.shift
+        opts.model_class = args.shift
+        opts.extended = self
+      end
+    end
+
+    def create(container, opts)
+      id = ContainerHelper.next_id
+      opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", container)
+      opts.mock
+    end
+
+    def post_create(opts, location)
+      add_model_methods(opts.mock, opts.model_class, location)
+    end
+
+    private
+
+    # Automatically add mocks for some common methods in ActiveRecord
+    # models.
+    def add_model_methods(mock, model_class, location)
+      [ [:id,          ContainerHelper.current_id                 ],
+        [:to_params,   ContainerHelper.current_id.to_s            ],
+        [:new_record?, false                                      ],
+        [:class,       model_class                                ],
+        [:errors,      make_mock_model_errors_for(mock, location) ]
+      ].each do |method, retval|
+        make_default_behavior(mock, location, method, retval)
+      end
+
+      [ [:is_a?,        lambda { |other| other == model_class }                  ],
+        [:instance_of?, lambda { |other| other == model_class }                  ],
+        [:kind_of?,     lambda { |other| model_class.ancestors.include?(other) } ],
+      ].each do |method, block|
+        make_default_behavior(mock, location, method, &block)
+      end
+    end
+
+    # Create a mock model errors object (with default behavior).
+    def make_mock_model_errors_for(mock, location)
+      result = mock.flexmock_container.flexmock("errors")
+      make_default_behavior(result, location, :count, 0)
+      make_default_behavior(result, location, :full_messages, [])
+      result
+    end
+
+    # Define default behavior on a mock object.
+    #
+    # If a block is given, use that to define the behavior. Otherwise
+    # return the +retval+ value.
+    def make_default_behavior(mock, location, method, retval=nil, &block)
+      if block_given?
+        mock.flexmock_define_expectation(location, method).with(FlexMock.any).and_return(&block).by_default
+      else
+        mock.flexmock_define_expectation(location, method).and_return(retval).by_default
+      end
+    end
+  end
+
   ContainerHelper = MockContainerHelper.new
+  ContainerHelper.add_extension(ARModelExtension.new)
 end
