@@ -116,58 +116,17 @@ class FlexMock
     #   for a partial mock, flexmock will return the domain object rather than
     #   the mock object.
     #
-    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock)
-    def flexmock_handle_options(args)
-      opts = FlexOpts.new
-      while ! args.empty?
-        case args.first
-        when :base, :safe
-          opts.safe_mode = (args.shift == :safe)
-          opts.domain_obj = args.shift
-        when :model
-          args.shift
-          opts.model_class = args.shift
-        when :on
-          args.shift
-          opts.base_class = args.shift
-          opts.name ||= "#{opts.base_class} Mock"
-        when String, Symbol
-          opts.name = args.shift.to_s
-        when Hash
-          opts.defs = args.shift
-        when FlexMock
-          opts.mock = args.shift
-        else
-          opts.domain_obj = args.shift
-        end
-      end
-      opts
-    end
     def flexmock(*args)
       location = caller.first
-      opts = flexmock_handle_options(args)
+      opts = ContainerHelper.parse_creation_args(args)
       raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
-      if opts.domain_obj
-        opts.mock = ContainerHelper.make_partial_proxy(self, opts.domain_obj, opts.name, opts.safe_mode)
-        result = opts.domain_obj
-      elsif opts.model_class
-        id = ContainerHelper.next_id
-        opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", self)
-        result = opts.mock
-      else
-        opts.mock ||= FlexMock.new(opts.name || "unknown", self)
-        result = opts.mock
-      end
-      if opts.base_class
-        opts.mock.flexmock_based_on(opts.base_class)
-      elsif opts.domain_obj && FlexMock.partials_are_based
-        opts.mock.flexmock_based_on(opts.domain_obj.class)
-      end
+      result = ContainerHelper.create_double(self, opts)
+      opts.mock.flexmock_based_on(opts.base_class) if opts.base_class
       opts.mock.flexmock_define_expectation(location, opts.defs)
       yield(opts.mock) if block_given?
       flexmock_remember(opts.mock)
-      ContainerHelper.add_model_methods(opts.mock, opts.model_class, id, location) if opts.model_class
+      ContainerHelper.add_model_methods(opts.mock, opts.model_class, location) if opts.model_class
       result
     end
     alias flexstub flexmock
@@ -208,6 +167,80 @@ class FlexMock
       @id_counter += 1
     end
 
+    def current_id
+      @id_counter
+    end
+
+    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock)
+
+    def parse_creation_args(args)
+      opts = FlexOpts.new
+      while ! args.empty?
+        case args.first
+        when Symbol
+          unless parse_create_symbol(args, opts)
+            opts.name = args.shift.to_s
+          end
+        when String, Symbol
+          opts.name = args.shift.to_s
+        when Hash
+          opts.defs = args.shift
+        when FlexMock
+          opts.mock = args.shift
+        else
+          opts.domain_obj = args.shift
+        end
+      end
+      if ! opts.base_class && opts.domain_obj && FlexMock.partials_are_based
+        opts.base_class = opts.domain_obj.class
+      end
+      opts
+    end
+
+    def parse_create_symbol(args, opts)
+      case args.first
+      when :base, :safe
+        opts.safe_mode = (args.shift == :safe)
+        opts.domain_obj = args.shift
+      when :model
+        args.shift
+        opts.model_class = args.shift
+      when :on
+        args.shift
+        opts.base_class = args.shift
+        opts.name ||= "#{opts.base_class} Mock"
+      else
+        return false
+      end
+      true
+    end
+
+    def create_double(container, opts)
+      if opts.domain_obj
+        result = ContainerHelper.create_partial(container, opts)
+      elsif opts.model_class
+        result = ContainerHelper.create_model(container, opts)
+      else
+        result = ContainerHelper.create_mock(container, opts)
+      end
+    end
+
+    def create_partial(container, opts)
+      opts.mock = ContainerHelper.make_partial_proxy(container, opts.domain_obj, opts.name, opts.safe_mode)
+      opts.domain_obj
+    end
+
+    def create_model(container, opts)
+      id = ContainerHelper.next_id
+      opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", container)
+      opts.mock
+    end
+
+    def create_mock(container, opts)
+      opts.mock ||= FlexMock.new(opts.name || "unknown", container)
+      opts.mock
+    end
+
     # :call-seq:
     #   parse_should_args(args) { |symbol| ... }
     #
@@ -234,9 +267,9 @@ class FlexMock
 
     # Automatically add mocks for some common methods in ActiveRecord
     # models.
-    def add_model_methods(mock, model_class, id, location)
-      [ [:id,          id                                         ],
-        [:to_params,   id.to_s                                    ],
+    def add_model_methods(mock, model_class, location)
+      [ [:id,          ContainerHelper.current_id                 ],
+        [:to_params,   ContainerHelper.current_id.to_s            ],
         [:new_record?, false                                      ],
         [:class,       model_class                                ],
         [:errors,      make_mock_model_errors_for(mock, location) ]
