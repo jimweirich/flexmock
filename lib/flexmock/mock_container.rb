@@ -116,17 +116,14 @@ class FlexMock
     #   for a partial mock, flexmock will return the domain object rather than
     #   the mock object.
     #
-    def flexmock(*args)
+    def flexmock(*args, &block)
       location = caller.first
       opts = CONTAINER_HELPER.parse_creation_args(args)
       raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
       result = CONTAINER_HELPER.create_double(self, opts)
       opts.mock ||= result
-      opts.mock.flexmock_based_on(opts.base_class) if opts.base_class
-      opts.mock.flexmock_define_expectation(location, opts.defs)
-      yield(opts.mock) if block_given?
-      flexmock_remember(opts.mock)
+      flexmock_mock_setup(opts.mock, opts, location, &block)
       CONTAINER_HELPER.run_post_creation_hooks(opts, location)
       result
     end
@@ -142,11 +139,19 @@ class FlexMock
 
     private
 
+    # Setup the test double with its expections and such.
+    def flexmock_mock_setup(mock, opts, location) # :nodoc:
+      opts.mock.flexmock_based_on(opts.base_class) if opts.base_class
+      opts.mock.flexmock_define_expectation(location, opts.defs)
+      yield(opts.mock) if block_given?
+      flexmock_remember(opts.mock)
+    end
+
     # In frameworks (e.g. MiniTest) passed? will return nil to
     # indicate the test isn't over yet.  From our point of view we are
     # only interested if the test has actually failed, so we wrap the
     # raw call to passed? and handle accordingly.
-    def flexmock_test_has_failed?
+    def flexmock_test_has_failed? # :nodoc:
       passed? == false
     end
   end
