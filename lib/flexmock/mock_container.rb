@@ -122,6 +122,7 @@ class FlexMock
       raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
       result = CONTAINER_HELPER.create_double(self, opts)
+      opts.mock ||= result
       opts.mock.flexmock_based_on(opts.base_class) if opts.base_class
       opts.mock.flexmock_define_expectation(location, opts.defs)
       yield(opts.mock) if block_given?
@@ -169,7 +170,11 @@ class FlexMock
       extensions << extension
     end
 
-    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :model_class, :base_class, :mock, :extended)
+    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :base_class, :mock, :extended, :extended_data) do
+      def data
+        self.extended_data ||= {}
+      end
+    end
 
     def parse_creation_args(args)
       opts = FlexOpts.new
@@ -222,6 +227,7 @@ class FlexMock
       else
         result = create_mock(container, opts)
       end
+      result
     end
 
     def run_post_creation_hooks(opts, location)
@@ -346,22 +352,38 @@ class FlexMock
   end
 
   class ARModelExtension
+    # Handle the argument list.
+    #
+    # This method is called whenever an unrecognized symbol is
+    # detected in the flexmock argument list. If the extension class
+    # can handle it, it should return true.
+    #
+    # Extension data can be stored in the opts.data hash for later use
+    # during the create and post_create phase.
     def handle(args, opts)
-      if args.first == :model
-        args.shift
-        opts.model_class = args.shift
-        opts.extended = self
-      end
+      return false unless args.first == :model
+      args.shift
+      opts.data[:model_class] = args.shift
+      opts.extended = self
+      true
     end
 
+    # Create the test double.
+    #
+    # Create the custome test double according to the data from the
+    # argument list. The object returned from this method is the
+    # object returned from the original flexmock() method call. This
+    # the returned object is NOT the actual mock object (which is the
+    # case for things like partial proxies), then the opts.mock field
+    # should be set to contain the actual mock object.
     def create(container, opts)
       id = next_id
-      opts.mock ||= FlexMock.new("#{opts.model_class}_#{id}", container)
-      opts.mock
+      FlexMock.new("#{opts.data[:model_class]}_#{id}", container)
     end
 
+    # Do any post-creation setup on the mock object.
     def post_create(opts, location)
-      add_model_methods(opts.mock, opts.model_class, location)
+      add_model_methods(opts.mock, opts.data[:model_class], location)
     end
 
     private
