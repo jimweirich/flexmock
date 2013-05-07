@@ -58,7 +58,7 @@ Rake::TestTask.new do |t|
   t.warning = true
 end
 
-module Config
+module Configuration
   def self.minitest?
     require 'minitest/autorun'
     return true
@@ -69,7 +69,7 @@ end
 
 task :testunit do
   files = FileList['test/test_unit_integration/*_test.rb']
-  if ! Config.minitest?
+  if ! Configuration.minitest?
     files = files.reject { |fn| fn =~ /minitest/ }
   end
   files.each do |file|
