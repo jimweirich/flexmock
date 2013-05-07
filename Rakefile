@@ -58,8 +58,20 @@ Rake::TestTask.new do |t|
   t.warning = true
 end
 
+module Config
+  def self.minitest?
+    require 'minitest/autorun'
+    return true
+  rescue Exception
+    return false
+  end
+end
+
 task :testunit do
   files = FileList['test/test_unit_integration/*_test.rb']
+  if ! Config.minitest?
+    files = files.reject { |fn| fn =~ /minitest/ }
+  end
   files.each do |file|
     sh "ruby -Ilib:. #{file}"
   end
