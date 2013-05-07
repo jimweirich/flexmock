@@ -66,6 +66,12 @@ class FlexMock
       ex
     end
 
+    unless defined?(refute_match)
+      def refute_match(*args)
+        assert_no_match(*args)
+      end
+    end
+
     def assert_with_block(msg=nil)
       unless yield
         assert(false, msg || "Expected block to yield true")
