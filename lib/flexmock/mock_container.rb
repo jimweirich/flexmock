@@ -236,30 +236,21 @@ class FlexMock
     # Automatically add mocks for some common methods in ActiveRecord
     # models.
     def add_model_methods(mock, model_class, id, location)
-      container = mock.flexmock_container
+      [ [:id,          id                                         ],
+        [:to_params,   id.to_s                                    ],
+        [:new_record?, false                                      ],
+        [:class,       model_class                                ],
+        [:errors,      make_mock_model_errors_for(mock, location) ]
+      ].each do |method, retval|
+        make_default_behavior(mock, location, method, retval)
+      end
 
-      mock_errors = container.flexmock("errors")
-      mock_errors.flexmock_define_expectation(location, :count).and_return(0).by_default
-      mock_errors.flexmock_define_expectation(location, :full_messages).and_return([]).by_default
-
-      mock.flexmock_define_expectation(location, :id).and_return(id).by_default
-      mock.flexmock_define_expectation(location, :to_params).and_return(id.to_s).by_default
-      mock.flexmock_define_expectation(location, :new_record?).and_return(false).by_default
-      mock.flexmock_define_expectation(location, :class).and_return(model_class).by_default
-      mock.flexmock_define_expectation(location, :errors).and_return(mock_errors).by_default
-
-      # HACK: Ruby 1.9 needs the following lambda so that model_class
-      # is correctly bound below.
-      lambda { }
-      mock.flexmock_define_expectation(location, :is_a?).with(any).and_return { |other|
-        other == model_class
-      }.by_default
-      mock.flexmock_define_expectation(location, :instance_of?).with(any).and_return { |other|
-        other == model_class
-      }.by_default
-      mock.flexmock_define_expectation(location, :kind_of?).with(any).and_return { |other|
-        model_class.ancestors.include?(other)
-      }.by_default
+      [ [:is_a?,        lambda { |other| other == model_class }                  ],
+        [:instance_of?, lambda { |other| other == model_class }                  ],
+        [:kind_of?,     lambda { |other| model_class.ancestors.include?(other) } ],
+      ].each do |method, block|
+        make_default_behavior(mock, location, method, &block)
+      end
     end
 
     # Create a PartialMockProxy for the given object.  Use +name+ as
@@ -275,6 +266,26 @@ class FlexMock
     end
 
     private
+
+    # Create a mock model errors object (with default behavior).
+    def make_mock_model_errors_for(mock, location)
+      result = mock.flexmock_container.flexmock("errors")
+      make_default_behavior(result, location, :count, 0)
+      make_default_behavior(result, location, :full_messages, [])
+      result
+    end
+
+    # Define default behavior on a mock object.
+    #
+    # If a block is given, use that to define the behavior. Otherwise
+    # return the +retval+ value.
+    def make_default_behavior(mock, location, method, retval=nil, &block)
+      if block_given?
+        mock.flexmock_define_expectation(location, method).with(any).and_return(&block).by_default
+      else
+        mock.flexmock_define_expectation(location, method).and_return(retval).by_default
+      end
+    end
 
     # Build the chain of mocks for demeter style mocking.
     #
