@@ -96,7 +96,7 @@ class FlexMock
     end
 
     def flexmock_define_expectation(location, *args)
-      ContainerHelper.parse_should_args(@mock, args) do |sym|
+      CONTAINER_HELPER.parse_should_args(@mock, args) do |sym|
         unless @methods_proxied.include?(sym)
           hide_existing_method(sym)
         end

@@ -118,15 +118,15 @@ class FlexMock
     #
     def flexmock(*args)
       location = caller.first
-      opts = ContainerHelper.parse_creation_args(args)
+      opts = CONTAINER_HELPER.parse_creation_args(args)
       raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
-      result = ContainerHelper.create_double(self, opts)
+      result = CONTAINER_HELPER.create_double(self, opts)
       opts.mock.flexmock_based_on(opts.base_class) if opts.base_class
       opts.mock.flexmock_define_expectation(location, opts.defs)
       yield(opts.mock) if block_given?
       flexmock_remember(opts.mock)
-      ContainerHelper.run_post_creation_hooks(opts, location)
+      CONTAINER_HELPER.run_post_creation_hooks(opts, location)
       result
     end
     alias flexstub flexmock
@@ -155,7 +155,7 @@ class FlexMock
   # that is designed to be mixed into other classes, particularly
   # testing framework test cases.  Since we don't want to pollute the
   # method namespace of the class that mixes in MockContainer, a
-  # number of MockContainer methods were moved into ContainerHelper to
+  # number of MockContainer methods were moved into CONTAINER_HELPER to
   # to isoloate the names.
   #
   class MockContainerHelper
@@ -417,6 +417,6 @@ class FlexMock
     end
   end
 
-  ContainerHelper = MockContainerHelper.new
-  ContainerHelper.add_extension(ARModelExtension.new)
+  CONTAINER_HELPER = MockContainerHelper.new
+  CONTAINER_HELPER.add_extension(ARModelExtension.new)
 end
