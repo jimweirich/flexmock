@@ -100,7 +100,9 @@ end
 task :rdoc => ["html/index.html", :fixcss]
 
 file "html/index.html" => ["Rakefile"] + RDOC_FILES do
-  sh "rdoc -o html --title FlexMock --line-numbers -m doc/index.rdoc #{RDOC_FILES}"
+  Bundler.with_clean_env do
+    sh "rdoc -o html --title FlexMock --line-numbers -m doc/index.rdoc #{RDOC_FILES}"
+  end
 end
 
 EXAMPLE_RB.zip(EXAMPLE_DOC).each do |source, target|
