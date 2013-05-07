@@ -16,7 +16,13 @@ require "flexmock/test_unit"
 
 class TestFlexmockTestUnit < Test::Unit::TestCase
   def teardown
-    super
+    failed = false
+    begin
+      super
+    rescue Exception => ex
+      failed = true
+    end
+    assert_equal @should_fail, failed, "Expected failed to be #{@should_fail}"
   end
 
   # This test should pass.
@@ -24,11 +30,13 @@ class TestFlexmockTestUnit < Test::Unit::TestCase
     m = flexmock("mock")
     m.should_receive(:hi).once
     m.hi
+    @should_fail = false
   end
 
   # This test should fail during teardown.
   def test_should_fail__mocks_are_auto_verified
     m = flexmock("mock")
     m.should_receive(:hi).once
+    @should_fail = true
   end
 end

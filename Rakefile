@@ -44,7 +44,7 @@ RDOC_FILES = FileList[
   'doc/**/*.rdoc',
 ] + EXAMPLE_DOC
 
-task :default => [:test_all, :rspec]
+task :default => [:test_all, :rspec, :testunit]
 task :test_all => [:test]
 task :test_units => [:test]
 task :ta => [:test_all]
@@ -58,10 +58,11 @@ Rake::TestTask.new do |t|
   t.warning = true
 end
 
-Rake::TestTask.new(:test_extended) do |t|
-  t.test_files = FileList['test/extended/*_test.rb']
-  t.verbose = true
-  t.warning = true
+task :testunit do
+  files = FileList['test/test_unit_integration/*_test.rb']
+  files.each do |file|
+    sh "ruby -Ilib:. #{file}"
+  end
 end
 
 task :rspec do
