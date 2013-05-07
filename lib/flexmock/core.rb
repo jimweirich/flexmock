@@ -230,8 +230,9 @@ class FlexMock
     flexmock_define_expectation(location, *args)
   end
 
+  # Using +location+, define the expectations specified by +args+.
   def flexmock_define_expectation(location, *args)
-    @last_expectation = ContainerHelper.parse_should_args(self, args) do |sym|
+    @last_expectation = CONTAINER_HELPER.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym, location)
       @expectations[sym] << result
