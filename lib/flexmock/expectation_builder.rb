@@ -24,6 +24,7 @@ class FlexMock
       end
       result
     end
+
     # Build the chain of mocks for demeter style mocking.
     #
     # Warning: Nasty code ahead.
@@ -102,4 +103,6 @@ class FlexMock
       end
     end
   end
+
+  EXP_BUILDER = ExpectationBuilder.new
 end
