@@ -261,18 +261,24 @@ class FlexMock
       @methods_proxied << method_name
       new_alias = create_alias_for_existing_method(method_name)
       if new_alias
-        my_object = @obj
-        @method_definitions[method_name] = Proc.new { |*args|
-          block = nil
-          if Proc === args.last
-            block = args.last
-            args = args[0...-1]
-          end
-          my_object.send(new_alias, *args, &block)
-        }
+        @method_definitions[method_name] = create_aliased_definition(@obj, new_alias)
       end
       remove_current_method(method_name) if singleton?(method_name)
     end
+
+    # Create a method definition that invokes the original behavior
+    # via the alias.
+    def create_aliased_definition(my_object, new_alias)
+      Proc.new { |*args|
+        block = nil
+        if Proc === args.last
+          block = args.last
+          args = args[0...-1]
+        end
+        my_object.send(new_alias, *args, &block)
+      }
+    end
+    private :create_aliased_definition
 
     # Create an alias for the existing +method_name+.  Returns the new
     # alias name.  If the aliasing process fails (because the method
