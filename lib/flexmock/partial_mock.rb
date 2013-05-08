@@ -107,6 +107,10 @@ class FlexMock
       end
     end
 
+    def flexmock_find_expectation(*args)
+      @mock.flexmock_find_expectation(*args)
+    end
+
     def add_mock_method(method_name)
       stow_existing_definition(method_name)
       target_class_eval do

@@ -59,18 +59,45 @@ class FlexMock
     # It is important that the shared methods return the same mocks in
     # both chains.
     #
-    def build_demeter_chain(mock, arg, &block)
-      container = mock.flexmock_container
-      names = arg.to_s.split('.')
+    def build_demeter_chain(mock, name_chain, &block)
+      names = name_chain.to_s.split('.').map { |n| n.to_sym }
       check_method_names(names)
-      exp = nil
-      next_exp = lambda { |n| block.call(n) }
-      loop do
-        method_name = names.shift.to_sym
-        exp = mock.flexmock_find_expectation(method_name)
-        need_new_exp = exp.nil? || names.empty?
-        exp = next_exp.call(method_name) if need_new_exp
-        break if names.empty?
+      if names.size == 1
+        build_single_mock(mock, names.first, block)
+      else
+        build_real_demeter_chain(mock, names, block)
+      end
+    end
+
+    def build_single_mock(mock, method_name, block)
+      block.call(method_name)
+    end
+
+    def build_real_demeter_chain(mock, names, block)
+      container = mock.flexmock_container
+      last_method = names.pop
+      names.each do |name|
+        exp = mock.flexmock_find_expectation(name)
+        if exp
+          next_mock = exp._return_value([])
+          check_proper_mock(next_mock, name)
+        else
+          next_mock = container.flexmock("demeter_#{name}")
+          mock.should_receive(name).and_return(next_mock)
+        end
+        mock = next_mock
+      end
+      mock.should_receive(last_method)
+   end
+
+    def xbuild_real_demeter_chain(mock, names, block)
+      fail "NOT IN USE"
+      container = mock.flexmock_container
+      method_name = names.shift.to_sym
+      exp = mock.flexmock_find_expectation(method_name)
+      need_new_exp = exp.nil? || names.empty?
+      exp = block.call(method_name) if need_new_exp
+      while ! names.empty?
         if need_new_exp
           mock = container.flexmock("demeter_#{method_name}")
           exp.with_no_args.and_return(mock)
@@ -78,7 +105,8 @@ class FlexMock
           mock = exp._return_value([])
         end
         check_proper_mock(mock, method_name)
-        next_exp = lambda { |n| mock.should_receive(n) }
+        method_name = names.shift.to_sym
+        exp = mock.flexmock_find_expectation(method_name) || mock.should_receive(method_name)
       end
       exp
     end

@@ -126,7 +126,6 @@ class TestDefaults < Test::Unit::TestCase
 
   def test_something_where_bark_must_be_called_once
     @mock_dog.should_receive(:bark => "bow wow").once
-
     assert_equal "bow wow", @mock_dog.bark
     assert_equal :a_tail, @mock_dog.tail
   end

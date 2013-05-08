@@ -5,7 +5,7 @@ require 'test/test_setup'
 class TestDemeterMocking < Test::Unit::TestCase
   include FlexMock::TestCase
 
-  def test_demeter_mocking
+  def test_demeter_mocking_basics
     m = flexmock("A")
     m.should_receive("children.first").and_return(:first)
     assert_kind_of FlexMock, m
@@ -36,8 +36,20 @@ class TestDemeterMocking < Test::Unit::TestCase
     assert_equal :last, m.child.x.y.z.last
   end
 
-  def test_multi_level_deep_demeter_violation
+  def test_multi_level_deep_demeter_violation_with_mock
     a = flexmock("a")
+    a.should_receive("b.c.d.e.f.g.h.i.j.k").and_return(:xyzzy)
+    assert_equal :xyzzy, a.b.c.d.e.f.g.h.i.j.k
+  end
+
+  def test_partial_with_demeter
+    a = flexmock(Object.new, "a partial")
+    a.should_receive("b.c").and_return(:xyzzy)
+    assert_equal :xyzzy, a.b.c
+  end
+
+  def test_multi_level_deep_demeter_violation_with_partial
+    a = flexmock(Object.new, "a")
     a.should_receive("b.c.d.e.f.g.h.i.j.k").and_return(:xyzzy)
     assert_equal :xyzzy, a.b.c.d.e.f.g.h.i.j.k
   end
@@ -60,6 +72,29 @@ class TestDemeterMocking < Test::Unit::TestCase
     assert_match(/conflicting/i, ex.message)
     assert_match(/mock\s+declaration/i, ex.message)
     assert_match(/child/i, ex.message)
+  end
+
+  def test_compatible_mock_declarations_are_ok
+    m = flexmock("A")
+    b = flexmock("B")
+    c = flexmock("C")
+    m.should_receive(:b => b)
+    b.should_receive(:c => c)
+    c.should_receive(:foo => :bar)
+    m.should_receive("b.c.baz").and_return(:barg)
+    m.should_receive("b.zhar").and_return(:zzz)
+
+    assert_equal :bar, m.b.c.foo
+    assert_equal :barg, m.b.c.baz
+    assert_equal :zzz, m.b.zhar
+  end
+
+  def test_paths
+    m = flexmock("A")
+    b = flexmock("B")
+    m.should_receive("a.b" => b)
+    m.should_receive("a.b.c.x" => 1)
+    m.should_receive("a.b.c.y" => 2)
   end
 
   def test_conflicting_mock_declarations_in_reverse_order_does_not_raise_error
