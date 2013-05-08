@@ -30,12 +30,16 @@ class FlexMock
         else
           result << "The following messages have been received:\n"
           spy.flexmock_calls.each do |call_record|
-            result << "    " << call_description(call_record.method_name, call_record.args)
-            result << " matched by " << call_record.expectation.description if call_record.expectation
-            result << "\n"
+            append_call_record(result, call_record)
           end
         end
         result
+      end
+
+      def append_call_record(result, call_record)
+        result << "    " << call_description(call_record.method_name, call_record.args)
+        result << " matched by " << call_record.expectation.description if call_record.expectation
+        result << "\n"
       end
 
       def times_description(times)
