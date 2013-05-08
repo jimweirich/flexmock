@@ -6,9 +6,9 @@ class FlexMock
   # want to pollute the method namespace of the class that mixes in
   # MockContainer. So we have aggressively moved a number of
   # MockContainer methods out of that class and into
-  # MockContainerHelper to isoloate the names.
+  # MockBuilder to isoloate the names.
   #
-  class MockContainerHelper
+  class MockBuilder
     def initialize(container)
       @container = container
     end

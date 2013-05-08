@@ -1,14 +1,14 @@
 require 'test/test_setup'
 
-class MockContainerHelperTest < Test::Unit::TestCase
+class MockBuilderTest < Test::Unit::TestCase
   include FlexMock::TestCase
 
   def assert_method_name(name)
-    assert_match(FlexMock::MockContainerHelper::METHOD_NAME_RE, name)
+    assert_match(FlexMock::MockBuilder::METHOD_NAME_RE, name)
   end
 
   def assert_not_method_name(name)
-    refute_match(FlexMock::MockContainerHelper::METHOD_NAME_RE, name)
+    refute_match(FlexMock::MockBuilder::METHOD_NAME_RE, name)
   end
 
   def test_valid_method_names

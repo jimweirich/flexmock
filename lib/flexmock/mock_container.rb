@@ -119,7 +119,7 @@ class FlexMock
     #
     def flexmock(*args, &block)
       location = caller.first
-      @flexmock_worker ||= MockContainerHelper.new(self)
+      @flexmock_worker ||= MockBuilder.new(self)
       @flexmock_worker.define_a_mock(location, *args, &block)
     end
     alias flexstub flexmock
