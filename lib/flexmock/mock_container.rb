@@ -12,7 +12,7 @@
 require 'flexmock/noop'
 require 'flexmock/argument_types'
 require 'flexmock/ordering'
-require 'flexmock/mock_container_helper'
+require 'flexmock/mock_builder'
 
 class FlexMock
 
