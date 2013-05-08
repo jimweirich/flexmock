@@ -47,7 +47,7 @@ class FlexMock
       :should_receive, :new_instances,
       :should_receive_with_location,
       :flexmock_get,   :flexmock_teardown, :flexmock_verify,
-      :flexmock_received?, :flexmock_calls,
+      :flexmock_received?, :flexmock_calls, :flexmock_find_expectation
     ]
 
     # Initialize a PartialMockProxy object.

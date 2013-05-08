@@ -86,7 +86,7 @@ class FlexMock
 
     # Check that the given mock is a real FlexMock mock.
     def check_proper_mock(mock, method_name)
-      unless mock.kind_of?(FlexMock)
+      unless mock.respond_to?(:should_receive)
         fail FlexMock::UsageError,
           "Conflicting mock declaration for '#{method_name}' in demeter style mock"
       end

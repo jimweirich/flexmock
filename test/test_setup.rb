@@ -82,7 +82,7 @@ class FlexMock
       state = "PASSING"
       begin
         yield
-      rescue Exception => ex
+      rescue Exception => _
         state = "FAILING"
       end
       where = caller.first.split(/:in/).first

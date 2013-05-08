@@ -74,9 +74,24 @@ class TestDemeterMocking < Test::Unit::TestCase
     assert_match(/child/i, ex.message)
   end
 
-  def test_compatible_mock_declarations_are_ok
+  def test_compatible_mock_declarations_are_ok_full_mock_version
     m = flexmock("A")
     b = flexmock("B")
+    c = flexmock("C")
+    m.should_receive(:b => b)
+    b.should_receive(:c => c)
+    c.should_receive(:foo => :bar)
+    m.should_receive("b.c.baz").and_return(:barg)
+    m.should_receive("b.zhar").and_return(:zzz)
+
+    assert_equal :bar, m.b.c.foo
+    assert_equal :barg, m.b.c.baz
+    assert_equal :zzz, m.b.zhar
+  end
+
+  def test_compatible_mock_declarations_are_ok_partial_mock_version
+    m = flexmock("A")
+    b = flexmock(Object.new, "B")
     c = flexmock("C")
     m.should_receive(:b => b)
     b.should_receive(:c => c)
