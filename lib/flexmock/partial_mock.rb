@@ -29,7 +29,7 @@ class FlexMock
 
     attr_reader :mock
 
-    # Make a partial mock proxy and install it on the +obj+.
+    # Make a partial mock proxy and install it on the target +obj+.
     def self.make_proxy_for(obj, container, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
       if !obj.instance_variable_defined?("@flexmock_proxy") || obj.instance_variable_get("@flexmock_proxy").nil?
@@ -97,11 +97,11 @@ class FlexMock
     end
 
     def flexmock_define_expectation(location, *args)
-      EXP_BUILDER.parse_should_args(@mock, args) do |sym|
-        unless @methods_proxied.include?(sym)
-          hide_existing_method(sym)
+      EXP_BUILDER.parse_should_args(@mock, args) do |method_name|
+        unless @methods_proxied.include?(method_name)
+          hide_existing_method(method_name)
         end
-        ex = @mock.flexmock_define_expectation(location, sym)
+        ex = @mock.flexmock_define_expectation(location, method_name)
         ex.mock = self
         ex
       end
@@ -109,13 +109,10 @@ class FlexMock
 
     def add_mock_method(method_name)
       stow_existing_definition(method_name)
-      sclass.module_eval do
+      target_class_eval do
         define_method(method_name) { |*args, &block|
-          proxy = instance_variable_get("@flexmock_proxy")
-          if proxy.nil?
-            fail "Missing FlexMock proxy " +
-              "(for method_name=#{method_name.inspect}, self=\#{self})"
-          end
+          proxy = instance_variable_get("@flexmock_proxy") or
+            fail "Missing FlexMock proxy (for method_name=#{method_name.inspect}, self=\#{self})"
           proxy.send(method_name, *args, &block)
         }
       end
@@ -231,8 +228,14 @@ class FlexMock
     end
 
     # The singleton class of the object.
-    def sclass
+    def target_singleton_class
       class << @obj; self; end
+    end
+
+    # Evaluate a block (or string) in the context of the singleton
+    # class of the target partial object.
+    def target_class_eval(*args, &block)
+      target_singleton_class.class_eval(*args, &block)
     end
 
     def singleton?(method_name)
@@ -285,7 +288,7 @@ class FlexMock
     # meta-programming, so we provide for the case that the
     # method_name does not exist.
     def safe_alias_method(new_alias, method_name)
-      sclass.class_eval do
+      target_class_eval do
         begin
           alias_method(new_alias, method_name)
         rescue NameError
@@ -300,14 +303,14 @@ class FlexMock
     def define_proxy_method(method_name)
       if method_name.to_s =~ /=$/
         eval_line = __LINE__ + 1
-        sclass.class_eval %{
+        target_class_eval %{
           def #{method_name}(*args, &block)
             instance_variable_get('@flexmock_proxy').mock.__send__(:#{method_name}, *args, &block)
           end
         }, __FILE__, eval_line
       else
         eval_line = __LINE__ + 1
-        sclass.class_eval %{
+        target_class_eval %{
           def #{method_name}(*args, &block)
             instance_variable_get('@flexmock_proxy').mock.#{method_name}(*args, &block)
           end
@@ -323,7 +326,7 @@ class FlexMock
         method_def = @method_definitions[method_name]
         if method_def
           the_alias = new_name(method_name)
-          sclass.class_eval do
+          target_class_eval do
             alias_method(method_name, the_alias)
           end
         end
@@ -336,7 +339,7 @@ class FlexMock
     # Remove the current method if it is a singleton method of the
     # object being mocked.
     def remove_current_method(method_name)
-      sclass.class_eval { remove_method(method_name) }
+      target_class_eval { remove_method(method_name) }
     end
 
     # Have we been detached from the existing object?
