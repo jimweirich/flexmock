@@ -15,19 +15,38 @@ class FlexMock
         case arg
         when Hash
           arg.each do |k,v|
-            exp = build_demeter_chain(mock, k, &block).and_return(v)
+            exp = create_expectation(mock, k, &block).and_return(v)
             result.add(exp)
           end
         when Symbol, String
-          result.add(build_demeter_chain(mock, arg, &block))
+          result.add(create_expectation(mock, arg, &block))
         end
       end
       result
     end
 
-    # Build the chain of mocks for demeter style mocking.
+    # Create an expectation for the name on this mock. For simple
+    # mocks, this is done by calling the provided block parameter and
+    # letting the calling site handle the creation of the expectation
+    # (which differs between full mocks and partial mocks).
     #
-    # Warning: Nasty code ahead.
+    # If the name_chain contains demeter mocking chains, then the
+    # process is more complex. A series of mocks are created, each
+    # component of the chain returning the next mock until the
+    # expectation for the last component is returned.
+    def create_expectation(mock, name_chain, &block)
+      names = name_chain.to_s.split('.').map { |n| n.to_sym }
+      check_method_names(names)
+      if names.size == 1
+        block.call(names.first)
+      elsif names.size > 1
+        create_demeter_chain(mock, names)
+      else
+        fail "Empty list of names"
+      end
+    end
+
+    # Build the chain of mocks for demeter style mocking.
     #
     # This method builds a chain of mocks to support demeter style
     # mocking.  Given a mock chain of "first.second.third.last", we
@@ -37,43 +56,18 @@ class FlexMock
     #
     # Things to consider:
     #
-    # (1) The expectation for the "first" method must be created by
-    # the proper mechanism, which is supplied by the block parameter
-    # "block".  In other words, first expectation is created by
-    # calling the block.  (This allows us to create expectations on
-    # both pure mocks and partial mocks, with the block handling the
-    # details).
+    # * The expectations for all methods but the last in the chain
+    #   will be setup to expect no parameters and to return the next
+    #   mock in the chain.
     #
-    # (2) Although the first mock is arbitrary, the remaining mocks in
-    # the chain will always be pure mocks created specifically for
-    # this purpose.
+    # * It could very well be the case that several demeter chains
+    #   will be defined on a single mock object, and those chains
+    #   could share some of the same methods (e.g. "mock.one.two.read"
+    #   and "mock.one.two.write" both share the methods "one" and
+    #   "two"). It is important that the shared methods return the
+    #   same mocks in both chains.
     #
-    # (3) The expectations for all methods but the last in the chain
-    # will be setup to expect no parameters and to return the next
-    # mock in the chain.
-    #
-    # (4) It could very well be the case that several demeter chains
-    # will be defined on a single mock object, and those chains could
-    # share some of the same methods (e.g. "mock.one.two.read" and
-    # "mock.one.two.write" both share the methods "one" and "two").
-    # It is important that the shared methods return the same mocks in
-    # both chains.
-    #
-    def build_demeter_chain(mock, name_chain, &block)
-      names = name_chain.to_s.split('.').map { |n| n.to_sym }
-      check_method_names(names)
-      if names.size == 1
-        build_single_mock(mock, names.first, block)
-      else
-        build_real_demeter_chain(mock, names, block)
-      end
-    end
-
-    def build_single_mock(mock, method_name, block)
-      block.call(method_name)
-    end
-
-    def build_real_demeter_chain(mock, names, block)
+    def create_demeter_chain(mock, names)
       container = mock.flexmock_container
       last_method = names.pop
       names.each do |name|
@@ -88,27 +82,6 @@ class FlexMock
         mock = next_mock
       end
       mock.should_receive(last_method)
-    end
-
-    def xbuild_real_demeter_chain(mock, names, block)
-      fail "NOT IN USE"
-      container = mock.flexmock_container
-      method_name = names.shift.to_sym
-      exp = mock.flexmock_find_expectation(method_name)
-      need_new_exp = exp.nil? || names.empty?
-      exp = block.call(method_name) if need_new_exp
-      while ! names.empty?
-        if need_new_exp
-          mock = container.flexmock("demeter_#{method_name}")
-          exp.with_no_args.and_return(mock)
-        else
-          mock = exp._return_value([])
-        end
-        check_proper_mock(mock, method_name)
-        method_name = names.shift.to_sym
-        exp = mock.flexmock_find_expectation(method_name) || mock.should_receive(method_name)
-      end
-      exp
     end
 
     # Check that the given mock is a real FlexMock mock.

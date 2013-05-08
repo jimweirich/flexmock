@@ -97,7 +97,7 @@ class FlexMock
     end
 
     def flexmock_define_expectation(location, *args)
-      EXP_BUILDER.parse_should_args(@mock, args) do |method_name|
+      EXP_BUILDER.parse_should_args(self, args) do |method_name|
         unless @methods_proxied.include?(method_name)
           hide_existing_method(method_name)
         end
