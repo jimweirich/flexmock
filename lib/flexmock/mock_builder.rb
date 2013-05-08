@@ -48,9 +48,7 @@ class FlexMock
           opts.domain_obj = args.shift
         end
       end
-      if ! opts.base_class && opts.domain_obj && FlexMock.partials_are_based
-        opts.base_class = opts.domain_obj.class
-      end
+      set_base_class(opts)
       opts
     end
 
@@ -83,9 +81,17 @@ class FlexMock
       container.flexmock_remember(mock)
     end
 
+    attr_reader :container
+    private :container
+
     private
 
-    attr_reader :container
+    # Set the base class if not defined and partials are based.
+    def set_base_class(opts)
+      if ! opts.base_class && opts.domain_obj && FlexMock.partials_are_based
+        opts.base_class = opts.domain_obj.class
+      end
+    end
 
     # Handle a symbol in the flexmock() args list.
     def parse_create_symbol(args, opts)
