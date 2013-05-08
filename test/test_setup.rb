@@ -77,5 +77,10 @@ class FlexMock
         assert(false, msg || "Expected block to yield true")
       end
     end
+
+    def pending(msg="")
+      where = caller.first.split(/:in/).first
+      puts "\nPENDING TEST (#{msg}) #{where}"
+    end
   end
 end

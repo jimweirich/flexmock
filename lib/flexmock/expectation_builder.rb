@@ -88,7 +88,7 @@ class FlexMock
         mock = next_mock
       end
       mock.should_receive(last_method)
-   end
+    end
 
     def xbuild_real_demeter_chain(mock, names, block)
       fail "NOT IN USE"
