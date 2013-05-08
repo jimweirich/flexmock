@@ -207,8 +207,7 @@ class TestStubbing < Test::Unit::TestCase
       assert out.is_a?(IO)
       out.puts "XYZ"
     end
-    text = nil
-    File.open("dummy.txt") { |f| text = f.read }
+    text = File.open("dummy.txt") { |f| f.read }
     assert_equal "XYZ\n", text
   ensure
     FileUtils.rm_f("dummy.txt")
