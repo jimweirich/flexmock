@@ -15,6 +15,7 @@ require 'flexmock/ordering'
 require 'flexmock/argument_matching'
 require 'flexmock/explicit_needed'
 require 'flexmock/class_extensions'
+require 'flexmock/expectation_builder'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -232,7 +233,8 @@ class FlexMock
 
   # Using +location+, define the expectations specified by +args+.
   def flexmock_define_expectation(location, *args)
-    @last_expectation = MockBuilder.parse_should_args(self, args) do |sym|
+    builder = ExpectationBuilder.new
+    @last_expectation = builder.parse_should_args(self, args) do |sym|
       @expectations[sym] ||= ExpectationDirector.new(sym)
       result = Expectation.new(self, sym, location)
       @expectations[sym] << result

@@ -4,16 +4,16 @@ class MockBuilderTest < Test::Unit::TestCase
   include FlexMock::TestCase
 
   def assert_method_name(name)
-    assert_match(FlexMock::MockBuilder::METHOD_NAME_RE, name)
+    assert_match(FlexMock::ExpectationBuilder::METHOD_NAME_RE, name)
   end
 
   def assert_not_method_name(name)
-    refute_match(FlexMock::MockBuilder::METHOD_NAME_RE, name)
+    refute_match(FlexMock::ExpectationBuilder::METHOD_NAME_RE, name)
   end
 
   def test_valid_method_names
     assert_method_name "foo"
-    assert_method_name "Foo"
+    assert_method_name "FooBar"
     assert_method_name "_foo"
     assert_method_name "__foo"
     assert_method_name "___foo"

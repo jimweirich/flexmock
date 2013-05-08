@@ -10,6 +10,7 @@
 #+++
 
 require 'flexmock/noop'
+require 'flexmock/expectation_builder'
 
 class FlexMock
 
@@ -96,7 +97,8 @@ class FlexMock
     end
 
     def flexmock_define_expectation(location, *args)
-      MockBuilder.parse_should_args(@mock, args) do |sym|
+      builder = ExpectationBuilder.new
+      builder.parse_should_args(@mock, args) do |sym|
         unless @methods_proxied.include?(sym)
           hide_existing_method(sym)
         end
