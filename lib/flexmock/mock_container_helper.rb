@@ -11,12 +11,18 @@ class FlexMock
   class MockContainerHelper
     include FlexMock::ArgumentTypes
 
-    def extensions
-      @extensions ||= []
+    def initialize(container)
+      @container = container
     end
 
-    def add_extension(extension)
-      extensions << extension
+    def define_a_mock(location, *args, &block)
+      opts = parse_creation_args(args)
+      raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
+
+      result = create_double(@container, opts)
+      flexmock_mock_setup(@container, opts.mock, opts, location, &block)
+      run_post_creation_hooks(opts, location)
+      result
     end
 
     FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :base_class, :mock, :extended, :extended_data) do
@@ -78,7 +84,7 @@ class FlexMock
     # hashes, and identifies the method names specified by each.  As each
     # method name is identified, create a mock expectation for it using the
     # supplied block.
-    def parse_should_args(mock, args, &block)  # :nodoc:
+    def self.parse_should_args(mock, args, &block)  # :nodoc:
       result = CompositeExpectation.new
       args.each do |arg|
         case arg
@@ -115,7 +121,7 @@ class FlexMock
         opts.base_class = args.shift
         opts.name ||= "#{opts.base_class} Mock"
       else
-        extensions.each do |ext|
+        CONTAINER_HELPER.extensions.each do |ext|
           handled = ext.handle(args, opts)
           return true if handled
         end
@@ -170,7 +176,7 @@ class FlexMock
     # It is important that the shared methods return the same mocks in
     # both chains.
     #
-    def build_demeter_chain(mock, arg, &block)
+    def self.build_demeter_chain(mock, arg, &block)
       container = mock.flexmock_container
       names = arg.to_s.split('.')
       check_method_names(names)
@@ -195,7 +201,7 @@ class FlexMock
     end
 
     # Check that the given mock is a real FlexMock mock.
-    def check_proper_mock(mock, method_name)
+    def self.check_proper_mock(mock, method_name)
       unless mock.kind_of?(FlexMock)
         fail FlexMock::UsageError,
           "Conflicting mock declaration for '#{method_name}' in demeter style mock"
@@ -207,7 +213,7 @@ class FlexMock
     METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?|\*\*|<<|>>|<=>|[<>=!]=|[=!]~|===|[-+]@|[-+\*\/%&^|<>~`!])$/
 
     # Check that all the names in the list are valid method names.
-    def check_method_names(names)
+    def self.check_method_names(names)
       names.each do |name|
         fail FlexMock::UsageError, "Ill-formed method name '#{name}'" if
           name !~ METHOD_NAME_RE

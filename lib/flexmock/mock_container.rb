@@ -119,13 +119,8 @@ class FlexMock
     #
     def flexmock(*args, &block)
       location = caller.first
-      opts = CONTAINER_HELPER.parse_creation_args(args)
-      raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
-
-      result = CONTAINER_HELPER.create_double(self, opts)
-      CONTAINER_HELPER.flexmock_mock_setup(self, opts.mock, opts, location, &block)
-      CONTAINER_HELPER.run_post_creation_hooks(opts, location)
-      result
+      @flexmock_worker ||= MockContainerHelper.new(self)
+      @flexmock_worker.define_a_mock(location, *args, &block)
     end
     alias flexstub flexmock
 
@@ -148,5 +143,14 @@ class FlexMock
     end
   end
 
-  CONTAINER_HELPER = MockContainerHelper.new
+  class ExtensionRegistry
+    def add_extension(extension)
+      extensions << extension
+    end
+    def extensions
+      @extensions ||= []
+    end
+  end
+
+  CONTAINER_HELPER = ExtensionRegistry.new
 end
