@@ -4,7 +4,7 @@ task :flog, [:all] do |t, args|
   flags = args.all ? "--all" : ""
   flags = "-m #{flags}"
   Bundler.with_clean_env do
-    sh "flog #{flags} #{METRICS_FILES}" do |status|
+    sh "flog #{flags} #{METRICS_FILES}" do |status, flag|
       if status.nil?
         puts "Install flog with: 'gem install flog'"
       end
@@ -14,7 +14,7 @@ end
 
 task :flay do
   Bundler.with_clean_env do
-    sh "flay #{METRICS_FILES}" do |status|
+    sh "flay #{METRICS_FILES}" do |status, flag|
       if status.nil?
         puts "Install flay with: 'gem install flay'"
       end
