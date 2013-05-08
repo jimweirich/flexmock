@@ -79,8 +79,14 @@ class FlexMock
     end
 
     def pending(msg="")
+      state = "PASSING"
+      begin
+        yield
+      rescue Exception => ex
+        state = "FAILING"
+      end
       where = caller.first.split(/:in/).first
-      puts "\nPENDING TEST (#{msg}) #{where}"
+      puts "\n#{state} PENDING TEST (#{msg}) #{where}"
     end
   end
 end
