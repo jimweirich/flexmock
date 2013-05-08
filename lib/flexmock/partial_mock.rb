@@ -140,35 +140,37 @@ class FlexMock
       fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
       location = caller.first
       allocators = [:new] if allocators.empty?
-      result = ExpectationRecorder.new
+      expectation_recorder = ExpectationRecorder.new
       allocators.each do |allocate_method|
         check_allocate_method(allocate_method)
-        # HACK: Without the following lambda, Some versions of Ruby 1.9
-        #       would not bind the allocate_method parameter
-        #       correctly. I don't think it is necessary for recent
-        #       versions.
-        lambda { }
-        self.flexmock_define_expectation(location, allocate_method).and_return { |*args|
-          new_obj = invoke_original(allocate_method, args)
-          mock = flexmock_container.flexmock(new_obj)
-          block.call(mock) if block_given?
-          result.apply(mock)
-          new_obj
+        flexmock_define_expectation(location, allocate_method).and_return { |*args|
+          create_new_mocked_object(allocate_method, args, expectation_recorder, block)
         }
       end
-      result
+      expectation_recorder
     end
+
+    # Create a new mocked object.
+    #
+    # The mocked object is created using the following steps:
+    # (1) Allocate with the original allocation method (and args)
+    # (2) Pass to the block for custom configuration.
+    # (3) Apply any recorded expecations
+    #
+    def create_new_mocked_object(allocate_method, args, recorder, block)
+      new_obj = flexmock_invoke_original(allocate_method, args)
+      mock = flexmock_container.flexmock(new_obj)
+      block.call(mock) unless block.nil?
+      recorder.apply(mock)
+      new_obj
+    end
+    private :create_new_mocked_object
 
     # Invoke the original definition of method on the object supported by
     # the stub.
-    def invoke_original(method, args)
+    def flexmock_invoke_original(method, args)
       method_proc = @method_definitions[method]
       method_proc.call(*args)
-    end
-    private :invoke_original
-
-    def flexmock_invoke_original(method, args)
-      invoke_original(method, args)
     end
 
     # Verify that the mock has been properly called.  After verification,
