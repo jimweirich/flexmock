@@ -16,6 +16,7 @@ require 'flexmock/argument_matching'
 require 'flexmock/explicit_needed'
 require 'flexmock/class_extensions'
 require 'flexmock/expectation_builder'
+require 'flexmock/call_validator'
 
 ######################################################################
 # FlexMock is a flexible mock object framework for supporting testing.
@@ -163,25 +164,11 @@ class FlexMock
     should_receive(:class => base_class)
   end
 
+  CALL_VALIDATOR = CallValidator.new
+
   # True if the mock received the given method and arguments.
-  def flexmock_received?(sym, args, options={})
-    count = 0
-    additional = options[:and] || []
-    additional = [additional] if additional.is_a?(Proc)
-    @calls.each { |call_record|
-      if call_record.matches?(sym, args, options)
-        count += 1
-        if options[:on_count].nil? || count == options[:on_count]
-          additional.each do |add| add.call(*call_record.args) end
-        end
-      end
-    }
-    if options[:times]
-      result = count == options[:times]
-    else
-      result = count > 0
-    end
-    result
+  def flexmock_received?(method_name, args, options={})
+    CALL_VALIDATOR.received?(@calls, method_name, args, options)
   end
 
   # Return the list of calls made on this mock. Used in formatting
@@ -192,13 +179,13 @@ class FlexMock
 
   # Invocke the original non-mocked functionality for the given
   # symbol.
-  def flexmock_invoke_original(sym, args)
+  def flexmock_invoke_original(method_name, args)
     return FlexMock.undefined
   end
 
   # Override the built-in +method+ to include the mocked methods.
-  def method(sym)
-    @expectations[sym] || super
+  def method(method_name)
+    @expectations[method_name] || super
   rescue NameError => ex
     if @ignore_missing
       proc { FlexMock.undefined }
@@ -233,13 +220,13 @@ class FlexMock
 
   # Using +location+, define the expectations specified by +args+.
   def flexmock_define_expectation(location, *args)
-    @last_expectation = EXP_BUILDER.parse_should_args(self, args) do |sym|
-      @expectations[sym] ||= ExpectationDirector.new(sym)
-      result = Expectation.new(self, sym, location)
-      @expectations[sym] << result
-      override_existing_method(sym) if flexmock_respond_to?(sym)
-      result = ExplicitNeeded.new(result, sym, @base_class) if
-        @base_class && ! @base_class.flexmock_defined?(sym)
+    @last_expectation = EXP_BUILDER.parse_should_args(self, args) do |method_name|
+      @expectations[method_name] ||= ExpectationDirector.new(method_name)
+      result = Expectation.new(self, method_name, location)
+      @expectations[method_name] << result
+      override_existing_method(method_name) if flexmock_respond_to?(method_name)
+      result = ExplicitNeeded.new(result, method_name, @base_class) if
+        @base_class && ! @base_class.flexmock_defined?(method_name)
       result
     end
   end
@@ -273,15 +260,15 @@ class FlexMock
   end
 
 
-  # Override the existing definition of method +sym+ in the mock.
-  # Most methods depend on the method_missing trick to be invoked.
-  # However, if the method already exists, it will not call
-  # method_missing.  This method defines a singleton method on the
-  # mock to explicitly invoke the method_missing logic.
-  def override_existing_method(sym)
+  # Override the existing definition of method +method_name+ in the
+  # mock. Most methods depend on the method_missing trick to be
+  # invoked. However, if the method already exists, it will not call
+  # method_missing. This method defines a singleton method on the mock
+  # to explicitly invoke the method_missing logic.
+  def override_existing_method(method_name)
     sclass.class_eval <<-EOS
-      def #{sym}(*args, &block)
-        method_missing(:#{sym}, *args, &block)
+      def #{method_name}(*args, &block)
+        method_missing(:#{method_name}, *args, &block)
       end
     EOS
   end
