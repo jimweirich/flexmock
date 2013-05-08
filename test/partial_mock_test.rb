@@ -41,9 +41,25 @@ class TestStubbing < Test::Unit::TestCase
     assert ! m.instance_variables.include?(:@flexmock_proxy.flexmock_as_name)
   end
 
-  def test_stub_command_add_behavior_to_arbitrary_objects
+  def test_forcibly_removing_proxy_causes_failure
     obj = Object.new
-    flexmock(obj).should_receive(:hi).once.and_return(:stub_hi)
+    flexmock(obj)
+    obj.instance_eval { @flexmock_proxy = nil }
+    assert_raises(RuntimeError, /missing.*proxy/i) do
+      obj.should_receive(:hi).and_return(:stub_hi)
+    end
+  end
+
+  def test_stub_command_add_behavior_to_arbitrary_objects_via_flexmock
+    obj = Object.new
+    flexmock(obj).should_receive(:hi).and_return(:stub_hi)
+    assert_equal :stub_hi, obj.hi
+  end
+
+  def test_stub_command_add_behavior_to_arbitrary_objects_post_flexmock
+    obj = Object.new
+    flexmock(obj)
+    obj.should_receive(:hi).and_return(:stub_hi)
     assert_equal :stub_hi, obj.hi
   end
 
@@ -64,7 +80,9 @@ class TestStubbing < Test::Unit::TestCase
 
   def test_multiple_stubs_on_the_same_object_reuse_the_same_partial_mock
     obj = Object.new
-    assert_equal flexmock(obj), flexmock(obj)
+    a = flexmock(obj)
+    b = flexmock(obj)
+    assert_equal a.object_id, b.object_id
   end
 
   def test_stubbed_methods_can_invoke_original_behavior_directly
