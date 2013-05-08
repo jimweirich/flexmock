@@ -32,11 +32,6 @@ class FlexMock
       n < @limit
     end
 
-    # Pluralize "call"
-    def calls(n)
-      n == 1 ? "call" : "calls"
-    end
-
     # Human readable description of the validator
     def describe
       case @limit
@@ -58,13 +53,24 @@ class FlexMock
     def validate_count(n, &block)
       @exp.flexmock_location_filter do
         FlexMock.framework_adapter.make_assertion(
-          lambda {
-            "Method '#{@exp}' called incorrect number of times\n" +
-            "#{describe_limit} matching #{calls(@limit)} expected\n" +
-            "#{n} matching #{calls(n)} found\n" +
-            describe_calls(@exp.mock)
-          }, &block)
+          lambda { construct_validation_count_error_message(n) },
+          &block)
       end
+    end
+
+    private
+
+    # Build the error message for an invalid count
+    def construct_validation_count_error_message(n)
+      "Method '#{@exp}' called incorrect number of times\n" +
+        "#{describe_limit} matching #{calls(@limit)} expected\n" +
+        "#{n} matching #{calls(n)} found\n" +
+        describe_calls(@exp.mock)
+    end
+
+    # Pluralize "call"
+    def calls(n)
+      n == 1 ? "call" : "calls"
     end
   end
 
