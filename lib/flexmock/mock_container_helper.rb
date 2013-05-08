@@ -9,8 +9,6 @@ class FlexMock
   # MockContainerHelper to isoloate the names.
   #
   class MockContainerHelper
-    include FlexMock::ArgumentTypes
-
     def initialize(container)
       @container = container
     end
@@ -19,8 +17,8 @@ class FlexMock
       opts = parse_creation_args(args)
       raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
 
-      result = create_double(@container, opts)
-      flexmock_mock_setup(@container, opts.mock, opts, location, &block)
+      result = create_double(opts)
+      flexmock_mock_setup(opts.mock, opts, location, &block)
       run_post_creation_hooks(opts, location)
       result
     end
@@ -57,13 +55,13 @@ class FlexMock
     end
 
     # Create the test double based on the args options.
-    def create_double(container, opts)
+    def create_double(opts)
       if opts.extended
         result = opts.extended.create(container, opts)
       elsif opts.domain_obj
-        result = create_partial(container, opts)
+        result = create_partial(opts)
       else
-        result = create_mock(container, opts)
+        result = create_mock(opts)
       end
       opts.mock ||= result
       result
@@ -101,7 +99,7 @@ class FlexMock
     end
 
     # Setup the test double with its expections and such.
-    def flexmock_mock_setup(container, mock, opts, location)
+    def flexmock_mock_setup(mock, opts, location)
       mock.flexmock_based_on(opts.base_class) if opts.base_class
       mock.flexmock_define_expectation(location, opts.defs)
       yield(mock) if block_given?
@@ -109,6 +107,8 @@ class FlexMock
     end
 
     private
+
+    attr_reader :container
 
     # Handle a symbol in the flexmock() args list.
     def parse_create_symbol(args, opts)
@@ -131,13 +131,13 @@ class FlexMock
     end
 
     # Create a mock object in the options.
-    def create_mock(container, opts)
+    def create_mock(opts)
       opts.mock ||= FlexMock.new(opts.name || "unknown", container)
       opts.mock
     end
 
     # Create a partial mock object in options.
-    def create_partial(container, opts)
+    def create_partial(opts)
       opts.mock = PartialMockProxy.make_proxy_for(opts.domain_obj, container, opts.name, opts.safe_mode)
       opts.domain_obj
     end
