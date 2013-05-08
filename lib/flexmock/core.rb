@@ -17,12 +17,11 @@ require 'flexmock/explicit_needed'
 require 'flexmock/class_extensions'
 require 'flexmock/expectation_builder'
 require 'flexmock/call_validator'
+require 'flexmock/call_record'
 
 ######################################################################
-# FlexMock is a flexible mock object framework for supporting testing.
-#
-# FlexMock has a simple interface that's easy to remember, and leaves
-# the hard stuff to all those other mock object implementations.
+# FlexMock is a flexible mock object framework for creating and using
+# test doubles (mocks, stubs and spies).
 #
 # Basic Usage:
 #
@@ -35,8 +34,6 @@ require 'flexmock/call_validator'
 # With Test::Unit Integration:
 #
 #   class TestSomething < Test::Unit::TestCase
-#     include FlexMock::TestCase
-#
 #     def test_something
 #       m = flexmock("name")
 #       m.should_receive(:hi).and_return("Hello")
@@ -44,9 +41,7 @@ require 'flexmock/call_validator'
 #     end
 #   end
 #
-# Note: When using Test::Unit integeration, don't forget to include
-# FlexMock::TestCase.  Also, if you override +teardown+, make sure you
-# call +super+.
+# Note: Also, if you override +teardown+, make sure you call +super+.
 #
 class FlexMock
   include Ordering
@@ -104,22 +99,6 @@ class FlexMock
   def by_default
     @last_expectation.by_default
     self
-  end
-
-  CallRecord = Struct.new(:method_name, :args, :block_given, :expectation) do
-    def matches?(sym, actual_args, options)
-      method_name == sym &&
-        ArgumentMatching.all_match?(actual_args, args) &&
-        matches_block?(options[:with_block])
-    end
-
-    private
-
-    def matches_block?(block_option)
-      block_option.nil? ||
-        (block_option && block_given) ||
-        (!block_option && !block_given)
-    end
   end
 
   # Handle missing methods by attempting to look up a handler.
