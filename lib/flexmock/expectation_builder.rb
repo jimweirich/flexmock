@@ -100,7 +100,7 @@ class FlexMock
     def check_method_names(names)
       names.each do |name|
         fail FlexMock::UsageError, "Ill-formed method name '#{name}'" if
-          name !~ METHOD_NAME_RE
+          name.to_s !~ METHOD_NAME_RE
       end
     end
   end
