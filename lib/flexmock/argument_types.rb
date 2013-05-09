@@ -13,7 +13,6 @@ require 'flexmock/argument_matchers'
 
 class FlexMock
 
-  ####################################################################
   # Include this module in your test class if you wish to use the +eq+
   # and +any+ argument matching methods without a prefix.  (Otherwise
   # use <tt>FlexMock.any</tt> and <tt>FlexMock.eq(obj)</tt>.

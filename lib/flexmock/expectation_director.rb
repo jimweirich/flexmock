@@ -13,7 +13,7 @@ require 'flexmock/noop'
 require 'flexmock/errors'
 
 class FlexMock
-  ####################################################################
+
   # The expectation director is responsible for routing calls to the
   # correct expectations for a given argument list.
   #

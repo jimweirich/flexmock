@@ -13,7 +13,6 @@ require 'flexmock/argument_types'
 
 class FlexMock
 
-  ####################################################################
   # Translate arbitrary method calls into expectations on the given
   # mock object.
   #

@@ -11,7 +11,6 @@
 
 class FlexMock
 
-  # #################################################################
   # The ordering module contains the methods and data structures used
   # to determine proper orderring of mocked calls.  By providing the
   # functionality in a module, a individual mock object can order its

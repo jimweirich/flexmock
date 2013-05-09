@@ -18,7 +18,6 @@ require 'flexmock/expectation_builder'
 require 'flexmock/call_validator'
 require 'flexmock/call_record'
 
-######################################################################
 # FlexMock is a flexible mock object framework for creating and using
 # test doubles (mocks, stubs and spies).
 #

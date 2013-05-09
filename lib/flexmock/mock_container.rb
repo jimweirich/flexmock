@@ -16,7 +16,7 @@ require 'flexmock/mock_builder'
 
 class FlexMock
 
-  # ######################################################################
+
   # Mock container methods
   #
   # Include this module in to get integration with FlexMock.  When this module

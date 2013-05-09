@@ -15,7 +15,6 @@ require 'flexmock/test_unit_assert_spy_called'
 
 class FlexMock
 
-  ####################################################################
   # Test::Unit::TestCase Integration.
   #
   # Include this module in any TestCase class in a Test::Unit test
@@ -41,7 +40,6 @@ class FlexMock
 
   end
 
-  ####################################################################
   # Adapter for adapting FlexMock to the Test::Unit framework.
   #
   class TestUnitFrameworkAdapter

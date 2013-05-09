@@ -14,7 +14,6 @@ require 'flexmock/expectation_builder'
 
 class FlexMock
 
-  # #########################################################################
   # PartialMockProxy is used to mate the mock framework to an existing
   # object. The object is "enhanced" with a reference to a mock object
   # (stored in <tt>@flexmock_proxy</tt>). When the +should_receive+
