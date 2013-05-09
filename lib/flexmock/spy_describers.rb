@@ -37,8 +37,14 @@ class FlexMock
       end
 
       def append_call_record(result, call_record)
-        result << "    " << call_description(call_record.method_name, call_record.args)
-        result << " matched by " << call_record.expectation.description if call_record.expectation
+        result <<
+          "    " <<
+          call_description(call_record.method_name, call_record.args)
+        if call_record.expectation
+          result <<
+            " matched by " <<
+            call_record.expectation.description
+        end
         result << "\n"
       end
 

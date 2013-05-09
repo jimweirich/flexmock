@@ -15,7 +15,9 @@ class FlexMock
 
     def define_a_mock(location, *args, &block)
       opts = parse_creation_args(args)
-      raise UsageError, "a block is required in safe mode" if opts.safe_mode && ! block_given?
+      if opts.safe_mode && ! block_given?
+        raise UsageError, "a block is required in safe mode"
+      end
 
       result = create_double(opts)
       flexmock_mock_setup(opts.mock, opts, location, &block)
@@ -23,7 +25,11 @@ class FlexMock
       result
     end
 
-    FlexOpts = Struct.new(:name, :defs, :domain_obj, :safe_mode, :base_class, :mock, :extended, :extended_data) do
+    FlexOpts = Struct.new(
+      :name, :defs, :safe_mode, :mock,
+      :domain_obj, :base_class,
+      :extended, :extended_data
+      ) do
       def data
         self.extended_data ||= {}
       end
@@ -121,7 +127,10 @@ class FlexMock
 
     # Create a partial mock object in options.
     def create_partial(opts)
-      opts.mock = PartialMockProxy.make_proxy_for(opts.domain_obj, container, opts.name, opts.safe_mode)
+      opts.mock = PartialMockProxy.make_proxy_for(
+        opts.domain_obj,
+        container, opts.name,
+        opts.safe_mode)
       opts.domain_obj
     end
 

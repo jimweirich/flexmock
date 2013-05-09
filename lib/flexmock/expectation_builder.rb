@@ -105,9 +105,20 @@ class FlexMock
       end
     end
 
-    # CHECK: It seems this regex matches the null method name. I
-    # wonder if that's intended.
-    METHOD_NAME_RE = /^([A-Za-z_][A-Za-z0-9_]*[=!?]?|\[\]=?|\*\*|<<|>>|<=>|[<>=!]=|[=!]~|===|[-+]@|[-+\*\/%&^|<>~`!])$/
+    METHOD_NAME_ALTS = [
+      '[A-Za-z_][A-Za-z0-9_]*[=!?]?',
+      '\[\]=?',
+      '\*\\*',
+      '<<',
+      '>>',
+      '<=>',
+      '[<>=!]=',
+      '[=!]~',
+      '===',
+      '[-+]@',
+      '[-+\*\/%&^|<>~`!]'
+    ].join("|")
+    METHOD_NAME_RE = /^(#{METHOD_NAME_ALTS})$/
 
     # Check that all the names in the list are valid method names.
     def check_method_names(names)

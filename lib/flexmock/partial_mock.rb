@@ -31,12 +31,18 @@ class FlexMock
     # Make a partial mock proxy and install it on the target +obj+.
     def self.make_proxy_for(obj, container, name, safe_mode)
       name ||= "flexmock(#{obj.class.to_s})"
-      if !obj.instance_variable_defined?("@flexmock_proxy") || obj.instance_variable_get("@flexmock_proxy").nil?
+      if ! proxy_defined_on?(obj)
         mock = FlexMock.new(name, container)
         proxy = PartialMockProxy.new(obj, mock, safe_mode)
         obj.instance_variable_set("@flexmock_proxy", proxy)
       end
       obj.instance_variable_get("@flexmock_proxy")
+    end
+
+    # Is there a mock proxy defined on the domain object?
+    def self.proxy_defined_on?(obj)
+      obj.instance_variable_defined?("@flexmock_proxy") &&
+        obj.instance_variable_get("@flexmock_proxy")
     end
 
     # The following methods are added to partial mocks so that they
@@ -115,7 +121,8 @@ class FlexMock
       target_class_eval do
         define_method(method_name) { |*args, &block|
           proxy = instance_variable_get("@flexmock_proxy") or
-            fail "Missing FlexMock proxy (for method_name=#{method_name.inspect}, self=\#{self})"
+            fail "Missing FlexMock proxy " +
+                 "(for method_name=#{method_name.inspect}, self=\#{self})"
           proxy.send(method_name, *args, &block)
         }
       end
@@ -140,14 +147,16 @@ class FlexMock
     #    flexmock(ClassName).new_instances(:make).should_receive(...)
     #
     def new_instances(*allocators, &block)
-      fail ArgumentError, "new_instances requires a Class to stub" unless Class === @obj
+      fail ArgumentError, "new_instances requires a Class to stub" unless
+        Class === @obj
       location = caller.first
       allocators = [:new] if allocators.empty?
       expectation_recorder = ExpectationRecorder.new
       allocators.each do |allocate_method|
         check_allocate_method(allocate_method)
         flexmock_define_expectation(location, allocate_method).and_return { |*args|
-          create_new_mocked_object(allocate_method, args, expectation_recorder, block)
+          create_new_mocked_object(
+            allocate_method, args, expectation_recorder, block)
         }
       end
       expectation_recorder
@@ -228,7 +237,8 @@ class FlexMock
 
     def check_allocate_method(allocate_method)
       if allocate_method == :allocate && RUBY_VERSION >= "1.9"
-        fail UsageError, "Cannot mock the allocation method using new_instances in Ruby 1.9"
+        fail UsageError,
+          "Cannot mock the allocation method using new_instances in Ruby 1.9"
       end
     end
 
@@ -316,14 +326,16 @@ class FlexMock
         eval_line = __LINE__ + 1
         target_class_eval %{
           def #{method_name}(*args, &block)
-            instance_variable_get('@flexmock_proxy').mock.__send__(:#{method_name}, *args, &block)
+            instance_variable_get('@flexmock_proxy').
+              mock.__send__(:#{method_name}, *args, &block)
           end
         }, __FILE__, eval_line
       else
         eval_line = __LINE__ + 1
         target_class_eval %{
           def #{method_name}(*args, &block)
-            instance_variable_get('@flexmock_proxy').mock.#{method_name}(*args, &block)
+            instance_variable_get('@flexmock_proxy').
+              mock.#{method_name}(*args, &block)
           end
         }, __FILE__, eval_line
         _ = true       # make rcov recognize the above eval is covered

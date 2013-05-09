@@ -38,7 +38,8 @@ class FlexMock
   # that by passing in the number of expected calls as a second
   # paramter.
   def mock_handle(sym, expected_count=nil, &block) # :nodoc:
-    $stderr.puts "mock_handle is deprecated, use the new should_receive interface instead."
+    $stderr.puts "mock_handle is deprecated, " +
+      "use the new should_receive interface instead."
     self.should_receive(sym).times(expected_count).returns(&block)
   end
 
@@ -57,6 +58,10 @@ class FlexMock
   end
 
   module Ordering
-    flexmock_deprecate :mock_allocate_order, :mock_groups, :mock_current_order, :mock_validate_order
+    flexmock_deprecate(
+      :mock_allocate_order,
+      :mock_groups,
+      :mock_current_order,
+      :mock_validate_order)
   end
 end

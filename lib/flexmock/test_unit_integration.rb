@@ -56,7 +56,9 @@ class FlexMock
     end
 
     def assertion_failed_error
-      defined?(Test::Unit::AssertionFailedError) ? Test::Unit::AssertionFailedError : MiniTest::Assertion
+      defined?(Test::Unit::AssertionFailedError) ?
+        Test::Unit::AssertionFailedError :
+        MiniTest::Assertion
     end
   end
 

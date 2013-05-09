@@ -386,7 +386,11 @@ class FlexMock
 
     # Helper method for defining ordered expectations.
     def define_ordered(group_name, ordering)
-      fail UsageError, "Mock #{@mock.flexmock_name} is not in a container and cannot be globally ordered." if ordering.nil?
+      if ordering.nil?
+        fail UsageError,
+          "Mock #{@mock.flexmock_name} " +
+          "is not in a container and cannot be globally ordered."
+      end
       if group_name.nil?
          result = ordering.flexmock_allocate_order
       elsif (num = ordering.flexmock_groups[group_name])

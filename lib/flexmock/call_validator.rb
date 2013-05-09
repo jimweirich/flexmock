@@ -18,9 +18,11 @@ class FlexMock
     # Does the +calls+ list record a method named +method_name+ with
     # +args+.  Options include:
     #
-    # * :times => n -- If given, the call should match exactly +n+ times.
-    # * :and => []  -- A list of argument validations to be run on each matching invocation.
-    # * :on_count => n -- If given, the :and validations on only run on the nth invocation.
+    # * :times => n    -- If given, the call should match exactly +n+ times.
+    # * :and => []     -- A list of argument validations to be run on each
+    #                     matching invocation.
+    # * :on_count => n -- If given, the :and validations on only run on the
+    #                     nth invocation.
     #
     def received?(calls, method_name, args, options)
       count = 0

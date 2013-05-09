@@ -39,7 +39,8 @@ class FlexMock
       exp = find_expectation(*args)
       call_record.expectation = exp if call_record
       FlexMock.check(
-        "no matching handler found for " + FlexMock.format_call(@sym, args)) { ! exp.nil? }
+        "no matching handler found for " +
+        FlexMock.format_call(@sym, args)) { ! exp.nil? }
       returned_value = exp.verify_call(*args)
       returned_value
     end

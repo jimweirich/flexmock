@@ -39,7 +39,8 @@ class FlexMock
     # Start a new method expectation.  The following constraints will be
     # applied to the new expectation.
     def should_receive(*args, &block)
-      @expectations.first.mock.flexmock_define_expectation(caller.first, *args, &block)
+      @expectations.first.mock.
+        flexmock_define_expectation(caller.first, *args, &block)
     end
 
     # Return a string representations

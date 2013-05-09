@@ -57,7 +57,9 @@ class FlexMock
     # given arguments.
     def method_missing(sym, *args, &block)
       location = caller.first
-      expectation = @mock.flexmock_define_expectation(location, sym).and_return(&block)
+      expectation = @mock.
+        flexmock_define_expectation(location, sym).
+        and_return(&block)
       if strict?
         args = args.collect { |arg| eq(arg) }
         expectation.with(*args).ordered.once
