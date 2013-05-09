@@ -53,19 +53,27 @@ class FlexMock
       # Automatically add mocks for some common methods in ActiveRecord
       # models.
       def add_model_methods(mock, model_class, location)
-        [ [:id,          current_id                                 ],
+        add_model_methods_returning_values(mock, location,
+          [:id,          current_id                                 ],
           [:to_params,   current_id.to_s                            ],
           [:new_record?, false                                      ],
           [:class,       model_class                                ],
-          [:errors,      make_mock_model_errors_for(mock, location) ]
-        ].each do |method, retval|
+          [:errors,      make_mock_model_errors_for(mock, location) ])
+
+        add_model_methods_with_behavior(mock, location,
+          [:is_a?,        lambda { |other| other == model_class }                  ],
+          [:instance_of?, lambda { |other| other == model_class }                  ],
+          [:kind_of?,     lambda { |other| model_class.ancestors.include?(other) } ])
+      end
+
+      def add_model_methods_returning_values(mock, location, *pairs)
+        pairs.each do |method, retval|
           make_default_behavior(mock, location, method, retval)
         end
+      end
 
-        [ [:is_a?,        lambda { |other| other == model_class }                  ],
-          [:instance_of?, lambda { |other| other == model_class }                  ],
-          [:kind_of?,     lambda { |other| model_class.ancestors.include?(other) } ],
-        ].each do |method, block|
+      def add_model_methods_with_behavior(mock, location, *pairs)
+        pairs.each do |method, block|
           make_default_behavior(mock, location, method, &block)
         end
       end
@@ -84,9 +92,14 @@ class FlexMock
       # return the +retval+ value.
       def make_default_behavior(mock, location, method, retval=nil, &block)
         if block_given?
-          mock.flexmock_define_expectation(location, method).with(FlexMock.any).and_return(&block).by_default
+          mock.flexmock_define_expectation(location, method).
+            with(FlexMock.any).
+            and_return(&block).
+            by_default
         else
-          mock.flexmock_define_expectation(location, method).and_return(retval).by_default
+          mock.flexmock_define_expectation(location, method).
+            and_return(retval).
+            by_default
         end
       end
     end
