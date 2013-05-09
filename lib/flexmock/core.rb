@@ -10,7 +10,6 @@
 #+++
 
 require 'flexmock/errors'
-require 'flexmock/composite'
 require 'flexmock/ordering'
 require 'flexmock/argument_matching'
 require 'flexmock/explicit_needed'
