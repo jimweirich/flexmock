@@ -1,6 +1,14 @@
 class FlexMock
 
     module SpyDescribers
+      def spy_description(spy, sym, args, options)
+        result = "have received "
+        result << call_description(sym, args)
+        result << times_description(options[:times])
+        result << block_description(options[:with_block])
+        result
+      end
+
       def describe_spy_expectation(spy, sym, args, options={})
         describe_spy(spy, sym, args, options)
       end
@@ -14,8 +22,7 @@ class FlexMock
       def describe_spy(spy, sym, args, options, not_clause="")
         result = "expected "
         result << call_description(sym, args)
-        result << " to#{not_clause} be received by "
-        result << spy.inspect
+        result << " to#{not_clause} be received by " << spy.inspect
         result << times_description(options[:times])
         result << block_description(options[:with_block])
         result << ".\n"

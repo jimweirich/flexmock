@@ -29,6 +29,10 @@ class FlexMock
         describe_spy_negative_expectation(@spy, @method_name, @args, @options)
       end
 
+      def description
+        spy_description(@spy, @method_name, @args, @options)
+      end
+
       def with(*args)
         @args = args
         self
